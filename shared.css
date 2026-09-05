@@ -30,8 +30,18 @@
      基準を満たす明度に上げる（3.63:1）。意図的な逸脱 */
   --line-ui:   #6b6b6b;  /* ボタン・CTA・リンクカードの枠線 */
   --surface:   #1a1a1a;  /* 入力欄など、面が必要なときだけ */
-  --badge-bg:  #ffffff;  /* 選択中バッジの塗り */
-  --badge-fg:  #000000;  /* 白バッジ内の文字 */
+
+  /* ---- アクセント ----
+     teamLab の仕様書は「UIにアクセントカラーを追加しない」としているが、
+     無彩色だけでは状態の変化が伝わりにくいため、水色を1色だけ入れる（意図的な逸脱）。
+     用途は「状態（ホバー・選択・フォーカス）」と「小さな強調」に限定し、
+     面や本文には使わない。10.23:1 で文字・塗りのどちらでも基準を満たす */
+  --accent:    #5ecbe8;
+  --on-accent: #0e0f0e;  /* アクセント塗りの上に載せる文字 */
+
+  /* バッジ・選択状態はアクセントで塗る */
+  --badge-bg:  var(--accent);
+  --badge-fg:  var(--on-accent);
 
   /* ---- タイポグラフィ ----
      Webフォントは読み込まない。欧文を先頭に置き ASCII を欧文書体で組む */
@@ -118,7 +128,7 @@ h1 {
 }
 
 .back-link:hover,
-.back-link:focus-visible { color: var(--fg); }
+.back-link:focus-visible { color: var(--accent); }
 
 /* ---------- ヘッダー内サブコピー ---------- */
 .header-sub,
@@ -176,16 +186,25 @@ h1 {
 }
 
 .cta:hover,
-.cta:focus-visible { border-color: var(--fg); }
+.cta:focus-visible {
+  border-color: var(--accent);
+  color:        var(--accent);
+}
 
 /* ---------- リンク ---------- */
 a { color: var(--fg); }
 
-/* フォーカスリングは色を持たせず白で統一する */
+/* フォーカスリングはアクセントで統一する（キーボード操作の現在地を目立たせる） */
 a:focus-visible,
 button:focus-visible {
-  outline:        1px solid var(--fg);
+  outline:        2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* ---------- 選択範囲 ---------- */
+::selection {
+  background: var(--accent);
+  color:      var(--on-accent);
 }
 
 /* ---------- コード ---------- */

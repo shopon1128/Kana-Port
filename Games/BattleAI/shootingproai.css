@@ -17,6 +17,12 @@ main {
   gap:            var(--sp-2xl);
 }
 
+/* flex/grid の子は既定で min-width:auto になり、中身の最小幅より狭くなれない。
+   成績表は white-space:nowrap で最小幅が約720pxあるため、これを 0 にしないと
+   section が縮まず、.result-table-wrap の overflow-x:auto が発動しない。
+   結果としてウィンドウを狭めたときにページ全体が横へはみ出す */
+main > section { min-width: 0; }
+
 /* 長文段落。teamLab の規定は 1.6 だが、同サイトに長文は存在しない。
    日本語の長文は 1.7〜2.0 が読みやすいため 1.8 を採用する */
 main p {
@@ -47,7 +53,10 @@ main section > p + p { margin-top: var(--sp-m); }
 }
 
 .play-button:hover,
-.play-button:focus-visible { border-color: var(--fg); }
+.play-button:focus-visible {
+  border-color: var(--accent);
+  color:        var(--accent);
+}
 
 .play-note {
   margin-top:  var(--sp-m);
@@ -96,8 +105,9 @@ main section > p + p { margin-top: var(--sp-m); }
 }
 
 .feature {
-  border:  1px solid var(--line);
-  padding: var(--sp-m) var(--sp-m) var(--sp-l);
+  border:    1px solid var(--line);
+  padding:   var(--sp-m) var(--sp-m) var(--sp-l);
+  min-width: 0;   /* グリッドの子の min-width:auto による横はみ出しを防ぐ */
 }
 
 .feature h3 {
@@ -133,7 +143,7 @@ main section > p + p { margin-top: var(--sp-m); }
   font-size:      11px;
   font-weight:    700;
   letter-spacing: 0.02em;
-  color:          var(--fg);
+  color:          var(--accent);
   margin-right:   6px;
 }
 
@@ -173,12 +183,13 @@ main section > p + p { margin-top: var(--sp-m); }
 }
 
 .ai-card {
-  border:  1px solid var(--line);
-  padding: var(--sp-m) var(--sp-m) var(--sp-l);
+  border:    1px solid var(--line);
+  padding:   var(--sp-m) var(--sp-m) var(--sp-l);
+  min-width: 0;   /* グリッドの子の min-width:auto による横はみ出しを防ぐ */
 }
 
-/* 現行チャンピオンは色ではなく枠の明度で差をつける（アクセント色を使わない） */
-.ai-card--champ { border-color: var(--fg); }
+/* 現行チャンピオンだけアクセント枠で立たせる */
+.ai-card--champ { border-color: var(--accent); }
 
 /* shared.css のページヘッダー用スタイルを打ち消す */
 .ai-card header {
@@ -264,7 +275,7 @@ main section > p + p { margin-top: var(--sp-m); }
   font-family: var(--font-mono);
   font-weight: 700;
   font-size:   13px;
-  color:       var(--muted);
+  color:       var(--accent);
 }
 
 /* ---------- 対戦データ配布 ---------- */

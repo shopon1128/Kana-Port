@@ -46,6 +46,12 @@
 - 解決: ホバー表現を transform ではなく `::before` の `inset` を広げる形に変更した
 - 教訓: `::before { z-index: -1 }` で親の背後に枠を敷く手法を使う要素には、`transform` / `filter` / `opacity < 1` / `will-change` を当てない(いずれもスタッキングコンテキストを作り、枠が親の背景の裏に閉じ込められる)
 
+## ウィンドウを縮めるとページ全体が横にはみ出す (2026-09-05)
+- 症状: ウィンドウを広げてから縮めると、レイアウトが崩れて横スクロールが出る
+- 原因: BattleAI の成績表に `white-space: nowrap` を付けたため最小幅が約720pxになった。表を包む `<section>` は `main { display: flex }` の子で、**flex/grid の子は既定が `min-width: auto`** ＝ 中身の最小幅より狭くなれない。そのため section が縮まず、`.result-table-wrap` の `overflow-x: auto` が発動しなかった
+- 解決: `main > section { min-width: 0 }` を追加。あわせて `.work-card` `.featured-card` `.category-card` などグリッドの子にも `min-width: 0` を入れた
+- 教訓: **`overflow-x: auto` は単体では効かない。** flex/grid の子孫に置くときは、途中の全ての flex/grid アイテムに `min-width: 0` が要る。`overflow-x` を書いたら必ずセットで確認する。`body { overflow-x: hidden }` で隠すのは症状の握りつぶしで、中身が切れるだけなので使わない
+
 ## デザイン仕様書の枠線色がWCAGを満たしていなかった (2026-09-05)
 - 症状: teamLab のDESIGN.mdどおり CTA の枠線を `#5a5a5a` にしたが、コントラスト検査で 2.78:1 と判定された
 - 原因: 背景 `#0e0f0e` に対して `#5a5a5a` は 2.78:1。WCAG 1.4.11 が UIコンポーネントの識別に求める 3:1 に届かない。**参照元の実サイトの実測値がそのまま基準を満たしているとは限らない**
