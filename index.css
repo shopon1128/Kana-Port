@@ -1,15 +1,10 @@
 /* ============================================================
    index.css — トップページ（index.html）固有スタイル
-   構成: header → About → Featured Works → All Works（タグ絞り込み）
+   構成: header → About → Featured Works → Works（カテゴリ入口）
+   ※ 作品カードとタグ絞り込みのスタイルは works.css 側にある
+      （Games/index.html・Apps/index.html で使うため）
+   ※ 共通のレイアウト変数（--border-w 等）は shared.css の :root
    ============================================================ */
-
-:root {
-  --border-w:       2.5px;   /* 枠線の太さ（shared.css の枠と揃える） */
-  --frame-offset:   5px;     /* ::before のアクセント枠のズレ幅 */
-  --lift-frame:     10px;    /* ホバー時にアクセント枠を広げる幅 */
-  --gap-section:    40px;    /* セクション間の余白 */
-  --gap-card:       24px;    /* カード間の余白 */
-}
 
 /* ---------- ヘッダー（トップページは大きめ） ---------- */
 header {
@@ -30,10 +25,25 @@ h1 span { color: #5b9bff; }
   font-size:      0.85rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color:          #7aa8e0;
+  color:          var(--on-dark);
 }
 
-/* ---------- 共通: アクセント枠付きのパネル ---------- */
+/* ---------- アクセント枠（このサイト共通の装飾） ----------
+   ::before を z-index:-1 で親の背後にずらして二重枠に見せている。
+   この枠を持つ要素に transform / filter / opacity<1 を当てると
+   新しいスタッキングコンテキストができて枠が消えるので注意 */
+.bio::before,
+.featured-card::before,
+.category-card::before {
+  content:  '';
+  position: absolute;
+  inset:    var(--frame-offset) calc(-1 * var(--frame-offset))
+            calc(-1 * var(--frame-offset)) var(--frame-offset);
+  border:   var(--border-w) solid var(--accent);
+  z-index:  -1;
+}
+
+/* ---------- About ---------- */
 .bio {
   border:        var(--border-w) solid var(--border);
   padding:       28px 40px;
@@ -41,15 +51,6 @@ h1 span { color: #5b9bff; }
   position:      relative;
   animation:     fadeUp 0.6s 0.15s ease both;
   margin-bottom: var(--gap-section);
-}
-
-.bio::before {
-  content:  '';
-  position: absolute;
-  inset:    var(--frame-offset) calc(-1 * var(--frame-offset))
-            calc(-1 * var(--frame-offset)) var(--frame-offset);
-  border:   var(--border-w) solid var(--accent);
-  z-index:  -1;
 }
 
 .bio p {
@@ -94,38 +95,12 @@ h1 span { color: #5b9bff; }
   position:        relative;
 }
 
-.featured-card::before {
-  content:    '';
-  position:   absolute;
-  inset:      var(--frame-offset) calc(-1 * var(--frame-offset))
-              calc(-1 * var(--frame-offset)) var(--frame-offset);
-  border:     var(--border-w) solid var(--accent);
-  z-index:    -1;
-  transition: inset 0.18s ease;
-}
-
-/* ホバーはアクセント枠を外側にずらして表現する。
-   カード自体に transform を当てるとスタッキングコンテキストが生まれ、
-   z-index:-1 の ::before がカード背景の裏に隠れて枠が消えるため */
-.featured-card:hover::before,
-.featured-card:focus-visible::before {
-  inset: var(--lift-frame) calc(-1 * var(--lift-frame))
-         calc(-1 * var(--lift-frame)) var(--lift-frame);
-}
-
-.featured-card:focus-visible {
-  outline:        3px solid var(--accent);
-  outline-offset: 3px;
-}
-
-.featured-card:hover .featured-title { color: var(--accent); }
-
 .featured-thumb {
-  display:         block;
-  border:          2px solid var(--border);
-  overflow:        hidden;
-  aspect-ratio:    16 / 9;
-  background:      var(--accent-light);
+  display:      block;
+  border:       2px solid var(--border);
+  overflow:     hidden;
+  aspect-ratio: 16 / 9;
+  background:   var(--accent-light);
 }
 
 .featured-thumb img {
@@ -152,70 +127,95 @@ h1 span { color: #5b9bff; }
 }
 
 /* ============================================================
-   All Works — タグ絞り込み
+   Works — カテゴリの入口（Games / Apps）
    ============================================================ */
-.filter {
-  display:       flex;
-  flex-wrap:     wrap;
-  gap:           8px;
-  margin-bottom: 12px;
+.works-grid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   var(--gap-card);
 }
 
-.filter-btn {
-  font-family:    'Syne', 'Noto Sans JP', sans-serif;
-  font-size:      0.72rem;
-  letter-spacing: 0.1em;
+.category-card {
+  border:          var(--border-w) solid var(--border);
+  padding:         28px 28px 32px;
+  background:      var(--accent-light);
+  display:         flex;
+  flex-direction:  column;
+  gap:             14px;
+  text-decoration: none;
+  color:           inherit;
+  position:        relative;
+}
+
+/* 右下の矢印。装飾なので読み上げ対象にしない（aria-hidden 相当の扱い） */
+.category-card::after {
+  content:     '→';
+  font-family: 'Syne', sans-serif;
+  font-size:   1.2rem;
+  position:    absolute;
+  bottom:      20px;
+  right:       24px;
+  transition:  transform 0.18s ease;
+}
+
+.category-card:hover::after,
+.category-card:focus-visible::after { transform: translateX(4px); }
+
+.card-tag {
+  display:        inline-block;
+  font-family:    'Syne', sans-serif;
+  font-size:      0.65rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  border:         2px solid var(--border);
-  background:     var(--card-bg);
-  color:          var(--ink);
-  padding:        5px 12px;
-  cursor:         pointer;
-  transition:     background 0.15s, color 0.15s;
+  background:     var(--accent);
+  color:          #fff;
+  padding:        3px 10px;
+  align-self:     flex-start;
 }
 
-.filter-btn:hover { background: var(--accent-light); }
-
-.filter-btn[aria-pressed="true"] {
-  background: var(--accent);
-  color:      #fff;
-}
-
-.filter-status {
+.card-title {
   font-family:    'Syne', 'Noto Sans JP', sans-serif;
-  font-size:      0.7rem;
-  letter-spacing: 0.08em;
+  font-weight:    700;
+  font-size:      1.25rem;
+  letter-spacing: -0.01em;
+  transition:     color 0.15s;
+}
+
+.card-desc {
+  font-size:      0.85rem;
+  line-height:    1.75;
   color:          var(--muted);
-  margin-bottom:  20px;
+  padding-bottom: 8px;
 }
 
-.no-result {
-  border:      2px dashed var(--border);
-  padding:     24px;
-  text-align:  center;
-  font-size:   0.85rem;
-  color:       var(--muted);
+.card-count {
+  font-family:    'Syne', sans-serif;
+  font-size:      0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color:          var(--accent);
+  margin-top:     auto;
 }
 
-/* 絞り込みで隠したカード。
-   works.css の .work-card { display: grid } は詳細度が同じで後勝ちするため、
-   [hidden] だけでは消えない。ここで明示的に打ち消す */
-.work-card[hidden] { display: none; }
-
-/* ---------- カード内のタグチップ（押すと絞り込みできる） ---------- */
-.work-tags .tag {
-  font-family: 'Syne', 'Noto Sans JP', sans-serif;
-  font-size:   0.68rem;
-  border:      none;
-  cursor:      pointer;
-  transition:  background 0.15s;
+/* ---------- リンクカード共通のホバー / フォーカス ---------- */
+.featured-card:hover::before,
+.featured-card:focus-visible::before,
+.category-card:hover::before,
+.category-card:focus-visible::before {
+  inset: var(--lift-frame) calc(-1 * var(--lift-frame))
+         calc(-1 * var(--lift-frame)) var(--lift-frame);
 }
 
-.work-tags .tag:hover { background: var(--ink); }
+.featured-card::before,
+.category-card::before { transition: inset 0.18s ease; }
 
-.work-tags .tag--active {
-  background:  var(--ink);
-  box-shadow:  0 0 0 2px var(--accent);
+.featured-card:hover .featured-title,
+.category-card:hover .card-title { color: var(--accent); }
+
+.featured-card:focus-visible,
+.category-card:focus-visible {
+  outline:        3px solid var(--accent);
+  outline-offset: 3px;
 }
 
 /* ---------- レスポンシブ ---------- */
@@ -224,7 +224,8 @@ h1 span { color: #5b9bff; }
 }
 
 @media (max-width: 600px) {
-  .featured-grid { grid-template-columns: 1fr; }
-  header         { padding: 24px; }
-  .bio           { padding: 20px 24px; }
+  .featured-grid,
+  .works-grid { grid-template-columns: 1fr; }
+  header      { padding: 24px; }
+  .bio        { padding: 20px 24px; }
 }

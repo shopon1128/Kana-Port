@@ -10,6 +10,7 @@
 }
 
 :root {
+  /* ---- 色 ---- */
   --bg:           #f0f4f8;
   --ink:          #0a0e14;
   --accent:       #1a56db;
@@ -17,6 +18,16 @@
   --card-bg:      #ffffff;
   --border:       #0a0e14;
   --muted:        #4a5568;
+  --on-dark:      #7aa8e0;  /* 濃い背景の上に置く補助テキスト */
+
+  /* ---- レイアウト ----
+     index.css と works.css の両方から参照する。カテゴリページは
+     index.css を読み込まないため、共有する値はここに置く */
+  --border-w:     2.5px;    /* 枠線の太さ */
+  --frame-offset: 5px;      /* アクセント枠(::before)のズレ幅 */
+  --lift-frame:   10px;     /* ホバー時にアクセント枠を広げる幅 */
+  --gap-section:  40px;     /* セクション間の余白 */
+  --gap-card:     24px;     /* カード間の余白 */
 }
 
 /* ---------- ベース ---------- */
@@ -67,7 +78,7 @@ h1 {
   font-size:      0.7rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color:          #7aa8e0;
+  color:          var(--on-dark);
   text-decoration: none;
   margin-bottom:  10px;
 }
