@@ -1,90 +1,77 @@
 /* ============================================================
    booklib.css — BookLib 紹介ページ専用スタイル
-   (色・意匠は shared.css の CSS 変数を踏襲)
+   ------------------------------------------------------------
+   teamLab 準拠。スクリーンショットは枠を付けず直置きし、
+   UI 側は枠線1pxと余白だけで構成する。
+   長文を含むため line-height は 1.8 を採用（理由は BattleAI 側と同じ）。
    ============================================================ */
+
+/* 長文中心のページなので、一覧より狭い読み幅に落とす */
+body { max-width: var(--container-read); }
 
 main {
   display:        flex;
   flex-direction: column;
-  gap:            44px;
+  gap:            var(--sp-2xl);
 }
 
-/* ---------- ヘッダー内サブコピー ---------- */
-.header-sub {
-  margin-top: 10px;
-  font-size:  0.85rem;
-  color:      rgba(255, 255, 255, 0.78);
-  letter-spacing: 0.04em;
+main p {
+  font-size:   16px;
+  line-height: 1.8;
 }
 
-/* ---------- スクリーンショット枠 ---------- */
+main section > p + p { margin-top: var(--sp-m); }
+
+/* ---------- スクリーンショット ----------
+   仕様書どおり写真直置き。枠・影・角丸を付けない */
 .shot-frame {
-  border:          2.5px solid var(--border);
-  background:      var(--accent-light);
+  overflow:        hidden;
+  background:      var(--surface);
   display:         flex;
   align-items:     center;
   justify-content: center;
-  overflow:        hidden;
-  position:        relative;
   aspect-ratio:    16 / 10;
-  animation:       fadeUp 0.5s ease both;
-}
-
-.shot-frame--wide::before {
-  content:  '';
-  position: absolute;
-  inset:    5px -5px -5px 5px;
-  border:   2.5px solid var(--accent);
-  z-index:  -1;
+  animation:       fadeIn 0.4s ease both;
 }
 
 .shot-frame img {
   width:      100%;
   height:     100%;
   object-fit: cover;
-  display:    block;
 }
 
-.shot-frame .placeholder {
-  font-family:    'Syne', sans-serif;
-  font-size:      0.7rem;
-  letter-spacing: 0.1em;
-  color:          var(--accent);
-  text-transform: uppercase;
-}
-
-/* サブスクリーンショット(2枚並び) */
+/* サブスクリーンショット（2枚並び） */
 .shot-grid {
   display:               grid;
   grid-template-columns: 1fr 1fr;
-  gap:                   16px;
-  margin-top:            16px;
+  gap:                   var(--sp-m);
+  margin-top:            var(--sp-m);
 }
 
 /* ---------- 特徴カード ---------- */
 .feature-grid {
   display:               grid;
   grid-template-columns: 1fr 1fr;
-  gap:                   16px;
-  margin-top:            16px;
+  gap:                   var(--sp-m);
+  margin-top:            var(--sp-m);
 }
 
 .feature {
-  border:     2px solid var(--border);
-  background: var(--card-bg);
-  padding:    16px 18px;
+  border:  1px solid var(--line);
+  padding: var(--sp-m) var(--sp-m) var(--sp-l);
 }
 
 .feature h3 {
-  font-size:     0.95rem;
-  font-weight:   500;
-  margin-bottom: 6px;
+  font-size:     15px;
+  font-weight:   700;
+  line-height:   1.5;
+  margin-bottom: var(--sp-s);
 }
 
 .feature p {
-  font-size:   0.85rem;
-  line-height: 1.85;
-  color:       #2d3748;
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
 }
 
 /* ---------- 使い方ステップ ---------- */
@@ -93,90 +80,80 @@ main {
   counter-reset:  step;
   display:        flex;
   flex-direction: column;
-  gap:            12px;
-  margin-top:     16px;
+  gap:            var(--sp-s);
+  margin-top:     var(--sp-m);
 }
 
 .steps li {
   counter-increment: step;
-  border:      2px solid var(--border);
-  background:  var(--card-bg);
-  padding:     14px 18px 14px 60px;
+  border:      1px solid var(--line);
+  padding:     var(--sp-m) var(--sp-m) var(--sp-m) 56px;
   position:    relative;
-  font-size:   0.9rem;
-  line-height: 1.85;
+  font-size:   14px;
+  line-height: 1.8;
 }
 
 .steps li::before {
   content:     counter(step, decimal-leading-zero);
   position:    absolute;
-  left:        18px;
-  top:         15px;
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  color:       var(--accent);
-}
-
-.steps code {
-  background: var(--accent-light);
-  padding:    1px 7px;
-  font-size:  0.85em;
-  word-break: break-all;
+  left:        var(--sp-m);
+  top:         var(--sp-m);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size:   13px;
+  color:       var(--muted);
 }
 
 /* ---------- 動作環境 ---------- */
 .req-box {
-  border:      2px solid var(--border);
-  background:  var(--accent-light);
-  padding:     16px 20px;
-  font-size:   0.87rem;
-  line-height: 1.95;
-  margin-top:  16px;
+  border:      1px solid var(--line);
+  padding:     var(--sp-m) var(--sp-l);
+  font-size:   14px;
+  line-height: 1.9;
+  color:       var(--muted);
+  margin-top:  var(--sp-m);
 }
 
-.req-box ul {
-  list-style:   none;
-}
+.req-box ul { list-style: none; }
 
 .req-box li::before {
   content: '— ';
-  color:   var(--accent);
+  color:   var(--muted);
 }
 
 /* ---------- ダウンロード ---------- */
 .download { text-align: center; }
 
+/* CTA は塗りなし・枠線のみ（仕様書の Outlined CTA） */
 .dl-button {
   display:         inline-block;
-  font-family:     'Syne', sans-serif;
-  font-weight:     800;
-  font-size:       1rem;
-  letter-spacing:  0.12em;
-  text-transform:  uppercase;
-  background:      var(--accent);
-  color:           #fff;
-  border:          2.5px solid var(--border);
-  padding:         16px 40px;
-  margin-top:      16px;
+  font-size:       14px;
+  font-weight:     400;
+  line-height:     1.6;
+  letter-spacing:  normal;
+  color:           var(--fg);
+  background:      transparent;
+  border:          1px solid var(--line-ui);
+  border-radius:   0;
+  padding:         16px 32px;
+  margin-top:      var(--sp-m);
   text-decoration: none;
-  box-shadow:      6px 6px 0 var(--ink);
-  transition:      transform 0.12s ease, box-shadow 0.12s ease;
+  transition:      border-color 0.15s;
 }
 
-.dl-button:hover {
-  transform:  translate(2px, 2px);
-  box-shadow: 3px 3px 0 var(--ink);
-}
+.dl-button:hover,
+.dl-button:focus-visible { border-color: var(--fg); }
 
 .dl-note {
-  margin-top: 14px;
-  font-size:  0.8rem;
-  color:      var(--muted);
+  margin-top:  var(--sp-m);
+  font-size:   13px;
+  line-height: 1.6;
+  color:       var(--muted);
 }
 
 /* ---------- レスポンシブ ---------- */
-@media (max-width: 620px) {
-  main { gap: 36px; }
+@media (max-width: 768px) {
+  main { gap: var(--sp-xl); }
 
   .feature-grid,
   .shot-grid { grid-template-columns: 1fr; }

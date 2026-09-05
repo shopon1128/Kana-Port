@@ -1,126 +1,222 @@
 /* ============================================================
    shared.css — 全ページ共通スタイル
+   ------------------------------------------------------------
+   デザイン方針: teamLab 準拠のダーク・ミニマリズム
+     ・背景は純黒 #000 ではなく、わずかに緑寄りの #0e0f0e
+     ・UI は装飾色を一切持たない。色は作品スクリーンショットの中だけ
+     ・角丸ゼロ / 影ゼロ / グラデーションなし
+     ・Webフォントを読み込まず、OS既定フォントへフォールバックする
+     ・CTA は塗りなし、1px の枠線だけで構成する
    ============================================================ */
 
-/* ---------- リセット & CSS 変数 ---------- */
+/* ---------- リセット & トークン ---------- */
 *, *::before, *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  margin:     0;
+  padding:    0;
 }
 
 :root {
-  /* ---- 色 ---- */
-  --bg:           #f0f4f8;
-  --ink:          #0a0e14;
-  --accent:       #1a56db;
-  --accent-light: #e0eaff;
-  --card-bg:      #ffffff;
-  --border:       #0a0e14;
-  --muted:        #4a5568;
-  --on-dark:      #7aa8e0;  /* 濃い背景の上に置く補助テキスト */
+  color-scheme: dark;   /* スクロールバー・フォーム部品もダークに揃える */
 
-  /* ---- レイアウト ----
-     index.css と works.css の両方から参照する。カテゴリページは
-     index.css を読み込まないため、共有する値はここに置く */
-  --border-w:     2.5px;    /* 枠線の太さ */
-  --frame-offset: 5px;      /* アクセント枠(::before)のズレ幅 */
-  --lift-frame:   10px;     /* ホバー時にアクセント枠を広げる幅 */
-  --gap-section:  40px;     /* セクション間の余白 */
-  --gap-card:     24px;     /* カード間の余白 */
+  /* ---- 色（無彩色4階調のみ。アクセントカラーを足さないこと） ---- */
+  --bg:        #0e0f0e;  /* ページ背景。純黒 #000 は使わない */
+  --fg:        #ffffff;  /* 見出し・本文。オフホワイトは使わない */
+  --muted:     #999999;  /* 日付・キャプション・補足 */
+  --line:      #5a5a5a;  /* 装飾的なヘアライン（区切り線・非対話のカード枠） */
+  /* 仕様書の枠線色は #5a5a5a だが、背景 #0e0f0e に対して 2.78:1 しかなく、
+     WCAG 1.4.11（UI部品の識別に必要な情報は 3:1）を満たさない。
+     枠線が「それがボタンだと分かる唯一の手がかり」になる対話要素だけ、
+     基準を満たす明度に上げる（3.63:1）。意図的な逸脱 */
+  --line-ui:   #6b6b6b;  /* ボタン・CTA・リンクカードの枠線 */
+  --surface:   #1a1a1a;  /* 入力欄など、面が必要なときだけ */
+  --badge-bg:  #ffffff;  /* 選択中バッジの塗り */
+  --badge-fg:  #000000;  /* 白バッジ内の文字 */
+
+  /* ---- タイポグラフィ ----
+     Webフォントは読み込まない。欧文を先頭に置き ASCII を欧文書体で組む */
+  --font: "Helvetica Neue", Helvetica, Arial,
+          "Hiragino Kaku Gothic ProN", "ヒラギノ角ゴ ProN W3",
+          "Yu Gothic", YuGothic, Meiryo, sans-serif;
+  /* 仕様書に等幅の規定が無いため補完（詳細ページの <code> で使用） */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* ---- 余白（8pxグリッド） ---- */
+  --sp-xs:  4px;
+  --sp-s:   8px;
+  --sp-m:  16px;
+  --sp-l:  24px;
+  --sp-xl: 40px;
+  --sp-2xl: 80px;
+
+  /* ---- コンテナ ---- */
+  --container:      1200px;  /* 一覧・トップ（グリッドを広く使う） */
+  --container-read:  860px;  /* 詳細ページの長文（可読性のため狭める） */
 }
 
 /* ---------- ベース ---------- */
 html { scroll-behavior: smooth; }
 
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
-  background:  var(--bg);
-  color:       var(--ink);
-  font-family: 'Noto Sans JP', sans-serif;
-  font-weight: 300;
-  min-height:  100vh;
-  padding:     48px 32px;
-  max-width:   900px;
-  margin:      0 auto;
+  background:   var(--bg);
+  color:        var(--fg);
+  font-family:  var(--font);
+  font-size:    16px;
+  font-weight:  400;
+  line-height:  1.6;
+  /* teamLab は詰めも開きもしない。letter-spacing は normal を維持する */
+  letter-spacing: normal;
+  font-feature-settings: normal;  /* palt を当てない */
+  min-height:   100vh;
+  max-width:    var(--container);
+  margin:       0 auto;
+  /* 横 32px は仕様書の desktop 値。モバイルは 16px に落とす */
+  padding:      var(--sp-xl) 32px var(--sp-2xl);
+  overflow-wrap: break-word;
+  line-break:   strict;
 }
 
-/* ---------- ヘッダー ---------- */
+img {
+  max-width: 100%;
+  display:   block;
+}
+
+/* ---------- ヘッダー ----------
+   枠も塗りも持たない。区切りは余白だけでつくる */
 header {
-  border:        2.5px solid var(--border);
-  padding:       28px 40px;
-  margin-bottom: 40px;
-  background:    var(--ink);
-  color:         #fff;
-  position:      relative;
-  animation:     fadeUp 0.5s ease both;
+  padding-bottom: var(--sp-xl);
+  animation:      fadeIn 0.4s ease both;
 }
 
-header::before {
-  content:  '';
-  position: absolute;
-  inset:    5px -5px -5px 5px;
-  border:   2.5px solid var(--accent);
-  z-index:  -1;
-}
-
-/* ---------- 見出し ---------- */
 h1 {
-  font-family:    'Syne', sans-serif;
-  font-weight:    800;
-  font-size:      clamp(1.6rem, 4vw, 2.4rem);
-  letter-spacing: -0.02em;
+  /* 仕様書は h2 までしか規定が無いため、h1 は補完（20px/700 の上位として） */
+  font-size:      clamp(1.75rem, 4vw, 2.5rem);
+  font-weight:    700;
+  line-height:    1.3;
+  letter-spacing: normal;
 }
 
 /* ---------- 戻るリンク ---------- */
 .back-link {
-  display:        inline-block;
-  font-family:    'Syne', sans-serif;
-  font-size:      0.7rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color:          var(--on-dark);
+  display:         inline-block;
+  font-size:       12px;
+  line-height:     1.6;
+  letter-spacing:  0.02em;   /* 12px以下だけ潰れ防止に微量付与 */
+  color:           var(--muted);
   text-decoration: none;
-  margin-bottom:  10px;
+  margin-bottom:   var(--sp-m);
+  transition:      color 0.15s;
 }
-.back-link:hover { color: #5b9bff; }
 
-/* ---------- セクションラベル ---------- */
+.back-link:hover,
+.back-link:focus-visible { color: var(--fg); }
+
+/* ---------- ヘッダー内サブコピー ---------- */
+.header-sub,
+.page-sub {
+  margin-top:  var(--sp-s);
+  font-size:   13px;
+  line-height: 1.6;
+  color:       var(--muted);
+}
+
+/* ---------- セクション見出し ---------- */
 .section-label {
-  font-family:    'Syne', sans-serif;
-  font-size:      0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color:          var(--muted);
-  margin-bottom:  12px;
+  font-size:      20px;
+  font-weight:    700;
+  line-height:    1.5;
+  letter-spacing: normal;
+  color:          var(--fg);
+  margin-bottom:  var(--sp-m);
 }
 
-/* ---------- タグ ---------- */
+/* ---------- タグ / バッジ ----------
+   仕様書のミニバッジは「白塗り＋黒文字」だが、それは ON VIEW など
+   1枚に1個だけ置く用途。ここは1カードに最大5個並ぶため、
+   既定は枠線のみにし、選択中だけ白塗りにする（逸脱・意図的） */
 .tag {
-  font-family:    'Syne', sans-serif;
-  font-size:      0.6rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  background:     var(--accent);
-  color:          #fff;
-  padding:        2px 9px;
+  display:        inline-block;
+  font-family:    inherit;
+  font-size:      11px;
+  font-weight:    400;
+  line-height:    1.6;
+  letter-spacing: 0.02em;
+  color:          var(--muted);
+  background:     transparent;
+  border:         1px solid var(--line);
+  border-radius:  0;
+  padding:        3px 8px;
+}
+
+/* ---------- CTA（塗りなし・枠線のみ） ---------- */
+.cta {
+  display:         inline-block;
+  font-family:     inherit;
+  font-size:       14px;
+  font-weight:     400;
+  line-height:     1.6;
+  letter-spacing:  normal;
+  color:           var(--fg);
+  background:      transparent;
+  border:          1px solid var(--line-ui);
+  border-radius:   0;
+  padding:         12px 24px;
+  text-decoration: none;
+  cursor:          pointer;
+  transition:      border-color 0.15s, color 0.15s;
+}
+
+.cta:hover,
+.cta:focus-visible { border-color: var(--fg); }
+
+/* ---------- リンク ---------- */
+a { color: var(--fg); }
+
+/* フォーカスリングは色を持たせず白で統一する */
+a:focus-visible,
+button:focus-visible {
+  outline:        1px solid var(--fg);
+  outline-offset: 2px;
+}
+
+/* ---------- コード ---------- */
+code {
+  font-family: var(--font-mono);
+  font-size:   0.9em;
+  color:       var(--fg);
+  background:  var(--surface);
+  padding:     1px 6px;
+  word-break:  break-all;
 }
 
 /* ---------- フッター ---------- */
 footer {
-  margin-top:     48px;
-  text-align:     center;
-  font-size:      0.75rem;
-  color:          var(--muted);
-  letter-spacing: 0.08em;
+  margin-top:  var(--sp-2xl);
+  padding-top: var(--sp-l);
+  font-size:   12px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color:       var(--muted);
 }
 
-/* ---------- アニメーション ---------- */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* ---------- アニメーション ----------
+   teamLab は立体表現を持たない。移動を伴わない不透明度だけの変化にする */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* ---------- レスポンシブ ---------- */
-@media (max-width: 620px) {
-  body { padding: 24px 16px; }
+@media (max-width: 768px) {
+  body { padding: var(--sp-l) var(--sp-m) var(--sp-xl); }
+  .section-label { font-size: 18px; }
 }

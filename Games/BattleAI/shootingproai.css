@@ -1,383 +1,339 @@
 /* ============================================================
-   shootingproai.css — Battle AI(シューティングゲームAI)紹介ページ専用
-   (色・意匠は shared.css の CSS 変数を踏襲)
+   shootingproai.css — Battle AI（シューティングゲームAI）紹介ページ専用
+   ------------------------------------------------------------
+   teamLab 準拠。色を持たず、枠線1pxと余白だけで階層をつくる。
+   本ページは仕様書が想定していない「長文＋大きな表」を含むため、
+   可読性のために以下2点だけ意図的に外している（理由はコメントに記載）:
+     ・コンテナ幅を狭める
+     ・長文の line-height を 1.6 → 1.8 にする
    ============================================================ */
+
+/* 長文中心のページなので、一覧より狭い読み幅に落とす */
+body { max-width: var(--container-read); }
 
 main {
   display:        flex;
   flex-direction: column;
-  gap:            44px;
+  gap:            var(--sp-2xl);
 }
 
-/* ---------- ヘッダー内サブコピー ---------- */
-.header-sub {
-  margin-top:     10px;
-  font-size:      0.85rem;
-  color:          rgba(255, 255, 255, 0.78);
-  letter-spacing: 0.04em;
+/* 長文段落。teamLab の規定は 1.6 だが、同サイトに長文は存在しない。
+   日本語の長文は 1.7〜2.0 が読みやすいため 1.8 を採用する */
+main p {
+  font-size:   16px;
+  line-height: 1.8;
 }
+
+main section > p + p { margin-top: var(--sp-m); }
 
 /* ---------- プレイボタン ---------- */
 .play { text-align: center; }
 
+/* CTA は塗りなし・枠線のみ（仕様書の Outlined CTA） */
 .play-button {
   display:         inline-block;
-  font-family:     'Syne', sans-serif;
-  font-weight:     800;
-  font-size:       1rem;
-  letter-spacing:  0.12em;
-  text-transform:  uppercase;
-  background:      var(--accent);
-  color:           #fff;
-  border:          2.5px solid var(--border);
-  padding:         16px 40px;
-  margin-top:      16px;
+  font-size:       14px;
+  font-weight:     400;
+  line-height:     1.6;
+  letter-spacing:  normal;
+  color:           var(--fg);
+  background:      transparent;
+  border:          1px solid var(--line-ui);
+  border-radius:   0;
+  padding:         16px 32px;
+  margin-top:      var(--sp-m);
   text-decoration: none;
-  box-shadow:      6px 6px 0 var(--ink);
-  transition:      transform 0.12s ease, box-shadow 0.12s ease;
+  transition:      border-color 0.15s;
 }
 
-.play-button:hover {
-  transform:  translate(2px, 2px);
-  box-shadow: 3px 3px 0 var(--ink);
-}
+.play-button:hover,
+.play-button:focus-visible { border-color: var(--fg); }
 
 .play-note {
-  margin-top: 14px;
-  font-size:  0.8rem;
-  color:      var(--muted);
+  margin-top:  var(--sp-m);
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
+  text-align:  left;
 }
+
+.play .play-note { text-align: center; }
 
 /* ---------- 操作方法 ---------- */
 .controls {
   display:               grid;
   grid-template-columns: 1fr 1fr;
-  gap:                   10px 24px;
+  gap:                   var(--sp-s) var(--sp-l);
   max-width:             fit-content;
-  margin:                16px auto 0;
-  border:                2px solid var(--border);
-  background:            var(--card-bg);
-  padding:               16px 20px;
-  font-size:             0.87rem;
+  margin:                var(--sp-m) auto 0;
+  border:                1px solid var(--line);
+  padding:               var(--sp-m) var(--sp-l);
+  font-size:             14px;
   text-align:            left;
 }
 
 .controls .key {
   display:        inline-block;
-  min-width:      2.2em;
+  min-width:      2.4em;
   text-align:     center;
-  font-family:    'Syne', sans-serif;
-  font-weight:    700;
-  font-size:      0.72rem;
-  letter-spacing: 0.06em;
-  background:     var(--accent-light);
-  border:         1.5px solid var(--border);
-  padding:        2px 7px;
+  font-family:    var(--font-mono);
+  font-size:      11px;
+  letter-spacing: 0.02em;
+  color:          var(--fg);
+  border:         1px solid var(--line);
+  padding:        2px 8px;
   margin:         0 6px;
 }
-.controls div > .key:first-child {
-  margin-left:    0;
-}
+
+.controls div > .key:first-child { margin-left: 0; }
 
 /* ---------- 特徴カード ---------- */
 .feature-grid {
   display:               grid;
   grid-template-columns: 1fr 1fr;
-  gap:                   16px;
-  margin-top:            16px;
+  gap:                   var(--sp-m);
+  margin-top:            var(--sp-m);
 }
 
 .feature {
-  border:     2px solid var(--border);
-  background: var(--card-bg);
-  padding:    16px 18px;
+  border:  1px solid var(--line);
+  padding: var(--sp-m) var(--sp-m) var(--sp-l);
 }
 
 .feature h3 {
-  font-size:     0.95rem;
-  font-weight:   500;
-  margin-bottom: 6px;
+  font-size:     15px;
+  font-weight:   700;
+  line-height:   1.5;
+  margin-bottom: var(--sp-s);
 }
 
 .feature p {
-  font-size:   0.85rem;
-  line-height: 1.85;
-  color:       #2d3748;
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
 }
 
 /* ---------- 戦術チップ ---------- */
 .tactic-list {
   display:    flex;
   flex-wrap:  wrap;
-  gap:        8px;
-  margin-top: 14px;
+  gap:        var(--sp-s);
+  margin-top: var(--sp-m);
   list-style: none;
 }
 
 .tactic-list li {
-  font-size:  0.78rem;
-  border:     1.5px solid var(--border);
-  background: var(--card-bg);
-  padding:    4px 12px;
+  font-size: 13px;
+  color:     var(--muted);
+  border:    1px solid var(--line);
+  padding:   4px 12px;
 }
 
 .tactic-list li strong {
-  font-family:  'Syne', sans-serif;
-  font-size:    0.68rem;
-  font-weight:  700;
-  color:        var(--accent);
-  margin-right: 6px;
+  font-size:      11px;
+  font-weight:    700;
+  letter-spacing: 0.02em;
+  color:          var(--fg);
+  margin-right:   6px;
 }
 
 /* ---------- AIプロフィールカード ---------- */
-/* グループ見出し:塗りバッジ + 区切り線で「章の切れ目」として立たせる */
+/* グループ見出し: 白塗りミニバッジ + ヘアラインで章の切れ目を出す
+   （1グループに1個だけなので仕様書のバッジ用法に合致する） */
 .ai-group-label {
-  display:        flex;
-  align-items:    center;
-  gap:            12px;
-  font-family:    'Syne', sans-serif;
-  font-size:      0.78rem;
-  font-weight:    700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color:          inherit;
-  margin:         36px 0 0;
+  display:     flex;
+  align-items: center;
+  gap:         var(--sp-m);
+  margin:      var(--sp-xl) 0 0;
 }
 
 .ai-group-label span {
-  background:   var(--accent);
-  color:        #fff;
-  padding:      4px 12px;
-  box-shadow:   3px 3px 0 var(--border);
+  font-size:      10px;
+  font-weight:    700;
+  line-height:    1.6;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  background:     var(--badge-bg);
+  color:          var(--badge-fg);
+  padding:        4px 8px;
 }
 
-/* バッジの右に伸ばす区切り線 */
 .ai-group-label::after {
-  content:     "";
-  flex:        1;
-  height:      2px;
-  background:  var(--border);
+  content:    '';
+  flex:       1;
+  height:     1px;
+  background: var(--line);
 }
 
 .ai-grid {
   display:               grid;
   grid-template-columns: 1fr 1fr;
-  gap:                   16px;
-  margin-top:            16px;
+  gap:                   var(--sp-m);
+  margin-top:            var(--sp-m);
 }
 
 .ai-card {
-  border:     2px solid var(--border);
-  background: var(--card-bg);
-  padding:    16px 18px;
+  border:  1px solid var(--line);
+  padding: var(--sp-m) var(--sp-m) var(--sp-l);
 }
 
-/* 現行チャンピオンだけアクセント枠で目立たせる */
-.ai-card--champ {
-  border-color: var(--accent);
-  box-shadow:   4px 4px 0 var(--accent-light);
-}
+/* 現行チャンピオンは色ではなく枠の明度で差をつける（アクセント色を使わない） */
+.ai-card--champ { border-color: var(--fg); }
 
+/* shared.css のページヘッダー用スタイルを打ち消す */
 .ai-card header {
   display:         flex;
   align-items:     baseline;
   justify-content: space-between;
   flex-wrap:       wrap;
-  gap:             4px 10px;
-  border:          none;
-  background:      none;
-  color:           inherit;/* shared.cssのページヘッダー用スタイル(白文字)を打ち消す */
-  position:        static;
-  padding:         0;
-  margin:          0 0 4px;
+  gap:             var(--sp-xs) var(--sp-s);
+  padding:         0 0 var(--sp-xs);
+  margin:          0;
   animation:       none;
 }
 
-.ai-card header::before { content: none; }
-
 .ai-card h3 {
-  font-size:   0.98rem;
-  font-weight: 500;
+  font-size:   15px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .ai-tag {
-  font-family:    'Syne', sans-serif;
-  font-size:      0.62rem;
-  letter-spacing: 0.08em;
-  background:     var(--accent-light);
-  border:         1.5px solid var(--border);
-  padding:        1px 8px;
+  font-size:      11px;
+  line-height:    1.6;
+  letter-spacing: 0.02em;
+  color:          var(--muted);
+  border:         1px solid var(--line);
+  padding:        2px 8px;
 }
 
 .ai-persona {
-  font-size:     0.8rem;
-  font-weight:   500;
-  color:         var(--accent);
-  margin-bottom: 6px;
+  font-size:     13px;
+  line-height:   1.6;
+  color:         var(--fg);
+  margin-bottom: var(--sp-s);
 }
 
 .ai-card > p:not(.ai-persona) {
-  font-size:   0.85rem;
-  line-height: 1.85;
-  color:       #2d3748;
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
 }
 
 /* ---------- 公平性ルール ---------- */
 .fairness-box {
-  border:      2px solid var(--border);
-  background:  var(--accent-light);
-  padding:     16px 20px;
-  font-size:   0.87rem;
-  line-height: 1.95;
-  margin-top:  16px;
+  border:      1px solid var(--line);
+  padding:     var(--sp-m) var(--sp-l);
+  font-size:   14px;
+  line-height: 1.9;
+  color:       var(--muted);
+  margin-top:  var(--sp-m);
 }
 
 .fairness-box ul { list-style: none; }
 
 .fairness-box li::before {
   content: '— ';
-  color:   var(--accent);
+  color:   var(--muted);
 }
 
-/* ---------- 最適化パイプラインのステップ ---------- */
+/* ---------- 手順ステップ ---------- */
 .steps {
   list-style:     none;
   counter-reset:  step;
   display:        flex;
   flex-direction: column;
-  gap:            12px;
-  margin-top:     16px;
+  gap:            var(--sp-s);
+  margin-top:     var(--sp-m);
 }
 
 .steps li {
   counter-increment: step;
-  border:      2px solid var(--border);
-  background:  var(--card-bg);
-  padding:     14px 18px 14px 60px;
+  border:      1px solid var(--line);
+  padding:     var(--sp-m) var(--sp-m) var(--sp-m) 56px;
   position:    relative;
-  font-size:   0.9rem;
-  line-height: 1.85;
+  font-size:   14px;
+  line-height: 1.8;
 }
 
 .steps li::before {
   content:     counter(step, decimal-leading-zero);
   position:    absolute;
-  left:        18px;
-  top:         15px;
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  color:       var(--accent);
+  left:        var(--sp-m);
+  top:         var(--sp-m);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size:   13px;
+  color:       var(--muted);
 }
 
-.steps code {
-  background: var(--accent-light);
-  padding:    1px 7px;
-  font-size:  0.85em;
-  word-break: break-all;
-}
-
-/* ---------- 成果の数字 ---------- */
-.stat-row {
-  display:               grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:                   16px;
-  margin-top:            16px;
-}
-
-.stat {
-  border:     2px solid var(--border);
-  background: var(--ink);
-  color:      #fff;
-  padding:    18px 16px;
-  text-align: center;
-}
-
-.stat .stat-value {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size:   1.6rem;
-  color:       #7aa8e0;
-  display:     block;
-}
-
-.stat .stat-label {
-  font-size:      0.72rem;
-  letter-spacing: 0.08em;
-  margin-top:     6px;
-  display:        block;
-  color:          rgba(255, 255, 255, 0.85);
-}
-
-/* ---------- 戦闘データ配布 ---------- */
+/* ---------- 対戦データ配布 ---------- */
 .download { text-align: center; }
 
 .download .data-desc {
   text-align:  left;
-  margin-top:  12px;
-  font-size:   0.9rem;
-  line-height: 1.95;
-}
-
-.download code {
-  background: var(--accent-light);
-  padding:    1px 7px;
-  font-size:  0.85em;
+  margin-top:  var(--sp-m);
+  font-size:   16px;
+  line-height: 1.8;
 }
 
 /* ---------- 成績表 ---------- */
 .result-table-wrap {
   overflow-x: auto;
-  margin-top: 16px;
+  margin-top: var(--sp-m);
 }
 
 .result-table {
   width:           100%;
   border-collapse: collapse;
-  background:      var(--card-bg);
-  border:          2px solid var(--border);
-  font-size:       0.85rem;
+  border:          1px solid var(--line);
+  font-size:       13px;
+  line-height:     1.6;
   text-align:      left;
 }
 
 .result-table caption {
-  font-family:    'Syne', sans-serif;
-  font-size:      0.65rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size:      12px;
+  line-height:    1.6;
+  letter-spacing: 0.02em;
   color:          var(--muted);
   text-align:     left;
-  margin-bottom:  6px;
+  margin-bottom:  var(--sp-s);
 }
 
 .result-table th,
 .result-table td {
-  border:  1.5px solid var(--border);
-  padding: 8px 14px;
+  border:  1px solid var(--line);
+  padding: var(--sp-s) 14px;
+  white-space: nowrap;
 }
 
 .result-table thead th {
-  background:     var(--ink);
-  color:          #fff;
-  font-weight:    500;
-  font-size:      0.75rem;
-  letter-spacing: 0.06em;
+  background:  var(--surface);
+  color:       var(--fg);
+  font-weight: 700;
+  font-size:   12px;
 }
+
+.result-table tbody td { color: var(--muted); }
+
+/* 作品名の列と、強調した数値は白のまま残す */
+.result-table tbody td:first-child,
+.result-table tbody strong { color: var(--fg); }
 
 /* ---------- 技術タグ ---------- */
 .tech-tags {
   display:    flex;
   flex-wrap:  wrap;
-  gap:        8px;
-  margin-top: 14px;
+  gap:        var(--sp-s);
+  margin-top: var(--sp-m);
 }
 
 /* ---------- レスポンシブ ---------- */
-@media (max-width: 620px) {
-  main { gap: 36px; }
+@media (max-width: 768px) {
+  main { gap: var(--sp-xl); }
 
   .feature-grid,
   .ai-grid,
   .controls { grid-template-columns: 1fr; }
-
-  .stat-row { grid-template-columns: 1fr; }
 }
