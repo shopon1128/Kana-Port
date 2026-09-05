@@ -1,7 +1,16 @@
 /* ============================================================
    works.css — 作品一覧ページ共通スタイル
-               school/index.html・personal/index.html で使用
+               Games/index.html・Apps/index.html で使用
+               （カード一覧 + タグ絞り込みUI）
    ============================================================ */
+
+/* ---------- ページ見出しの補足行 ---------- */
+.page-sub {
+  margin-top:     8px;
+  font-size:      0.8rem;
+  letter-spacing: 0.1em;
+  color:          var(--on-dark);
+}
 
 /* ---------- 作品リスト ---------- */
 .works-list {
@@ -99,6 +108,73 @@
   flex-wrap:   wrap;
   margin-top:  -4px;
 }
+
+/* カード内のタグチップ。押すと絞り込みできる（filter.js） */
+.work-tags .tag {
+  font-family: 'Syne', 'Noto Sans JP', sans-serif;
+  font-size:   0.68rem;
+  border:      none;
+  cursor:      pointer;
+  transition:  background 0.15s;
+}
+
+.work-tags .tag:hover { background: var(--ink); }
+
+.work-tags .tag--active {
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* ============================================================
+   タグ絞り込みUI（filter.js が制御する）
+   ============================================================ */
+.filter {
+  display:       flex;
+  flex-wrap:     wrap;
+  gap:           8px;
+  margin-bottom: 12px;
+}
+
+.filter-btn {
+  font-family:    'Syne', 'Noto Sans JP', sans-serif;
+  font-size:      0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border:         2px solid var(--border);
+  background:     var(--card-bg);
+  color:          var(--ink);
+  padding:        5px 12px;
+  cursor:         pointer;
+  transition:     background 0.15s, color 0.15s;
+}
+
+.filter-btn:hover { background: var(--accent-light); }
+
+.filter-btn[aria-pressed="true"] {
+  background: var(--accent);
+  color:      #fff;
+}
+
+.filter-status {
+  font-family:    'Syne', 'Noto Sans JP', sans-serif;
+  font-size:      0.7rem;
+  letter-spacing: 0.08em;
+  color:          var(--muted);
+  margin-bottom:  20px;
+}
+
+.no-result {
+  border:     2px dashed var(--border);
+  padding:    24px;
+  text-align: center;
+  font-size:  0.85rem;
+  color:      var(--muted);
+}
+
+/* 絞り込みで隠したカード。
+   上の .work-card { display: grid } と、ブラウザ標準の [hidden] { display: none }
+   は詳細度が同じ(0,1,0)で後勝ちのため、[hidden] だけでは消えない。ここで明示的に打ち消す */
+.work-card[hidden] { display: none; }
 
 /* ---------- レスポンシブ ---------- */
 @media (max-width: 620px) {

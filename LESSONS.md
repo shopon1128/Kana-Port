@@ -34,7 +34,7 @@
 ## 作品カードに hidden を付けても消えない (2026-09-05)
 - 症状: タグ絞り込みで `card.hidden = true` にしても、カードが表示されたままになる
 - 原因: works.css の `.work-card { display: grid }` と、ブラウザ標準の `[hidden] { display: none }` は詳細度が同じ(0,1,0)。同点なら後勝ちで、作者スタイルの方が常に勝つ
-- 解決: index.css に `.work-card[hidden] { display: none; }` を明示して打ち消した
+- 解決: works.css の末尾に `.work-card[hidden] { display: none; }` を明示して打ち消した
 - 教訓: `display` を指定済みの要素を `hidden` で隠すときは、必ずセットで `[hidden]` の打ち消しを書く。このサイトは `.work-card` `.featured-card` など display 指定のカードが多いので、今後カードを増やすたびに同じ罠がある
 
 ## アクセント枠(::before)がホバー時だけ消える (2026-09-05)

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="自作アプリの一覧。日々の困りごとを解消するために作り、実際に使い続けているツールを配布しています。">
+  <title>Apps | Kana's Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared.css">
+  <link rel="stylesheet" href="../works.css">
+</head>
+<body>
+  <header>
+    <a class="back-link" href="../index.html">← トップへ戻る</a>
+    <h1>Apps</h1>
+    <p class="page-sub">日々の困りごとを解消するために作ったツール</p>
+  </header>
+
+  <main>
+    <!-- 絞り込みボタンは filter.js が各カードの data-tags から自動生成する
+         （ここにボタンを手書きしない）
+         作品を追加するときは <article class="work-card" data-tags="..."> を
+         1つコピーして、data-tags と .work-tags のチップを一致させる -->
+    <div class="filter" id="filter" role="group" aria-label="タグで絞り込み"></div>
+    <p class="filter-status" id="filter-status" role="status"></p>
+
+    <div class="works-list" id="works-list">
+
+      <article class="work-card" data-tags="Python,SQLite,macOS">
+        <div class="work-thumb">
+          <img src="../Images/BookLib.png" alt="BookLib の画面">
+        </div>
+        <h2 class="work-title">
+          <a href="BookLib/">BookLib</a>
+        </h2>
+        <div class="work-desc">
+          PDF管理アプリです。<br>PDFで保存している書籍を、Finderよりも管理しやすくしたいという思いで制作しました。<br>
+          ジャンルや著者名で検索したり、ファイル名は弄らずにタイトルを変更して管理したり出来ます。
+        </div>
+        <div class="work-tags">
+          <button type="button" class="tag" data-tag="Python">Python</button>
+          <button type="button" class="tag" data-tag="SQLite">SQLite</button>
+          <button type="button" class="tag" data-tag="macOS">macOS</button>
+        </div>
+      </article>
+
+    </div>
+
+    <p class="no-result" id="no-result" hidden>該当する作品がありません。</p>
+  </main>
+
+  <footer><p>© 2026 Shopon</p></footer>
+
+  <script defer src="../filter.js"></script>
+</body>
+</html>
