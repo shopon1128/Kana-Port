@@ -1,0 +1,33 @@
+# ============================================================
+# .gitignore — Kana-Port
+#
+# 【重要】Unity の WebGL ビルド成果物（Games/*/Build/ の
+# .wasm / .data / .framework.js / .loader.js、TemplateData/）は
+# 意図的に追跡している。このリポジトリが公開サイトの実体であり、
+# ビルドを除外するとゲームが動かなくなる。
+# 一般的な Unity 用 .gitignore をここに持ち込まないこと。
+# ============================================================
+
+# ---------- macOS ----------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ---------- Windows ----------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ---------- エディタ / IDE ----------
+.vscode/
+.idea/
+*.swp
+*~
+
+# ---------- ログ・一時ファイル ----------
+*.log
+*.tmp
+*.bak
