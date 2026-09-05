@@ -1,0 +1,230 @@
+/* ============================================================
+   index.css — トップページ（index.html）固有スタイル
+   構成: header → About → Featured Works → All Works（タグ絞り込み）
+   ============================================================ */
+
+:root {
+  --border-w:       2.5px;   /* 枠線の太さ（shared.css の枠と揃える） */
+  --frame-offset:   5px;     /* ::before のアクセント枠のズレ幅 */
+  --lift-frame:     10px;    /* ホバー時にアクセント枠を広げる幅 */
+  --gap-section:    40px;    /* セクション間の余白 */
+  --gap-card:       24px;    /* カード間の余白 */
+}
+
+/* ---------- ヘッダー（トップページは大きめ） ---------- */
+header {
+  padding:   36px 48px;
+  animation: fadeUp 0.6s ease both;
+}
+
+h1 {
+  font-size:      clamp(2rem, 5vw, 3.2rem);
+  letter-spacing: -0.02em;
+  line-height:    1;
+}
+
+h1 span { color: #5b9bff; }
+
+.subtitle {
+  margin-top:     8px;
+  font-size:      0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color:          #7aa8e0;
+}
+
+/* ---------- 共通: アクセント枠付きのパネル ---------- */
+.bio {
+  border:        var(--border-w) solid var(--border);
+  padding:       28px 40px;
+  background:    var(--card-bg);
+  position:      relative;
+  animation:     fadeUp 0.6s 0.15s ease both;
+  margin-bottom: var(--gap-section);
+}
+
+.bio::before {
+  content:  '';
+  position: absolute;
+  inset:    var(--frame-offset) calc(-1 * var(--frame-offset))
+            calc(-1 * var(--frame-offset)) var(--frame-offset);
+  border:   var(--border-w) solid var(--accent);
+  z-index:  -1;
+}
+
+.bio p {
+  font-size:   0.95rem;
+  line-height: 1.9;
+  color:       #2d3748;
+}
+
+/* 自己紹介が未記入でも枠が潰れないよう、最低限の高さを確保する */
+.bio p:empty { min-height: 1.9em; }
+
+/* ---------- セクション ---------- */
+.featured,
+.works {
+  margin-bottom: var(--gap-section);
+  animation:     fadeUp 0.6s 0.3s ease both;
+}
+
+.featured .section-label,
+.works .section-label {
+  font-size: 0.78rem;
+}
+
+/* ============================================================
+   Featured Works — 推しの3作品
+   ============================================================ */
+.featured-grid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--gap-card);
+}
+
+.featured-card {
+  border:          var(--border-w) solid var(--border);
+  background:      var(--card-bg);
+  padding:         16px 16px 20px;
+  display:         flex;
+  flex-direction:  column;
+  gap:             12px;
+  text-decoration: none;
+  color:           inherit;
+  position:        relative;
+}
+
+.featured-card::before {
+  content:    '';
+  position:   absolute;
+  inset:      var(--frame-offset) calc(-1 * var(--frame-offset))
+              calc(-1 * var(--frame-offset)) var(--frame-offset);
+  border:     var(--border-w) solid var(--accent);
+  z-index:    -1;
+  transition: inset 0.18s ease;
+}
+
+/* ホバーはアクセント枠を外側にずらして表現する。
+   カード自体に transform を当てるとスタッキングコンテキストが生まれ、
+   z-index:-1 の ::before がカード背景の裏に隠れて枠が消えるため */
+.featured-card:hover::before,
+.featured-card:focus-visible::before {
+  inset: var(--lift-frame) calc(-1 * var(--lift-frame))
+         calc(-1 * var(--lift-frame)) var(--lift-frame);
+}
+
+.featured-card:focus-visible {
+  outline:        3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.featured-card:hover .featured-title { color: var(--accent); }
+
+.featured-thumb {
+  display:         block;
+  border:          2px solid var(--border);
+  overflow:        hidden;
+  aspect-ratio:    16 / 9;
+  background:      var(--accent-light);
+}
+
+.featured-thumb img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  display:    block;
+}
+
+.featured-title {
+  font-family:    'Syne', sans-serif;
+  font-weight:    700;
+  font-size:      1.05rem;
+  letter-spacing: -0.01em;
+  border-bottom:  2px solid var(--accent);
+  padding-bottom: 4px;
+  transition:     color 0.15s;
+}
+
+.featured-lead {
+  font-size:   0.8rem;
+  line-height: 1.8;
+  color:       var(--muted);
+}
+
+/* ============================================================
+   All Works — タグ絞り込み
+   ============================================================ */
+.filter {
+  display:       flex;
+  flex-wrap:     wrap;
+  gap:           8px;
+  margin-bottom: 12px;
+}
+
+.filter-btn {
+  font-family:    'Syne', 'Noto Sans JP', sans-serif;
+  font-size:      0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border:         2px solid var(--border);
+  background:     var(--card-bg);
+  color:          var(--ink);
+  padding:        5px 12px;
+  cursor:         pointer;
+  transition:     background 0.15s, color 0.15s;
+}
+
+.filter-btn:hover { background: var(--accent-light); }
+
+.filter-btn[aria-pressed="true"] {
+  background: var(--accent);
+  color:      #fff;
+}
+
+.filter-status {
+  font-family:    'Syne', 'Noto Sans JP', sans-serif;
+  font-size:      0.7rem;
+  letter-spacing: 0.08em;
+  color:          var(--muted);
+  margin-bottom:  20px;
+}
+
+.no-result {
+  border:      2px dashed var(--border);
+  padding:     24px;
+  text-align:  center;
+  font-size:   0.85rem;
+  color:       var(--muted);
+}
+
+/* 絞り込みで隠したカード。
+   works.css の .work-card { display: grid } は詳細度が同じで後勝ちするため、
+   [hidden] だけでは消えない。ここで明示的に打ち消す */
+.work-card[hidden] { display: none; }
+
+/* ---------- カード内のタグチップ（押すと絞り込みできる） ---------- */
+.work-tags .tag {
+  font-family: 'Syne', 'Noto Sans JP', sans-serif;
+  font-size:   0.68rem;
+  border:      none;
+  cursor:      pointer;
+  transition:  background 0.15s;
+}
+
+.work-tags .tag:hover { background: var(--ink); }
+
+.work-tags .tag--active {
+  background:  var(--ink);
+  box-shadow:  0 0 0 2px var(--accent);
+}
+
+/* ---------- レスポンシブ ---------- */
+@media (max-width: 900px) {
+  .featured-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 600px) {
+  .featured-grid { grid-template-columns: 1fr; }
+  header         { padding: 24px; }
+  .bio           { padding: 20px 24px; }
+}

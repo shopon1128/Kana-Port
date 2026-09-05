@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Battle AI — ユーティリティAIの敵ボスをOptunaで強化した1vs1シューティング。公平性ルールで「理不尽じゃないのに強い」を目指したゲームAI作品。ブラウザでプレイできます。">
+  <title>Battle AI – シューティングゲームAIの作成 | Personal Works</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../shared.css">
+  <link rel="stylesheet" href="shootingproai.css">
+</head>
+<body>
+  <header>
+    <a class="back-link" href="../../index.html#works-heading">← 作品一覧へ戻る</a>
+    <h1>Battle AI</h1>
+    <p class="header-sub">「立ち回りで勝つ」敵AIをつくる — ユーティリティAI × Optuna最適化の1vs1シューティング</p>
+  </header>
+
+  <main>
+    <section class="play" aria-label="プレイ">
+      <a class="play-button" href="./BattleAI/">▶ Play in Browser</a>
+      <p class="play-note">WebGL版 / PCキーボード推奨 / スマホ対応</p>
+      <div class="controls">
+        <div><span class="key">WASD</span>  移動</div>
+        <div><span class="key">SHIFT</span>  ダッシュ</div>
+        <div><span class="key">↑←↓→</span>  上下左右へショット</div>
+        <div><span class="key">ESC</span>  AIの戦術・危険地帯を可視化</div>
+      </div>
+      <p>※タイトル画面のオプションからキー割り当ての変更や、スマホ用のUI表示ができます。</p>
+    </section>
+
+    <section>
+      <h2 class="section-label">About</h2>
+      <p>
+        ランダム生成される遮蔽物マップで、敵ボスと1vs1で撃ち合うトップダウンシューティングです。
+        ただし主役はプレイヤーではなく<strong>敵AI</strong>。
+        「機械だからこその理不尽な反応速度で勝つ」のではなく、
+        <strong>立ち回りの賢さだけで人間を追い詰める</strong>ボスを目指した作品です。
+        タイトル画面で9体の敵AIを切り替えられるので、
+        手作りの者から最適化された者まで、AIの進化を体感しながら遊べます。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-label">AI Design</h2>
+      <p>
+        敵AIは<strong>ユーティリティAI</strong>方式。7つの戦術を0.25秒ごとに採点し、
+        最も有効な戦術へ切り替えながら戦います。
+      </p>
+      <ul class="tactic-list">
+        <li><strong>SEARCH</strong>索敵</li>
+        <li><strong>APPROACH</strong>先回り接近</li>
+        <li><strong>ASSAULT</strong>ダッシュ強襲</li>
+        <li><strong>AMBUSH</strong>隠密接近</li>
+        <li><strong>ATTACK</strong>射撃+ストレイフ</li>
+        <li><strong>FEINT</strong>フェイント</li>
+        <li><strong>RETREAT</strong>離脱</li>
+      </ul>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>ダッシュ残像を逆手に取るフェイント</h3>
+          <p>ダッシュの残像は視界外でも見える=位置がバレる仕様。AIはこれを逆用し、囮のダッシュで偽の進行方向を見せてから、残像の出ない歩きで反対側へ回り込みます。</p>
+        </div>
+        <div class="feature">
+          <h3>危険地帯の短期記憶</h3>
+          <p>被弾した場所と撃たれた射線を8秒間記憶し、経路探索のコストに反映。「同じ角で2回撃たれない」動きで、待ち伏せや置き撃ちに適応します。</p>
+        </div>
+        <div class="feature">
+          <h3>隠密接近と回り込み</h3>
+          <p>プレイヤーから見えるセルに追加コストをかけたA*で遮蔽の陰を縫って接近。確率で側面へ回り込み、露出する区間だけダッシュで駆け抜けます。</p>
+        </div>
+        <div class="feature">
+          <h3>効果を「測る」仕組み</h3>
+          <p>命中率・戦術滞在時間・見失い時間などを毎試合記録しCSVに蓄積。フェイントの効果も「使った時と使わない時の隠密時間の差」として定量測定しています。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">AI Lineup</h2>
+      <p>
+        タイトル画面で選べる9体の敵AI。<strong>Featured</strong>の3体は常時表示、
+        <strong>Others</strong>の6体はサブメニューから選べます。名前はその個体の持つ特徴に由来するもので、
+        v1/v3といった番号は生まれた順の記録です。
+        対戦データ(CSV)の<code>ai_type</code>列は各カードのラベルに対応します。
+      </p>
+
+      <p class="ai-group-label"><span>Featured</span></p>
+      <div class="ai-grid">
+        <article class="ai-card ai-card--champ">
+          <header>
+            <h3>Crown AI</h3>
+            <span class="ai-tag">ai_type: pro_learned_v5</span>
+          </header>
+          <p class="ai-persona">王者 — 魅せる動きを捨てずに頂点へ立った、学習の到達点</p>
+          <p>
+            戦術の「選び方」を機械学習で作った個体。教師はSnipe AIで、その判断を
+            <strong>99%の一致率</strong>で模倣したうえ、CMA-ES(進化戦略)で磨きました。
+            遠距離での戦いを好みますが、撃てない位置に踏み込まれれば躊躇なく詰め、遮蔽の陰から不意打ちを仕掛ける、絶妙なバランス感を持つ個体です。
+            5種類の相手ボットすべてに77%以上で勝ち、得意不得意の差はわずか11ポイントと、<strong>相手を選ばない強さ</strong>を持った
+            <strong>現最強のAI</strong>です。
+          </p>
+        </article>
+        <article class="ai-card">
+          <header>
+            <h3>Veteran AI</h3>
+            <span class="ai-tag">ai_type: pro_optimized_v1</span>
+          </header>
+          <p class="ai-persona">歴戦 — 4世代の挑戦者を退け続けた古豪</p>
+          <p>
+            第1回Optuna最適化によって導かれたパラメータに対し、フェイント・偏差射撃・突撃の3項目だけを人間が手調整した
+            ハイブリッドAI。撃たれた場所を執拗に迂回し、攻撃中は不規則なダッシュで狙いを外させ、
+            決めた戦術は粘り強くやり抜きます。
+            <strong>第2〜4世代の挑戦者をすべて退け、長く「最強」の座を守り続けました</strong>。
+            第5世代(Crown AI)にわずかな差で王座を譲りましたが、いまも全体の2位。
+            高い命中率を誇る一方、細かく不規則に動く相手は勝率が56%まで落ちる程に苦手としています。
+          </p>
+        </article>
+        <article class="ai-card">
+          <header>
+            <h3>Craft AI</h3>
+            <span class="ai-tag">ai_type: pro</span>
+          </header>
+          <p class="ai-persona">学習前 — 設計者の意図どおりに戦う基準機</p>
+          <p>
+            7つの戦術を使い分けるユーティリティAIに、手調整の値を載せた「設計図どおり」の個体。
+            フェイントも危険記憶も教科書的な頻度で使います。慎重派で、EPが8割回復するまで
+            じっくり隠れるため試合が長引きがち。最適化の効果を測るときの比較基準です。
+          </p>
+        </article>
+      </div>
+
+      <p class="ai-group-label"><span>Others</span></p>
+      <div class="ai-grid">
+        <article class="ai-card">
+          <header>
+            <h3>Base AI</h3>
+            <span class="ai-tag">ai_type: base</span>
+          </header>
+          <p class="ai-persona">まっすぐ来る脳筋ファイター</p>
+          <p>
+            索敵→追跡→攻撃→離脱の4状態だけで動くステートマシン型で、全AIのご先祖的な個体。隠密も駆け引きも知らず、
+            見つけたら追いかけて自由角度で撃ちまくります。単純ゆえに手数が多く、
+            ボットには意外と強い一方、遮蔽を使う人間には動きを読まれがちです。
+          </p>
+        </article>
+        <article class="ai-card">
+          <header>
+            <h3>Cold AI</h3>
+            <span class="ai-tag">ai_type: pro_optimized_v1_origin</span>
+          </header>
+          <p class="ai-persona">勝つために見せ場を封印した素の最適化</p>
+          <p>
+            Veteran AIの素の姿。勝率だけを追った最適化はフェイントをほぼ使わず、
+            偏差射撃も控える冷徹な立ち回りを選びました。Veteran AIとはフェイント・偏差・突撃の
+            <strong>3項目だけ</strong>が違い、その差が「魅せない強さ」として表れます。
+          </p>
+        </article>
+        <article class="ai-card">
+          <header>
+            <h3>Snipe AI</h3>
+            <span class="ai-tag">ai_type: pro_optimized_v3</span>
+          </header>
+          <p class="ai-persona">間合いの外から仕留める遠距離型スナイパー</p>
+          <p>
+            第3回最適化(見せ場を最初から制約に組み込んだ共適応設計)で生まれた個体で、
+            現最強のCrown AIを育てた教師でもあります。
+            遠い間合いを徹底して保ち、引き撃ちで削り、詰められれば全力で回避します。
+          </p>
+        </article>
+        <article class="ai-card">
+          <header>
+            <h3>Frost AI</h3>
+            <span class="ai-tag">ai_type: pro_learned_v4</span>
+          </header>
+          <p class="ai-persona">学習と進化がたどり着いた、もう一つの冷徹</p>
+          <p>
+            戦術の「選び方」そのものを機械学習で作った個体。まず当時の王者(現Veteran AI)の判断を模倣学習で
+            <strong>97%再現</strong>し、さらにCMA-ES(進化戦略)で磨いて、勝率は王者をわずかに上回りました。
+            ただしその強さの正体は<strong>フェイント(見せ場)の封印</strong>であり、パラメータ最適化でそれをやったのがCold AI、
+            <strong>学習+進化で独立に同じ結論に達した</strong>のがこのFrost AIです。
+          </p>
+        </article>
+        <article class="ai-card">
+          <header>
+            <h3>Chaos AI</h3>
+            <span class="ai-tag">ai_type: chaos</span>
+          </header>
+          <p class="ai-persona">毎試合パラメータが変わる無法者</p>
+          <p>
+            立ち回りの14パラメータを試合ごとにランダム化する余興枠。射程も回避も突撃頻度も毎回バラバラで、
+            強い個体もちぐはぐな個体も出ます。データ上も勝率65%と、最適化・学習した個体(80%前後)に
+            はっきり届きません。「<strong>最適化しないとこうなる</strong>」を逆説的に見せる存在です。
+            公平性の枠(反応速度など)は固定なので、理不尽な動きにはなりません。
+          </p>
+        </article>
+        <article class="ai-card">
+          <header>
+            <h3>Shuffle AI</h3>
+            <span class="ai-tag">ai_type: 抽選結果が記録される</span>
+          </header>
+          <p class="ai-persona">毎試合、誰が出てくるか分からない</p>
+          <p>
+            試合ごとに他のAIから1体を抽選して出撃させる枠。次に何と戦うか分からないまま挑む遊び方ができます。
+            同時に<strong>データ収集の道具</strong>でもあり、全AIを同一条件・同一セッションで
+            均等に戦わせられるので、下のCSVはこの仕組みで集めました。
+            記録には抽選結果(実際に出たAI)が残ります。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">Fairness Rules</h2>
+      <p>強いだけのAIは簡単に作れてしまうので、「理不尽の禁止」を構造で保証しています。</p>
+      <div class="fairness-box">
+        <ul>
+          <li>判断は0.25秒周期のみ — フレーム単位の機械反射は構造上不可能</li>
+          <li>弾回避は「0.3秒以上見続けた弾」だけ — 近距離の弾は人間と同じく避けられない</li>
+          <li>緊急ダッシュ回避は実装しない — 回避は移動方向を逸らすだけ</li>
+          <li>プレイヤーの位置は「視線が通る」か「ダッシュ残像」でしか知り得ない — 真の座標は使わない</li>
+          <li>偏差射撃は単純な線形予測のみ・発射の瞬間だけ — 進行方向を変えれば外れる</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">Optuna Optimization</h2>
+      <p>
+        立ち回りのパラメータ12項目を、Python(Optuna)とUnityをファイル連携させた自動対戦ループで探索しました。
+        公平性に関わる値(連射間隔・判断周期・反応速度)は<strong>探索空間から除外</strong>し、
+        「ズルで勝つ」方向への最適化(報酬ハッキング)を封じています。
+      </p>
+      <ol class="steps">
+        <li>Optunaがパラメータ一式を提案し、<code>params.json</code>に書き込む</li>
+        <li>Unityが検知して敵AIに適用し、人間と同ルールで戦うボット相手に15〜25試合の自動対戦(高速再生 — 速度を変えても同じ試合になることを検証済み)</li>
+        <li>勝率を<code>result.json</code>で返し、Optunaが次の提案を賢くする — これを3回のスタディで計308試行</li>
+        <li>上位候補を別の追試とA/B対戦で選抜し直し(少ない試合数のベストは運で選ばれるため)、最後は人間の試遊で採否を決定</li>
+      </ol>
+      <p class="play-note">
+        学習は一直線には進みませんでした。強さがシミュレーション速度に依存していた測定環境の欠陥、
+        少ない試合数の「ベスト」を信じてしまう勝者の呪い、人間が後から値を上書きすると最適化の前提が崩れる共適応の問題 —
+        それらの問題を、様々な環境に適応できる仕組みづくりや、後から書き換えていた数値を「事後の拒否権」から「最適化の事前制約」へ昇格させるなど、
+        一つずつ潰して行きました。しかし結果として、最初の学習で生まれたAI v1が、その後の挑戦者たちを全て退けました。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-label">Machine Learning</h2>
+      <p>
+        Optuna最適化(上)が調整したのは「立ち回りの数値」でした。次の一歩は、それまで手書きだった
+        <strong>戦術の"選び方"そのもの</strong>を機械学習で置き換えること。運動制御と発動条件(＝公平性のルール)は
+        手書きのまま残し、<strong>7つの戦術のどれを選ぶかだけ</strong>を学習対象にしています(だから公平性は構造的に守られる)。
+      </p>
+      <ol class="steps">
+        <li>判断チックごとに「観測18次元 → そのとき選んだ戦術」を記録し、教師データを作る</li>
+        <li>教師AIの判断を<strong>線形モデルで模倣学習</strong>し、手書きの脳をまるごと再現</li>
+        <li>その重みを起点に<strong>CMA-ES(進化戦略)</strong>で磨く。良し悪しの指標は自動対戦の勝率(Optunaと同じUnity↔Pythonのファイル連携を流用)</li>
+      </ol>
+      <p class="play-note">
+        この方法によって生まれた個体は、教師が軸としていた戦い方を通すための判断に優れていました。
+        また、後付けで浮いた見せ場は殺され(v1 → v4)、最初から設計に織り込まれた見せ場は、進化を通り抜けて残りました(v3 → v5)。
+        パラメータ最適化で得た「制約は事後に上書きせず、最初から探索空間に入れる」という教訓が、技術を跨いで機械学習でも成り立ちました。
+      </p>
+    </section>
+
+    <section class="download">
+      <h2 class="section-label">Battle Data</h2>
+      <p class="data-desc">
+        現行ビルドで収録した対戦データ(1試合1行・<strong>4,760試合</strong>)を公開しています。
+        <code>ai_type</code>列は上のAI Lineupのラベルに、<code>opponent</code>列は
+        対戦相手(<code>player</code>=人間 / <code>bot_○○</code>=各性格のボット)に対応します。
+        勝敗・両者の命中率・戦術ごとの滞在時間・フェイントの効果測定などが1行に入っており、pandasでそのまま読めます。
+      </p>
+      <p class="data-desc">
+        評価用のボットは<strong>5種類の性格</strong>を用意しました。単一の相手に対する勝率は、
+        その相手の癖への適応度でもあるからです。実際、1種類だけで測っていた頃は上位7体が
+        78〜82%に張り付いて<strong>統計的に区別できなくなっていました</strong>が、
+        性格を増やした途端、同じAI群が<strong>50%〜97%に展開</strong>しました。
+      </p>
+      <div class="result-table-wrap">
+        <table class="result-table">
+          <caption>敵AI × 相手の性格 別の勝率(全9種・4,760試合)</caption>
+          <thead>
+            <tr><th>敵AI</th><th>突撃</th><th>回避</th><th>標準</th><th>初心者</th><th>置き撃ち</th><th>合計</th><th>最大差</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Crown AI(v5)</strong></td><td>78%</td><td>77%</td><td>81%</td><td>81%</td><td>89%</td><td><strong>81%</strong></td><td><strong>11pt</strong></td></tr>
+            <tr><td>Frost AI(v4)</td><td>77%</td><td>74%</td><td>80%</td><td>89%</td><td>93%</td><td>81%</td><td>19pt</td></tr>
+            <tr><td>Snipe AI(v3)</td><td>75%</td><td>72%</td><td>73%</td><td>86%</td><td>95%</td><td>78%</td><td>23pt</td></tr>
+            <tr><td>Base AI</td><td>55%</td><td>74%</td><td>79%</td><td>94%</td><td>97%</td><td>77%</td><td>42pt</td></tr>
+            <tr><td>Veteran AI(v1)</td><td>66%</td><td>56%</td><td>74%</td><td>83%</td><td>83%</td><td>73%</td><td>27pt</td></tr>
+            <tr><td>Cold AI</td><td>59%</td><td>65%</td><td>72%</td><td>83%</td><td>96%</td><td>73%</td><td>36pt</td></tr>
+            <tr><td>Chaos AI</td><td>52%</td><td>50%</td><td>65%</td><td>79%</td><td>90%</td><td>65%</td><td>40pt</td></tr>
+            <tr><td>Craft AI</td><td>51%</td><td>56%</td><td>64%</td><td>83%</td><td>69%</td><td>64%</td><td>32pt</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="play-note">
+        <strong>平均は性質を隠します。</strong>合計勝率では Base AI 77% &gt; Veteran AI 73% ですが、
+        突撃してくる相手に限れば Veteran 66% &gt; Base 55% と逆転する。
+        単純な脳筋AI(Base)は相手の質に42ポイントも左右されるのに対し、
+        <strong>Crown AIの振れ幅は11ポイント</strong> — どんな相手にも通用する強さが、
+        「最強」と「最高」を同時に満たせた理由だと考えています。
+        なお本データは新しい地形生成ルールで取り直したもので、対人戦のデータはまだ含まれていません。
+      </p>
+      <a class="play-button" href="battle_data.csv" download>Download battle_data.csv</a>
+    </section>
+
+    <section>
+      <h2 class="section-label">Tech</h2>
+      <div class="tech-tags">
+        <span class="tag">Unity 6</span>
+        <span class="tag">C#</span>
+        <span class="tag">ユーティリティAI</span>
+        <span class="tag">A*経路探索</span>
+        <span class="tag">Python</span>
+        <span class="tag">Optuna</span>
+        <span class="tag">模倣学習</span>
+        <span class="tag">CMA-ES</span>
+        <span class="tag">scikit-learn</span>
+        <span class="tag">WebGL</span>
+      </div>
+    </section>
+  </main>
+
+  <footer><p>© 2026 Shopon</p></footer>
+</body>
+</html>

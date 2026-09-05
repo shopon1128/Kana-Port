@@ -1,0 +1,183 @@
+/* ============================================================
+   booklib.css — BookLib 紹介ページ専用スタイル
+   (色・意匠は shared.css の CSS 変数を踏襲)
+   ============================================================ */
+
+main {
+  display:        flex;
+  flex-direction: column;
+  gap:            44px;
+}
+
+/* ---------- ヘッダー内サブコピー ---------- */
+.header-sub {
+  margin-top: 10px;
+  font-size:  0.85rem;
+  color:      rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.04em;
+}
+
+/* ---------- スクリーンショット枠 ---------- */
+.shot-frame {
+  border:          2.5px solid var(--border);
+  background:      var(--accent-light);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  overflow:        hidden;
+  position:        relative;
+  aspect-ratio:    16 / 10;
+  animation:       fadeUp 0.5s ease both;
+}
+
+.shot-frame--wide::before {
+  content:  '';
+  position: absolute;
+  inset:    5px -5px -5px 5px;
+  border:   2.5px solid var(--accent);
+  z-index:  -1;
+}
+
+.shot-frame img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  display:    block;
+}
+
+.shot-frame .placeholder {
+  font-family:    'Syne', sans-serif;
+  font-size:      0.7rem;
+  letter-spacing: 0.1em;
+  color:          var(--accent);
+  text-transform: uppercase;
+}
+
+/* サブスクリーンショット(2枚並び) */
+.shot-grid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   16px;
+  margin-top:            16px;
+}
+
+/* ---------- 特徴カード ---------- */
+.feature-grid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   16px;
+  margin-top:            16px;
+}
+
+.feature {
+  border:     2px solid var(--border);
+  background: var(--card-bg);
+  padding:    16px 18px;
+}
+
+.feature h3 {
+  font-size:     0.95rem;
+  font-weight:   500;
+  margin-bottom: 6px;
+}
+
+.feature p {
+  font-size:   0.85rem;
+  line-height: 1.85;
+  color:       #2d3748;
+}
+
+/* ---------- 使い方ステップ ---------- */
+.steps {
+  list-style:     none;
+  counter-reset:  step;
+  display:        flex;
+  flex-direction: column;
+  gap:            12px;
+  margin-top:     16px;
+}
+
+.steps li {
+  counter-increment: step;
+  border:      2px solid var(--border);
+  background:  var(--card-bg);
+  padding:     14px 18px 14px 60px;
+  position:    relative;
+  font-size:   0.9rem;
+  line-height: 1.85;
+}
+
+.steps li::before {
+  content:     counter(step, decimal-leading-zero);
+  position:    absolute;
+  left:        18px;
+  top:         15px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  color:       var(--accent);
+}
+
+.steps code {
+  background: var(--accent-light);
+  padding:    1px 7px;
+  font-size:  0.85em;
+  word-break: break-all;
+}
+
+/* ---------- 動作環境 ---------- */
+.req-box {
+  border:      2px solid var(--border);
+  background:  var(--accent-light);
+  padding:     16px 20px;
+  font-size:   0.87rem;
+  line-height: 1.95;
+  margin-top:  16px;
+}
+
+.req-box ul {
+  list-style:   none;
+}
+
+.req-box li::before {
+  content: '— ';
+  color:   var(--accent);
+}
+
+/* ---------- ダウンロード ---------- */
+.download { text-align: center; }
+
+.dl-button {
+  display:         inline-block;
+  font-family:     'Syne', sans-serif;
+  font-weight:     800;
+  font-size:       1rem;
+  letter-spacing:  0.12em;
+  text-transform:  uppercase;
+  background:      var(--accent);
+  color:           #fff;
+  border:          2.5px solid var(--border);
+  padding:         16px 40px;
+  margin-top:      16px;
+  text-decoration: none;
+  box-shadow:      6px 6px 0 var(--ink);
+  transition:      transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.dl-button:hover {
+  transform:  translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.dl-note {
+  margin-top: 14px;
+  font-size:  0.8rem;
+  color:      var(--muted);
+}
+
+/* ---------- レスポンシブ ---------- */
+@media (max-width: 620px) {
+  main { gap: 36px; }
+
+  .feature-grid,
+  .shot-grid { grid-template-columns: 1fr; }
+}

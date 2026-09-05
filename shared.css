@@ -1,0 +1,115 @@
+/* ============================================================
+   shared.css — 全ページ共通スタイル
+   ============================================================ */
+
+/* ---------- リセット & CSS 変数 ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:           #f0f4f8;
+  --ink:          #0a0e14;
+  --accent:       #1a56db;
+  --accent-light: #e0eaff;
+  --card-bg:      #ffffff;
+  --border:       #0a0e14;
+  --muted:        #4a5568;
+}
+
+/* ---------- ベース ---------- */
+html { scroll-behavior: smooth; }
+
+body {
+  background:  var(--bg);
+  color:       var(--ink);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 300;
+  min-height:  100vh;
+  padding:     48px 32px;
+  max-width:   900px;
+  margin:      0 auto;
+}
+
+/* ---------- ヘッダー ---------- */
+header {
+  border:        2.5px solid var(--border);
+  padding:       28px 40px;
+  margin-bottom: 40px;
+  background:    var(--ink);
+  color:         #fff;
+  position:      relative;
+  animation:     fadeUp 0.5s ease both;
+}
+
+header::before {
+  content:  '';
+  position: absolute;
+  inset:    5px -5px -5px 5px;
+  border:   2.5px solid var(--accent);
+  z-index:  -1;
+}
+
+/* ---------- 見出し ---------- */
+h1 {
+  font-family:    'Syne', sans-serif;
+  font-weight:    800;
+  font-size:      clamp(1.6rem, 4vw, 2.4rem);
+  letter-spacing: -0.02em;
+}
+
+/* ---------- 戻るリンク ---------- */
+.back-link {
+  display:        inline-block;
+  font-family:    'Syne', sans-serif;
+  font-size:      0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color:          #7aa8e0;
+  text-decoration: none;
+  margin-bottom:  10px;
+}
+.back-link:hover { color: #5b9bff; }
+
+/* ---------- セクションラベル ---------- */
+.section-label {
+  font-family:    'Syne', sans-serif;
+  font-size:      0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color:          var(--muted);
+  margin-bottom:  12px;
+}
+
+/* ---------- タグ ---------- */
+.tag {
+  font-family:    'Syne', sans-serif;
+  font-size:      0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background:     var(--accent);
+  color:          #fff;
+  padding:        2px 9px;
+}
+
+/* ---------- フッター ---------- */
+footer {
+  margin-top:     48px;
+  text-align:     center;
+  font-size:      0.75rem;
+  color:          var(--muted);
+  letter-spacing: 0.08em;
+}
+
+/* ---------- アニメーション ---------- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- レスポンシブ ---------- */
+@media (max-width: 620px) {
+  body { padding: 24px 16px; }
+}
