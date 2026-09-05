@@ -15,6 +15,10 @@ main {
   gap:            var(--sp-2xl);
 }
 
+/* flex の子は既定で min-width:auto となり中身より狭くなれない。
+   長いコードやURLが入ったときに横へはみ出すのを防ぐ */
+main > section { min-width: 0; }
+
 main p {
   font-size:   16px;
   line-height: 1.8;
@@ -57,8 +61,9 @@ main section > p + p { margin-top: var(--sp-m); }
 }
 
 .feature {
-  border:  1px solid var(--line);
-  padding: var(--sp-m) var(--sp-m) var(--sp-l);
+  border:    1px solid var(--line);
+  padding:   var(--sp-m) var(--sp-m) var(--sp-l);
+  min-width: 0;   /* グリッドの子の min-width:auto による横はみ出しを防ぐ */
 }
 
 .feature h3 {
@@ -101,7 +106,7 @@ main section > p + p { margin-top: var(--sp-m); }
   font-family: var(--font-mono);
   font-weight: 700;
   font-size:   13px;
-  color:       var(--muted);
+  color:       var(--accent);
 }
 
 /* ---------- 動作環境 ---------- */
@@ -142,7 +147,10 @@ main section > p + p { margin-top: var(--sp-m); }
 }
 
 .dl-button:hover,
-.dl-button:focus-visible { border-color: var(--fg); }
+.dl-button:focus-visible {
+  border-color: var(--accent);
+  color:        var(--accent);
+}
 
 .dl-note {
   margin-top:  var(--sp-m);

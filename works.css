@@ -34,7 +34,10 @@
   transition:     border-color 0.15s, background 0.15s, color 0.15s;
 }
 
-.filter-btn:hover { border-color: var(--fg); }
+.filter-btn:hover {
+  border-color: var(--accent);
+  color:        var(--accent);
+}
 
 .filter-btn[aria-pressed="true"] {
   background:   var(--badge-bg);
@@ -74,6 +77,9 @@
   flex-direction: column;
   gap:            var(--sp-m);
   animation:      fadeIn 0.4s ease both;
+  /* グリッドの子は既定で min-width:auto。長い作品名などで列が縮まなくなり、
+     ウィンドウを狭めたときに横へはみ出すのを防ぐ */
+  min-width:      0;
 }
 
 /* 絞り込みで隠したカード。
@@ -121,7 +127,7 @@
   transition:      color 0.15s;
 }
 
-.work-title a:hover { color: var(--muted); }
+.work-title a:hover { color: var(--accent); }
 
 /* ---------- 説明文 ---------- */
 .work-desc {
@@ -148,8 +154,8 @@
 }
 
 .work-tags .tag:hover {
-  border-color: var(--fg);
-  color:        var(--fg);
+  border-color: var(--accent);
+  color:        var(--accent);
 }
 
 .work-tags .tag--active {
