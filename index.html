@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kana's Portfolio — Unity製ゲーム・ゲームAI・Pythonツールの制作物一覧。ブラウザで遊べる作品と配布アプリをタグから絞り込めます。">
+  <title>Kana's Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="works.css">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <header>
+    <h1>Kana's <span>Portfolio</span></h1>
+    <p class="subtitle">Game AI / Unity / Python</p>
+  </header>
+
+  <main>
+
+    <!-- ============================================================
+         About — 自己紹介
+         ↓ この <p> の中身を書き換えてください（段落を増やすなら <p> を追加）
+         ============================================================ -->
+    <section class="bio" aria-labelledby="about-heading">
+      <h2 class="section-label" id="about-heading">About</h2>
+      <p>
+        <!-- ここに自己紹介を書く -->
+      </p>
+    </section>
+
+    <!-- ============================================================
+         Featured — 推しの3作品
+         入れ替えるときは、下の All Works から該当作品の
+         サムネイル・タイトル・href をコピーして差し替える
+         ============================================================ -->
+    <section class="featured" aria-labelledby="featured-heading">
+      <h2 class="section-label" id="featured-heading">Featured Works</h2>
+      <div class="featured-grid">
+
+        <a class="featured-card" href="Games/BattleAI/">
+          <span class="featured-thumb">
+            <img src="Images/BattleAI.png" alt="Battle AI のプレイ画面">
+          </span>
+          <h3 class="featured-title">Battle AI</h3>
+          <p class="featured-lead">立ち回りの賢さだけで人間を追い詰める敵AIを、最適化と機械学習で育てた1vs1シューティング。</p>
+        </a>
+
+        <a class="featured-card" href="Apps/BookLib/">
+          <span class="featured-thumb">
+            <img src="Images/BookLib.png" alt="BookLib の画面">
+          </span>
+          <h3 class="featured-title">BookLib</h3>
+          <p class="featured-lead">フォルダ構成をいじらずに、蔵書PDFを表紙付きの本棚として検索・タグ管理できるMac用アプリ。</p>
+        </a>
+
+        <a class="featured-card" href="Games/TheMeiro/">
+          <span class="featured-thumb">
+            <img src="Images/TheMeiro.png" alt="The Meiro のプレイ画面">
+          </span>
+          <h3 class="featured-title">The Meiro</h3>
+          <p class="featured-lead">ミニマップと目印を頼りに、広大な迷路から10個の鍵を集めて脱出する見下ろし型の探索ゲーム。</p>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         All Works — 全作品 + タグ絞り込み
+         ・絞り込みボタンは filter.js が各カードの data-tags から自動生成する
+           （ここにボタンを手書きしない）
+         ・作品を追加するときは <article class="work-card" data-tags="..."> を
+           1つコピーして、data-tags と .work-tags のチップを一致させる
+         ============================================================ -->
+    <section class="works" aria-labelledby="works-heading">
+      <h2 class="section-label" id="works-heading">All Works</h2>
+
+      <div class="filter" id="filter" role="group" aria-label="タグで絞り込み"></div>
+      <p class="filter-status" id="filter-status" role="status"></p>
+
+      <div class="works-list" id="works-list">
+
+        <article class="work-card" data-tags="アプリ,Python">
+          <div class="work-thumb">
+            <img src="Images/BookLib.png" alt="BookLib の画面">
+          </div>
+          <h3 class="work-title">
+            <a href="Apps/BookLib/">BookLib</a>
+          </h3>
+          <div class="work-desc">
+            PDF管理アプリです。<br>PDFで保存している書籍を、Finderよりも管理しやすくしたいという思いで制作しました。<br>
+            ジャンルや著者名で検索したり、ファイル名は弄らずにタイトルを変更して管理したり出来ます。
+          </div>
+          <div class="work-tags">
+            <button type="button" class="tag" data-tag="アプリ">アプリ</button>
+            <button type="button" class="tag" data-tag="Python">Python</button>
+          </div>
+        </article>
+
+        <article class="work-card" data-tags="ゲーム,Unity,ゲームAI,機械学習,Python,WebGL">
+          <div class="work-thumb">
+            <img src="Images/BattleAI.png" alt="Battle AI のプレイ画面">
+          </div>
+          <h3 class="work-title">
+            <a href="Games/BattleAI/">Battle AI — シューティングゲームAIの作成</a>
+          </h3>
+          <div class="work-desc">
+            敵AIが主役の1vs1シューティングです。<br>
+            7つの戦術を使い分けるユーティリティAIを、公平性ルール（機械的な反射の禁止）の中でどこまで強くできるかに挑みました。<br>
+            立ち回りのパラメータはPython+Optunaの自動対戦ループで最適化し、戦術選択層はCMA-ESによる探索で学習させました。
+          </div>
+          <div class="work-tags">
+            <button type="button" class="tag" data-tag="ゲーム">ゲーム</button>
+            <button type="button" class="tag" data-tag="Unity">Unity</button>
+            <button type="button" class="tag" data-tag="ゲームAI">ゲームAI</button>
+            <button type="button" class="tag" data-tag="機械学習">機械学習</button>
+            <button type="button" class="tag" data-tag="Python">Python</button>
+            <button type="button" class="tag" data-tag="WebGL">WebGL</button>
+          </div>
+        </article>
+
+        <article class="work-card" data-tags="ゲーム,Unity,2D,WebGL">
+          <div class="work-thumb">
+            <img src="Images/TheMeiro.png" alt="The Meiro のプレイ画面">
+          </div>
+          <h3 class="work-title">
+            <a href="Games/TheMeiro/">The Meiro</a>
+          </h3>
+          <div class="work-desc">
+            <!-- ▼要確認：スクリーンショットから読み取った内容です。実際の仕様に合わせて直してください -->
+            広大な迷路から10個の鍵を集めて脱出する、見下ろし型の探索ゲームです。<br>
+            ミニマップで全体像を掴みつつ、通った道に目印を残し、行き止まりはダイナマイトで壊して進みます。
+          </div>
+          <div class="work-tags">
+            <button type="button" class="tag" data-tag="ゲーム">ゲーム</button>
+            <button type="button" class="tag" data-tag="Unity">Unity</button>
+            <button type="button" class="tag" data-tag="2D">2D</button>
+            <button type="button" class="tag" data-tag="WebGL">WebGL</button>
+          </div>
+        </article>
+
+        <article class="work-card" data-tags="ゲーム,Unity,3D,WebGL">
+          <div class="work-thumb">
+            <img src="Images/SplashIGO.png" alt="Splash IGO のプレイ画面">
+          </div>
+          <h3 class="work-title">
+            <a href="Games/SplashIGO/">Splash IGO</a>
+          </h3>
+          <div class="work-desc">
+            <!-- ▼要確認：スクリーンショットから読み取った内容です。実際の仕様に合わせて直してください -->
+            囲碁盤を舞台にした3Dのアクションゲームです。<br>
+            盤上に碁石を放ち、塗り広がった領域の大きさがそのままスコアになります。
+          </div>
+          <div class="work-tags">
+            <button type="button" class="tag" data-tag="ゲーム">ゲーム</button>
+            <button type="button" class="tag" data-tag="Unity">Unity</button>
+            <button type="button" class="tag" data-tag="3D">3D</button>
+            <button type="button" class="tag" data-tag="WebGL">WebGL</button>
+          </div>
+        </article>
+
+        <article class="work-card" data-tags="ゲーム,Unity,2D,WebGL">
+          <div class="work-thumb">
+            <img src="Images/CatchBall2D.jpg" alt="Catch Ball 2D のプレイ画面">
+          </div>
+          <h3 class="work-title">
+            <a href="Games/CatchBall2D/">Catch Ball 2D</a>
+          </h3>
+          <div class="work-desc">
+            <!-- ▼要確認：スクリーンショットから読み取った内容です。実際の仕様に合わせて直してください -->
+            テンポよくボールを受け取ってコンボを繋ぐ2Dミニゲームです。<br>
+            受け損なうとライフが減り、続けるほどスコアの伸びが大きくなります。
+          </div>
+          <div class="work-tags">
+            <button type="button" class="tag" data-tag="ゲーム">ゲーム</button>
+            <button type="button" class="tag" data-tag="Unity">Unity</button>
+            <button type="button" class="tag" data-tag="2D">2D</button>
+            <button type="button" class="tag" data-tag="WebGL">WebGL</button>
+          </div>
+        </article>
+
+        <article class="work-card" data-tags="ゲーム,Unity,WebGL">
+          <div class="work-thumb">
+            <!-- 画像未用意。Images/MahouBattle.png を置いたら下の span を img に差し替える -->
+            <span class="placeholder">No Image</span>
+          </div>
+          <h3 class="work-title">
+            <a href="Games/MahouBattle/">Mahou Battle</a>
+          </h3>
+          <div class="work-desc">
+            <!-- ▼要記入：内容が分からなかったので空にしてあります -->
+          </div>
+          <div class="work-tags">
+            <button type="button" class="tag" data-tag="ゲーム">ゲーム</button>
+            <button type="button" class="tag" data-tag="Unity">Unity</button>
+            <button type="button" class="tag" data-tag="WebGL">WebGL</button>
+          </div>
+        </article>
+
+      </div>
+
+      <p class="no-result" id="no-result" hidden>該当する作品がありません。</p>
+    </section>
+
+  </main>
+
+  <footer><p>© 2026 Shopon</p></footer>
+
+  <script defer src="filter.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BookLib — フォルダ構成を変えずにブラウザから蔵書PDFを検索・タグ管理できるMac用ローカルアプリ。pip不要、macOS標準のPython3だけで動きます。">
+  <title>BookLib – PDF書籍管理アプリ | Personal Works</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../shared.css">
+  <link rel="stylesheet" href="booklib.css">
+</head>
+<body>
+  <header>
+    <a class="back-link" href="../../index.html#works-heading">← 作品一覧へ戻る</a>
+    <h1>BookLib</h1>
+    <p class="header-sub">フォルダ構成そのまま、ブラウザで蔵書PDFを管理するMac用ローカルアプリ</p>
+  </header>
+
+  <main>
+    <section aria-label="スクリーンショット">
+      <div class="shot-frame shot-frame--wide">
+        <img src="./全体.png" alt="BookLib">
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">About</h2>
+      <p>
+        買った本のPDFが増えてくると、Finderだけでは著者やジャンル毎での管理が難しくなってきます。
+        BookLibは、<strong>PDFの入ったフォルダを一切いじらずに</strong>、ブラウザから表紙付きの
+        本棚として検索・タグ管理できるようにする、一人用のローカルアプリです。
+      </p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>インストール不要</h3>
+          <p>macOS標準のPython3だけで動作。pipもNode.jsも使いません。zipを展開したらすぐ使えます。</p>
+        </div>
+        <div class="feature">
+          <h3>ファイルには指一本触れない</h3>
+          <p>本の同一性を内容で管理しているので、ファイルをリネームしてもフォルダを整理してもタグが追従します。PDF本体の移動・書き換えは一切しません。</p>
+        </div>
+        <div class="feature">
+          <h3>タグと検索</h3>
+          <p>タイトル・著者の部分一致検索と、複数タグのAND絞り込み。表紙サムネイルは自動生成されます。</p>
+        </div>
+        <div class="feature">
+          <h3>開くのも閉じるのもワンクリック</h3>
+          <p>付属ツールでアプリ化すれば、ダブルクリックで起動してブラウザが開き、タブを閉じればサーバも自動終了します。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">How to use</h2>
+      <ol class="steps">
+        <li>下のボタンからzipをダウンロードして展開する</li>
+        <li>ターミナルで <code>python3 BookLib/app.py ~/Documents/あなたのPDFフォルダ</code> を実行する(引数なしなら BookLib 内に書庫フォルダが自動作成されます)</li>
+        <li>ブラウザで <code>http://localhost:8323/</code> を開き、右上の「フォルダをスキャン」を押す</li>
+        <li>表紙をクリックすると、タイトル・著者・タグを編集できます。本を買ったらフォルダに入れて再スキャンするだけ</li>
+      </ol>
+      <p class="dl-note">
+        ダブルクリック起動のアプリ化や詳しい使い方は、同梱の「はじめにお読みください.txt」にまとめてあります。
+      </p>
+      <div class="shot-grid">
+        <div class="shot-frame">
+          <img src="./詳細画面.png" alt="詳細パネル">
+        </div>
+        <div class="shot-frame">
+          <img src="./Tag検索.png" alt="タグ検索">
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">Requirements</h2>
+      <div class="req-box">
+        <ul>
+          <li>macOS(表紙サムネイルの生成に標準コマンドを使用)</li>
+          <li>Python 3.9以上(macOS同梱のもので可・追加インストール不要)</li>
+          <li>アプリのデータは書庫フォルダ内の1か所だけに保存。そこを消せば完全にアンインストールできます</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="download">
+      <h2 class="section-label">Download</h2>
+      <a class="dl-button" href="BookLib.zip" download>Download BookLib.zip</a>
+      <p class="dl-note">約31KB / macOS用 / 無料</p>
+    </section>
+
+  </main>
+
+  <footer><p>© 2026 Shopon</p></footer>
+</body>
+</html>
