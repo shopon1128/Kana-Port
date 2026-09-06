@@ -12,6 +12,24 @@
   const TAG_ALL = '';
   const LABEL_ALL = 'すべて';
 
+  /**
+   * 絞り込みボタンの表示順を、意味の軸ごとにまとめて定義する。
+   *
+   * ここにあるのは「並び順」だけで、どの作品がどのタグを持つかは
+   * 各カードの data-tags が唯一の情報源。二重管理にはならない。
+   *
+   * 件数順に並べると、作品が増えるたびに 2D と 3D が離れるなど
+   * 並びが動いてしまうため、軸で固定する。
+   * ここに無いタグは末尾のグループへ自動的に回るので、
+   * タグを増やすだけならこのファイルを触らなくてよい。
+   */
+  const TAG_GROUPS = [
+    ['2D', '3D'],                                          // 形式
+    ['Unity', 'Python', 'ゲームAI', '機械学習', 'SQLite'],  // 技術
+    ['macOS'],                                             // 動作環境
+    ['ブラウザ', 'ダウンロード'],                            // 入手・遊び方
+  ];
+
   const filterBar = document.querySelector('#filter');
   const worksList = document.querySelector('#works-list');
   const statusText = document.querySelector('#filter-status');
@@ -34,11 +52,11 @@
       .filter((t) => t.length > 0);
 
   /**
-   * 全カードを走査してタグを集計し、表示順に並べて返す。
-   * 並び順は「件数の多い順 → 先に登場した順」。
-   * 件数が多いタグほど絞り込みの入口として役に立つため。
+   * 全カードを走査してタグを集計し、TAG_GROUPS の順にまとめて返す。
+   * 戻り値は「グループの配列」で、空のグループは落とす
+   * （例: Apps ページには形式タグが無いので、そのグループは現れない）。
    */
-  const collectTags = () => {
+  const collectTagGroups = () => {
     const counts = new Map();
     const firstSeen = new Map();
 
@@ -49,10 +67,21 @@
       });
     });
 
-    return Array.from(counts.keys()).sort((a, b) => {
-      const byCount = counts.get(b) - counts.get(a);
-      return byCount !== 0 ? byCount : firstSeen.get(a) - firstSeen.get(b);
-    });
+    // 定義済みグループ。このページに実在するタグだけを残す
+    const groups = TAG_GROUPS.map((group) => group.filter((tag) => counts.has(tag)));
+
+    // どのグループにも属さないタグは末尾へ。
+    // 定義漏れがあっても絞り込みから消えないための受け皿
+    const known = new Set(TAG_GROUPS.flat());
+    const ungrouped = Array.from(counts.keys())
+      .filter((tag) => !known.has(tag))
+      .sort((a, b) => {
+        const byCount = counts.get(b) - counts.get(a);
+        return byCount !== 0 ? byCount : firstSeen.get(a) - firstSeen.get(b);
+      });
+    groups.push(ungrouped);
+
+    return groups.filter((group) => group.length > 0);
   };
 
   const createButton = (a_tag, a_label) => {
@@ -65,11 +94,22 @@
     return btn;
   };
 
+  /** グループ間の区切り線。装飾なので読み上げ対象から外す */
+  const createSeparator = () => {
+    const sep = document.createElement('span');
+    sep.className = 'filter-sep';
+    sep.setAttribute('aria-hidden', 'true');
+    return sep;
+  };
+
   /** 絞り込みボタンを生成して差し込む */
   const buildFilterBar = () => {
     const fragment = document.createDocumentFragment();
     fragment.appendChild(createButton(TAG_ALL, LABEL_ALL));
-    collectTags().forEach((tag) => fragment.appendChild(createButton(tag, tag)));
+    collectTagGroups().forEach((group) => {
+      fragment.appendChild(createSeparator());
+      group.forEach((tag) => fragment.appendChild(createButton(tag, tag)));
+    });
     filterBar.appendChild(fragment);
   };
 
