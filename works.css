@@ -14,8 +14,17 @@
 .filter {
   display:       flex;
   flex-wrap:     wrap;
+  align-items:   stretch;
   gap:           var(--sp-s);
   margin-bottom: var(--sp-m);
+}
+
+/* タグの軸（形式 / 技術 / 入手）の区切り。filter.js が挿入する。
+   ボタンではないので aria-hidden 済み */
+.filter-sep {
+  width:      1px;
+  background: var(--line);
+  margin:     0 var(--sp-xs);
 }
 
 .filter-btn {
