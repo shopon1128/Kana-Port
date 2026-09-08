@@ -46,6 +46,12 @@
 - 解決: ホバー表現を transform ではなく `::before` の `inset` を広げる形に変更した
 - 教訓: `::before { z-index: -1 }` で親の背後に枠を敷く手法を使う要素には、`transform` / `filter` / `opacity < 1` / `will-change` を当てない(いずれもスタッキングコンテキストを作り、枠が親の背景の裏に閉じ込められる)
 
+## サムネイルが1枚だけ下にずれて見える (2026-09-06)
+- 症状: 一覧に並べたとき、Mahou Battle など数枚だけゲーム画面が下寄りに見えて段差になる
+- 原因: 画像そのものに黒帯(レターボックス)が焼き込まれていた。Unity の Game ビューをキャプチャすると、ゲームの目標アスペクトとウィンドウのアスペクトが違う場合に黒帯が入る。**帯は画像の一部なので `object-fit: cover` では消せない**(実測: MahouBattle 166px / AnimalZoo 72px / SplashIGO 72px / TamaKorokoro 32px、いずれも上部のみ)
+- 解決: 上部だけを切り落とした。macOS の `sips` は中央トリミングしかできず `--cropOffset` は無視されるため、PNGを自前でデコードして切り出し・再エンコードした(scratchpad の crop_top.py。Upフィルタ＋zlib9で元より小さくなった)
+- 教訓: スクショを追加したら `check_letterbox.py` 相当の検査を通す。画像の縦横比がバラバラなだけなら `cover` で高さは揃うので問題にならない。**段差の原因は比率ではなく焼き込まれた帯**。Unity側で Game ビューのアスペクトを16:9に固定してからキャプチャすれば発生しない
+
 ## ウィンドウを縮めるとページ全体が横にはみ出す (2026-09-05)
 - 症状: ウィンドウを広げてから縮めると、レイアウトが崩れて横スクロールが出る
 - 原因: BattleAI の成績表に `white-space: nowrap` を付けたため最小幅が約720pxになった。表を包む `<section>` は `main { display: flex }` の子で、**flex/grid の子は既定が `min-width: auto`** ＝ 中身の最小幅より狭くなれない。そのため section が縮まず、`.result-table-wrap` の `overflow-x: auto` が発動しなかった
