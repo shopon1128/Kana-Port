@@ -49,9 +49,10 @@
     <!-- ============================================================
          Skills
          ------------------------------------------------------------
-         バーの長さは style="--level: n"（0〜100 の自己評価）で決まる。
-         ★数値はすべて仮置き。調整するときは --level と aria-valuenow の
-           両方を同じ値にすること（読み上げとバーがズレないため）
+         熟練度は <li class="skill" style="--level: n"> の 1 箇所だけで決まる
+         （0〜100 の自己評価）。バーの長さも、読み上げ用の数値（画面には
+         出さない .skill-level）も、同じ --level から CSS が描くので、
+         書き換える場所は 1 つだけでよい。
          ============================================================ -->
     <section class="skills" aria-labelledby="skills-heading">
       <h2 class="section-label" id="skills-heading"><span class="section-no" aria-hidden="true">02</span>Skills</h2>
@@ -61,30 +62,27 @@
         <div class="skill-col">
           <h3 class="skill-col-title">言語 <span>Languages</span></h3>
           <ul class="skill-list">
-            <li class="skill">
+            <li class="skill" style="--level: 60">
               <p class="skill-row">
                 <span class="skill-name">C++</span>
-                <span class="skill-bar" style="--level: 60"
-                      role="meter" aria-label="C++ の熟練度"
-                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="60"></span>
+                <span class="skill-bar" aria-hidden="true"></span>
+                <span class="skill-level"></span>
               </p>
               <p class="skill-note">経験 6 年 / SFML</p>
             </li>
-            <li class="skill">
+            <li class="skill" style="--level: 50">
               <p class="skill-row">
                 <span class="skill-name">Python</span>
-                <span class="skill-bar" style="--level: 50"
-                      role="meter" aria-label="Python の熟練度"
-                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></span>
+                <span class="skill-bar" aria-hidden="true"></span>
+                <span class="skill-level"></span>
               </p>
               <p class="skill-note">経験 3 年 / PyGameZero / Optuna / scikit-learn / numpy</p>
             </li>
-            <li class="skill">
+            <li class="skill" style="--level: 40">
               <p class="skill-row">
                 <span class="skill-name">C#</span>
-                <span class="skill-bar" style="--level: 40"
-                      role="meter" aria-label="C# の熟練度"
-                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="40"></span>
+                <span class="skill-bar" aria-hidden="true"></span>
+                <span class="skill-level"></span>
               </p>
               <p class="skill-note">経験 2 年 / Unity でのゲーム開発</p>
             </li>
@@ -94,39 +92,35 @@
         <div class="skill-col">
           <h3 class="skill-col-title">ツール <span>Tools</span></h3>
           <ul class="skill-list">
-            <li class="skill">
+            <li class="skill" style="--level: 60">
               <p class="skill-row">
                 <span class="skill-name">Unity</span>
-                <span class="skill-bar" style="--level: 60"
-                      role="meter" aria-label="Unity の熟練度"
-                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="60"></span>
+                <span class="skill-bar" aria-hidden="true"></span>
+                <span class="skill-level"></span>
               </p>
               <p class="skill-note">ゲーム制作のメイン環境</p>
             </li>
-            <li class="skill">
+            <li class="skill" style="--level: 70">
               <p class="skill-row">
                 <span class="skill-name">VSCode</span>
-                <span class="skill-bar" style="--level: 70"
-                      role="meter" aria-label="VSCode の熟練度"
-                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="70"></span>
+                <span class="skill-bar" aria-hidden="true"></span>
+                <span class="skill-level"></span>
               </p>
               <p class="skill-note">コードを書くときのメイン環境</p>
             </li>
-            <li class="skill">
+            <li class="skill" style="--level: 75">
               <p class="skill-row">
                 <span class="skill-name">Claude Code</span>
-                <span class="skill-bar" style="--level: 75"
-                      role="meter" aria-label="Claude Code の熟練度"
-                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="75"></span>
+                <span class="skill-bar" aria-hidden="true"></span>
+                <span class="skill-level"></span>
               </p>
               <p class="skill-note">CLAUDE.md と Skill で規約を運用 / LESSONS.md に学びを蓄積</p>
             </li>
-            <li class="skill">
+            <li class="skill" style="--level: 50">
               <p class="skill-row">
                 <span class="skill-name">Git / GitHub</span>
-                <span class="skill-bar" style="--level: 50"
-                      role="meter" aria-label="Git / GitHub の熟練度"
-                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></span>
+                <span class="skill-bar" aria-hidden="true"></span>
+                <span class="skill-level"></span>
               </p>
               <p class="skill-note">チーム開発でのブランチ運用 / 個人開発でのバージョン管理</p>
             </li>
@@ -153,6 +147,8 @@
         </div>
 
       </div>
+
+      <p class="skill-scale">バーはそれぞれの熟練度の自己評価です</p>
     </section>
 
     <!-- ============================================================
