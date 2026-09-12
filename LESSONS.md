@@ -46,6 +46,12 @@
 - 解決: ホバー表現を transform ではなく `::before` の `inset` を広げる形に変更した
 - 教訓: `::before { z-index: -1 }` で親の背後に枠を敷く手法を使う要素には、`transform` / `filter` / `opacity < 1` / `will-change` を当てない(いずれもスタッキングコンテキストを作り、枠が親の背景の裏に閉じ込められる)
 
+## GitHub Pages で「CSSだけ効いていない」ように見える (2026-09-12)
+- 症状: push後に開くと、HTMLの中身は新しいのにレイアウトが崩れている。ローカルでは正常
+- 原因: **ブラウザ/CDNのキャッシュ**。GitHub Pages は `cache-control: max-age=600` を返すため、新しい index.html が届いても index.css は最大10分間キャッシュが使われる。今回は「shared.css は効いているが index.css だけ古い」状態だった
+- 解決: スーパーリロード(Chrome/Edge `Cmd+Shift+R` / Safari は `Option+Cmd+E` 後に `Cmd+R`)。10分待っても直る
+- 教訓: **「Pagesが壊れている」と判断する前に、配信中の実ファイルを取得して照合する。** `curl -sS <pages-url>/index.css | grep <新しいクラス名>` と `curl -sSI` のヘッダ確認で、デプロイ漏れかキャッシュかは一発で切り分けられる。今回は配信ファイルがローカルと完全一致していたので、デプロイは成功していた。**壊れ方が「一部のCSSだけ効かない」なら、まずキャッシュを疑う**(CSSが全く読めていない場合は背景色から崩れる)
+
 ## サムネイルが1枚だけ下にずれて見える (2026-09-06)
 - 症状: 一覧に並べたとき、Mahou Battle など数枚だけゲーム画面が下寄りに見えて段差になる
 - 原因: 画像そのものに黒帯(レターボックス)が焼き込まれていた。Unity の Game ビューをキャプチャすると、ゲームの目標アスペクトとウィンドウのアスペクトが違う場合に黒帯が入る。**帯は画像の一部なので `object-fit: cover` では消せない**(実測: MahouBattle 166px / AnimalZoo 72px / SplashIGO 72px / TamaKorokoro 32px、いずれも上部のみ)

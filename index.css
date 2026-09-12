@@ -8,9 +8,9 @@
    ============================================================ */
 
 :root {
-  /* スキルバーを満たす経験年数。バーの長さはこの値を基準に計算する。
-     数値（年数）は HTML 側の --years、目盛りの定義はここ、と役割を分ける */
-  --skill-max: 6;
+  /* 熟練度バーの満点。個々の数値（0〜100）は HTML 側の --level に持たせ、
+     目盛りの定義はここ、と役割を分ける */
+  --level-max:  100;
   --photo-size: 200px;
 }
 
@@ -112,10 +112,12 @@
 /* ============================================================
    02 Skills
    ============================================================ */
+/* 上段にバーを持つ2列（言語・ツール）、下段にチップの2列（資格・得意領域）。
+   4列横並びだとバーが短くなりすぎるため 2×2 に折る */
 .skills-grid {
   display:               grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap:                   var(--sp-xl);
+  grid-template-columns: 1fr 1fr;
+  gap:                   var(--sp-2xl) var(--sp-xl);
 }
 
 .skill-col { min-width: 0; }
@@ -146,13 +148,14 @@
   gap:            var(--sp-l);
 }
 
-.skill-head {
-  display:         flex;
-  flex-wrap:       wrap;
-  align-items:     baseline;
-  justify-content: space-between;
-  gap:             var(--sp-xs) var(--sp-s);
-  margin-bottom:   var(--sp-s);
+/* 名前とバーを同じ行に置く（参考デザインに合わせる）。
+   年数などの補足は .skill-note に落とし、バーが年数を表していると
+   誤読されないようにしている */
+.skill-row {
+  display:               grid;
+  grid-template-columns: max-content 1fr;
+  align-items:           center;
+  gap:                   var(--sp-m);
 }
 
 .skill-name {
@@ -161,20 +164,13 @@
   line-height: 1.5;
 }
 
-.skill-years {
-  font-family:    var(--font-mono);
-  font-size:      12px;
-  letter-spacing: 0.02em;
-  color:          var(--muted);
-}
-
-/* バーは年数の視覚化にすぎず、数値は .skill-years に文字で出ている。
-   そのため HTML 側で aria-hidden 済み */
+/* 熟練度バー。数値は role="meter" の aria-valuenow で読み上げられるので
+   aria-hidden にはしない */
 .skill-bar {
-  /* HTML 側の style="--years: n" で上書きする。
+  /* HTML 側の style="--level: n" で上書きする。
      既定を 0 にしておくのは、指定を忘れた場合に calc() が無効になり
-     バーが全幅（＝最大年数）に見えてしまう事故を防ぐため */
-  --years:    0;
+     バーが全幅（＝満点）に見えてしまう事故を防ぐため */
+  --level:    0;
   display:    block;
   height:     2px;
   background: var(--line);
@@ -185,7 +181,7 @@
   content:    '';
   position:   absolute;
   inset:      0 auto 0 0;
-  width:      calc(var(--years) / var(--skill-max) * 100%);
+  width:      calc(var(--level) / var(--level-max) * 100%);
   background: var(--accent);
 }
 
@@ -218,6 +214,12 @@
   color:          var(--fg);
   border:         1px solid var(--line);
   padding:        5px 10px;
+}
+
+/* 内容未定のプレースホルダ。書き忘れたまま公開しても気づけるよう破線にする */
+.chip--todo {
+  border-style: dashed;
+  color:        var(--muted);
 }
 
 /* ============================================================
@@ -355,17 +357,15 @@
 @media (max-width: 1024px) {
   .featured-grid { grid-template-columns: 1fr 1fr; }
 
-  /* 言語は説明文が長いので2列ぶち抜き、ツールと資格を下段に並べる */
-  .skills-grid { grid-template-columns: 1fr 1fr; }
-  .skills-grid .skill-col:first-child { grid-column: 1 / -1; }
 }
 
 @media (max-width: 768px) {
   .featured-grid,
   .works-grid,
-  .skills-grid { grid-template-columns: 1fr; }
-
-  .skills-grid .skill-col:first-child { grid-column: auto; }
+  .skills-grid {
+    grid-template-columns: 1fr;
+    gap:                   var(--sp-xl);
+  }
 
   /* 写真を名前の上に出す（狭い幅では横並びが窮屈になるため） */
   .profile-head {
