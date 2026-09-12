@@ -22,13 +22,13 @@
          末尾に自動で並ぶので、タグを増やすだけなら filter.js は触らなくてよい。
          作品を追加するときは <article class="work-card" data-tags="..."> を
          1つコピーして、data-tags と .work-tags のチップを一致させる
-         （チップの並びも 形式 → 技術 → 入手 の順に揃える） -->
+         （チップの並びも ジャンル → 形式 → 技術 → 入手 の順に揃える） -->
     <div class="filter" id="filter" role="group" aria-label="タグで絞り込み"></div>
     <p class="filter-status" id="filter-status" role="status"></p>
 
     <div class="works-list" id="works-list">
 
-      <article class="work-card" data-tags="Unity,ゲームAI,機械学習,Python,ブラウザ">
+      <article class="work-card" data-tags="シューティング,2D,Unity,ゲームAI,機械学習,Python,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/BattleAI.png" alt="Battle AI のプレイ画面">
         </div>
@@ -41,6 +41,8 @@
           立ち回りのパラメータはPython+Optunaの自動対戦ループで最適化し、戦術選択層はCMA-ESによる探索で学習させました。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="シューティング">シューティング</button>
+          <button type="button" class="tag" data-tag="2D">2D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ゲームAI">ゲームAI</button>
           <button type="button" class="tag" data-tag="機械学習">機械学習</button>
@@ -49,7 +51,7 @@
         </div>
       </article>
 
-      <article class="work-card" data-tags="3D,Unity,ブラウザ">
+      <article class="work-card" data-tags="パズル,対戦,3D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/SplashIGO.png" alt="Splash IGO のプレイ画面">
         </div>
@@ -61,13 +63,15 @@
           盤上に碁石を放ち、塗り広がった領域の大きさがそのままスコアになります。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="パズル">パズル</button>
+          <button type="button" class="tag" data-tag="対戦">対戦</button>
           <button type="button" class="tag" data-tag="3D">3D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article>
 
-      <article class="work-card" data-tags="2D,Unity,ブラウザ">
+      <article class="work-card" data-tags="探索,2D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/TheMeiro.png" alt="The Meiro のプレイ画面">
         </div>
@@ -79,13 +83,14 @@
           ミニマップで全体像を掴みつつ、通った道に目印を残し、行き止まりはダイナマイトで壊して進みます。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="探索">探索</button>
           <button type="button" class="tag" data-tag="2D">2D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article>
 
-      <article class="work-card" data-tags="2D,Unity,ブラウザ">
+      <article class="work-card" data-tags="アクション,協力,2D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/CatchBall2D.jpg" alt="Catch Ball 2D のプレイ画面">
         </div>
@@ -97,13 +102,15 @@
           受け損なうとライフが減り、続けるほどスコアの伸びが大きくなります。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="アクション">アクション</button>
+          <button type="button" class="tag" data-tag="協力">協力</button>
           <button type="button" class="tag" data-tag="2D">2D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article>
 
-      <article class="work-card" data-tags="Unity,ブラウザ">
+      <article class="work-card" data-tags="アクション,3D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/MahouBattle.png" alt="Mahou Battle のプレイ画面">
         </div>
@@ -114,12 +121,14 @@
           魔法で戦うゲームです。左クリックで通常攻撃、右クリックで杖を構えて、魔法を使うことができます。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="アクション">アクション</button>
+          <button type="button" class="tag" data-tag="3D">3D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article>
 
-      <article class="work-card" data-tags="3D,Unity,ブラウザ">
+      <article class="work-card" data-tags="シューティング,3D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/MyFPS.png" alt="My FPS のプレイ画面">
         </div>
@@ -131,13 +140,14 @@
           ミニマップで敵の位置を掴みつつ、残弾とHPを管理しながら撃破数を伸ばします。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="シューティング">シューティング</button>
           <button type="button" class="tag" data-tag="3D">3D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article>
 
-      <article class="work-card" data-tags="3D,Unity,ブラウザ">
+      <article class="work-card" data-tags="リズム,3D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/ClockWorker.png" alt="ClockWorkerのプレイ画面">
         </div>
@@ -149,13 +159,14 @@
           時計でうまくタイミングを計って、大きな櫓を築こう！
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="リズム">リズム</button>
           <button type="button" class="tag" data-tag="3D">3D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article>
 
-      <article class="work-card" data-tags="2D,Unity,ブラウザ">
+      <article class="work-card" data-tags="アクション,協力,2D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/TouSou.png" alt="TouSou のプレイ画面">
         </div>
@@ -166,13 +177,15 @@
           二人で協力して生き残るのを目指す弾幕ゲームです。<br>WASDと矢印でそれぞれのキャラを動かし、Spaceで位置交換が出来ます。<br>一人でやってもよし。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="アクション">アクション</button>
+          <button type="button" class="tag" data-tag="協力">協力</button>
           <button type="button" class="tag" data-tag="2D">2D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article>
 
-      <article class="work-card" data-tags="3D,Unity,ブラウザ">
+      <article class="work-card" data-tags="アクション,3D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/PinBall.png" alt="PinBall のプレイ画面">
         </div>
@@ -183,13 +196,14 @@
           3Dピンボールゲームです。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="アクション">アクション</button>
           <button type="button" class="tag" data-tag="3D">3D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article>
 
-      <article class="work-card" data-tags="3D,Unity,ブラウザ">
+      <article class="work-card" data-tags="パズル,3D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/TamaKorokoro.png" alt="3D玉転がしのプレイ画面">
         </div>
@@ -200,13 +214,14 @@
           ステージを傾けて玉を転がし、ゴールを目指す3Dゲームです。玉の素材を切り替えて、ギミックに対応しよう！
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="パズル">パズル</button>
           <button type="button" class="tag" data-tag="3D">3D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article>
 
-      <!-- <article class="work-card" data-tags="2D,Unity,ブラウザ">
+      <!-- <article class="work-card" data-tags="アクション,2D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/AnimalZoo.png" alt="Animal Zoo のプレイ画面">
         </div>
@@ -218,13 +233,14 @@
           テンポよく渡し続けるとコンボが伸び、失敗するとライフが減ります。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="アクション">アクション</button>
           <button type="button" class="tag" data-tag="2D">2D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article> -->
 
-      <article class="work-card" data-tags="2D,Unity,ブラウザ">
+      <article class="work-card" data-tags="クリッカー,2D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/MonsterClicker.png" alt="Monster Clicker のプレイ画面">
         </div>
@@ -232,18 +248,18 @@
           <a href="MonsterClicker/">Monster Clicker</a>
         </h2>
         <div class="work-desc">
-          <!-- ▼要確認：スクリーンショットから読み取った内容です。実際の仕様に合わせて直してください -->
           人類を滅ぼす側になるクリッカーゲームです。<br>
           クリックで触手を伸ばし、攻撃力・出撃数・オート化を強化しながら撃破数を伸ばします。残りの人口が進行の指標になります。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="クリッカー">クリッカー</button>
           <button type="button" class="tag" data-tag="2D">2D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article>
 
-      <article class="work-card" data-tags="3D,Unity,ブラウザ">
+      <article class="work-card" data-tags="対戦,3D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/TuruturuKamiSumo.png" alt="つるつる紙相撲 のプレイ画面">
         </div>
@@ -254,13 +270,14 @@
           つるつる滑るフィールドで相撲。倒れても最後にフィールドにいた方が勝ち!<br>wasdと矢印で叩けます。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="対戦">対戦</button>
           <button type="button" class="tag" data-tag="3D">3D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
         </div>
       </article>
 
-      <article class="work-card" data-tags="2D,Unity,ブラウザ">
+      <article class="work-card" data-tags="リズム,2D,Unity,ブラウザ">
         <div class="work-thumb">
           <img src="../Images/WASDRhythm.png" alt="WASD Rhythm のプレイ画面">
         </div>
@@ -271,6 +288,7 @@
           キーボードで遊べるリズムゲーム。<br>四方からくるノーツはWASDと矢印キーを使って捌けます。
         </div>
         <div class="work-tags">
+          <button type="button" class="tag" data-tag="リズム">リズム</button>
           <button type="button" class="tag" data-tag="2D">2D</button>
           <button type="button" class="tag" data-tag="Unity">Unity</button>
           <button type="button" class="tag" data-tag="ブラウザ">ブラウザ</button>
