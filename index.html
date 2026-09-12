@@ -16,7 +16,7 @@
 
   <main>
     <!-- ============================================================
-         Profile — 内容の出典は prof.md。書き換えるときは両方を揃える
+         Profile
          ============================================================ -->
     <section class="profile" aria-labelledby="profile-heading">
       <h2 class="section-label" id="profile-heading"><span class="section-no" aria-hidden="true">01</span>Profile</h2>
@@ -47,9 +47,11 @@
     </section>
 
     <!-- ============================================================
-         Skills — 内容の出典は prof.md
-         バーの長さは style="--years: n" から CSS が計算する。
-         満たす年数（--skill-max）は index.css 側で定義
+         Skills
+         ------------------------------------------------------------
+         バーの長さは style="--level: n"（0〜100 の自己評価）で決まる。
+         ★数値はすべて仮置き。調整するときは --level と aria-valuenow の
+           両方を同じ値にすること（読み上げとバーがズレないため）
          ============================================================ -->
     <section class="skills" aria-labelledby="skills-heading">
       <h2 class="section-label" id="skills-heading"><span class="section-no" aria-hidden="true">02</span>Skills</h2>
@@ -60,40 +62,74 @@
           <h3 class="skill-col-title">言語 <span>Languages</span></h3>
           <ul class="skill-list">
             <li class="skill">
-              <p class="skill-head">
+              <p class="skill-row">
                 <span class="skill-name">C++</span>
-                <span class="skill-years">経験 6 年</span>
+                <span class="skill-bar" style="--level: 60"
+                      role="meter" aria-label="C++ の熟練度"
+                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="60"></span>
               </p>
-              <span class="skill-bar" style="--years: 6" aria-hidden="true"></span>
-              <p class="skill-note">SFML</p>
+              <p class="skill-note">経験 6 年 / SFML</p>
             </li>
             <li class="skill">
-              <p class="skill-head">
+              <p class="skill-row">
                 <span class="skill-name">Python</span>
-                <span class="skill-years">経験 3 年</span>
+                <span class="skill-bar" style="--level: 50"
+                      role="meter" aria-label="Python の熟練度"
+                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></span>
               </p>
-              <span class="skill-bar" style="--years: 3" aria-hidden="true"></span>
-              <p class="skill-note">PyGameZero / Optuna / scikit-learn / numpy</p>
+              <p class="skill-note">経験 3 年 / PyGameZero / Optuna / scikit-learn / numpy</p>
             </li>
             <li class="skill">
-              <p class="skill-head">
+              <p class="skill-row">
                 <span class="skill-name">C#</span>
-                <span class="skill-years">経験 2 年</span>
+                <span class="skill-bar" style="--level: 40"
+                      role="meter" aria-label="C# の熟練度"
+                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="40"></span>
               </p>
-              <span class="skill-bar" style="--years: 2" aria-hidden="true"></span>
-              <p class="skill-note">Unity でのゲーム開発</p>
+              <p class="skill-note">経験 2 年 / Unity でのゲーム開発</p>
             </li>
           </ul>
-          <p class="skill-scale">バーの長さは経験年数に比例（最長 6 年を満とする）</p>
         </div>
 
         <div class="skill-col">
           <h3 class="skill-col-title">ツール <span>Tools</span></h3>
-          <ul class="chip-list">
-            <li class="chip">Unity</li>
-            <li class="chip">VSCode</li>
-            <li class="chip">Claude Code</li>
-            <li class="chip">GitHub</li>
+          <ul class="skill-list">
+            <li class="skill">
+              <p class="skill-row">
+                <span class="skill-name">Unity</span>
+                <span class="skill-bar" style="--level: 60"
+                      role="meter" aria-label="Unity の熟練度"
+                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="60"></span>
+              </p>
+              <p class="skill-note">ゲーム制作のメイン環境</p>
+            </li>
+            <li class="skill">
+              <p class="skill-row">
+                <span class="skill-name">VSCode</span>
+                <span class="skill-bar" style="--level: 70"
+                      role="meter" aria-label="VSCode の熟練度"
+                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="70"></span>
+              </p>
+              <p class="skill-note">コードを書くときのメイン環境</p>
+            </li>
+            <li class="skill">
+              <p class="skill-row">
+                <span class="skill-name">Claude Code</span>
+                <span class="skill-bar" style="--level: 75"
+                      role="meter" aria-label="Claude Code の熟練度"
+                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="75"></span>
+              </p>
+              <p class="skill-note">CLAUDE.md と Skill で規約を運用 / LESSONS.md に学びを蓄積</p>
+            </li>
+            <li class="skill">
+              <p class="skill-row">
+                <span class="skill-name">Git / GitHub</span>
+                <span class="skill-bar" style="--level: 50"
+                      role="meter" aria-label="Git / GitHub の熟練度"
+                      aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></span>
+              </p>
+              <p class="skill-note">チーム開発でのブランチ運用 / 個人開発でのバージョン管理</p>
+            </li>
           </ul>
         </div>
 
@@ -103,6 +139,16 @@
             <li class="chip">基本情報技術者</li>
             <li class="chip">情報技術検定 1 級</li>
             <li class="chip">MOS</li>
+          </ul>
+        </div>
+
+        <div class="skill-col">
+          <h3 class="skill-col-title">得意領域 <span>Strengths</span></h3>
+          <ul class="chip-list">
+            <li class="chip">機械学習</li>
+            <li class="chip">ゲームプログラミング</li>
+            <li class="chip">データ分析</li>
+            <li class="chip">Claude Code を用いた開発</li>
           </ul>
         </div>
 
@@ -149,7 +195,7 @@
          Works — カテゴリの入口
          作品カードの実体と絞り込みは各カテゴリページにある
          （Games/index.html・Apps/index.html）
-         作品を増やしたら .card-count の件数も更新すること
+         作品を増やしたら .card-count の件数も更新する必要あり
          ============================================================ -->
     <section class="works" aria-labelledby="works-heading">
       <h2 class="section-label" id="works-heading"><span class="section-no" aria-hidden="true">04</span>Works</h2>
