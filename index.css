@@ -148,6 +148,17 @@
   gap:            var(--sp-l);
 }
 
+/* 熟練度は HTML の style="--level: n" 1 箇所だけが持ち、
+   バーの長さ（.skill-bar）と右端の数字（.skill-level）の両方をここから描く。
+   既定を 0 にしておくのは、指定を忘れた場合に calc() が無効になり
+   バーが全幅（＝満点）に見えてしまう事故を防ぐため */
+.skill {
+  --level:       0;
+  /* バーの長さも読み上げ用の数値も、この 2 つのカウンタから描く。
+     満点側も --level-max を参照するので、目盛りの定義は 1 箇所のまま */
+  counter-reset: level var(--level) levelmax var(--level-max);
+}
+
 /* 名前とバーを同じ行に置く（参考デザインに合わせる）。
    年数などの補足は .skill-note に落とし、バーが年数を表していると
    誤読されないようにしている */
@@ -156,6 +167,7 @@
   grid-template-columns: max-content 1fr;
   align-items:           center;
   gap:                   var(--sp-m);
+  position:              relative;   /* .skill-level を内側に収めるため */
 }
 
 .skill-name {
@@ -164,13 +176,8 @@
   line-height: 1.5;
 }
 
-/* 熟練度バー。数値は role="meter" の aria-valuenow で読み上げられるので
-   aria-hidden にはしない */
+/* バーは右の数値を視覚化しただけなので読み上げ対象から外す（HTML で aria-hidden） */
 .skill-bar {
-  /* HTML 側の style="--level: n" で上書きする。
-     既定を 0 にしておくのは、指定を忘れた場合に calc() が無効になり
-     バーが全幅（＝満点）に見えてしまう事故を防ぐため */
-  --level:    0;
   display:    block;
   height:     2px;
   background: var(--line);
@@ -183,6 +190,23 @@
   inset:      0 auto 0 0;
   width:      calc(var(--level) / var(--level-max) * 100%);
   background: var(--accent);
+}
+
+/* 熟練度の数値。デザイン上は出さないが、バーが aria-hidden なので
+   ここを消すと熟練度を知る手段が視覚だけになってしまう。
+   そこで画面からのみ隠し、読み上げには残す。
+   数値は --level から CSS カウンタで描くため、バーとズレることは起こり得ない */
+.skill-level {
+  position:    absolute;
+  width:       1px;
+  height:      1px;
+  overflow:    hidden;
+  clip-path:   inset(50%);
+  white-space: nowrap;
+}
+
+.skill-level::after {
+  content: '熟練度 ' counter(level) ' / ' counter(levelmax);
 }
 
 .skill-note {
