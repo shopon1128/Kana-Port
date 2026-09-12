@@ -15,12 +15,98 @@
   </header>
 
   <main>
-    <section class="bio" aria-labelledby="about-heading">
-      <h2 class="section-label" id="about-heading">About</h2>
-      <p>
-        東京テクノロジーセンター専門学校<br>
-        スーパーIT科スーパーAIクリエイター専攻 2年<br>
-      </p>
+    <!-- ============================================================
+         Profile — 内容の出典は prof.md。書き換えるときは両方を揃える
+         ============================================================ -->
+    <section class="profile" aria-labelledby="profile-heading">
+      <h2 class="section-label" id="profile-heading"><span class="section-no" aria-hidden="true">01</span>Profile</h2>
+
+      <div class="profile-head">
+        <div class="profile-id">
+          <p class="profile-name">
+            山口 奏輝<span class="profile-name-en">Yamaguchi Kanade</span>
+          </p>
+
+          <dl class="profile-meta">
+            <dt>所属</dt>
+            <dd>
+              東京デザインテクノロジーセンター専門学校<br>
+              スーパーIT科 スーパーAIクリエイター専攻 2年
+            </dd>
+            <dt>学歴</dt>
+            <dd>川崎総合科学高等学校 情報工学科 卒業</dd>
+          </dl>
+        </div>
+
+        <!-- 顔写真。用意できたら Images/Profile.png を置いて
+             下の span を <img src="Images/Profile.png" alt="山口 奏輝"> に差し替える -->
+        <div class="profile-photo">
+          <span class="placeholder">No Image</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Skills — 内容の出典は prof.md
+         バーの長さは style="--years: n" から CSS が計算する。
+         満たす年数（--skill-max）は index.css 側で定義
+         ============================================================ -->
+    <section class="skills" aria-labelledby="skills-heading">
+      <h2 class="section-label" id="skills-heading"><span class="section-no" aria-hidden="true">02</span>Skills</h2>
+
+      <div class="skills-grid">
+
+        <div class="skill-col">
+          <h3 class="skill-col-title">言語 <span>Languages</span></h3>
+          <ul class="skill-list">
+            <li class="skill">
+              <p class="skill-head">
+                <span class="skill-name">C++</span>
+                <span class="skill-years">経験 6 年</span>
+              </p>
+              <span class="skill-bar" style="--years: 6" aria-hidden="true"></span>
+              <p class="skill-note">SFML</p>
+            </li>
+            <li class="skill">
+              <p class="skill-head">
+                <span class="skill-name">Python</span>
+                <span class="skill-years">経験 3 年</span>
+              </p>
+              <span class="skill-bar" style="--years: 3" aria-hidden="true"></span>
+              <p class="skill-note">PyGameZero / Optuna / scikit-learn / numpy</p>
+            </li>
+            <li class="skill">
+              <p class="skill-head">
+                <span class="skill-name">C#</span>
+                <span class="skill-years">経験 2 年</span>
+              </p>
+              <span class="skill-bar" style="--years: 2" aria-hidden="true"></span>
+              <p class="skill-note">Unity でのゲーム開発</p>
+            </li>
+          </ul>
+          <p class="skill-scale">バーの長さは経験年数に比例（最長 6 年を満とする）</p>
+        </div>
+
+        <div class="skill-col">
+          <h3 class="skill-col-title">ツール <span>Tools</span></h3>
+          <ul class="chip-list">
+            <li class="chip">Unity</li>
+            <li class="chip">VSCode</li>
+            <li class="chip">Claude Code</li>
+            <li class="chip">GitHub</li>
+          </ul>
+        </div>
+
+        <div class="skill-col">
+          <h3 class="skill-col-title">資格 <span>Certifications</span></h3>
+          <ul class="chip-list">
+            <li class="chip">基本情報技術者</li>
+            <li class="chip">情報技術検定 1 級</li>
+            <li class="chip">MOS</li>
+          </ul>
+        </div>
+
+      </div>
     </section>
 
     <!-- ============================================================
@@ -29,7 +115,7 @@
          該当作品のサムネイル・タイトル・href をコピーして差し替える
          ============================================================ -->
     <section class="featured" aria-labelledby="featured-heading">
-      <h2 class="section-label" id="featured-heading">Featured Works</h2>
+      <h2 class="section-label" id="featured-heading"><span class="section-no" aria-hidden="true">03</span>Featured Works</h2>
       <div class="featured-grid">
 
         <a class="featured-card" href="Games/BattleAI/">
@@ -66,7 +152,7 @@
          作品を増やしたら .card-count の件数も更新すること
          ============================================================ -->
     <section class="works" aria-labelledby="works-heading">
-      <h2 class="section-label" id="works-heading">Works</h2>
+      <h2 class="section-label" id="works-heading"><span class="section-no" aria-hidden="true">04</span>Works</h2>
       <div class="works-grid">
 
         <a class="category-card" href="Games/">
@@ -75,7 +161,7 @@
           <span class="card-desc">
             2D・3Dのミニゲームから、ゲームAIの実験まで。
           </span>
-          <span class="card-count">12 works</span>
+          <span class="card-count">13 works</span>
         </a>
 
         <a class="category-card" href="Apps/">
