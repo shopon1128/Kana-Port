@@ -12,6 +12,10 @@
      目盛りの定義はここ、と役割を分ける */
   --level-max:  100;
   --photo-size: 200px;
+  /* スキル名カラムの固定幅。max-content にすると名前の長さでバーが伸縮し、
+     項目どうしの比較ができなくなるため固定する。
+     ここを広げる以外でバーの長さが変わることはない */
+  --skill-name-w: 7.5rem;
 }
 
 /* ---------- セクション ---------- */
@@ -164,7 +168,7 @@
    誤読されないようにしている */
 .skill-row {
   display:               grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: var(--skill-name-w) 1fr;
   align-items:           center;
   gap:                   var(--sp-m);
   position:              relative;   /* .skill-level を内側に収めるため */
@@ -174,6 +178,9 @@
   font-size:   15px;
   font-weight: 700;
   line-height: 1.5;
+  /* 固定幅に収まらない名前は折り返す。バーを縮めて逃がすと
+     長さが揃わなくなり、比較できなくなるため */
+  overflow-wrap: break-word;
 }
 
 /* バーは右の数値を視覚化しただけなので読み上げ対象から外す（HTML で aria-hidden） */
@@ -390,6 +397,9 @@
     grid-template-columns: 1fr;
     gap:                   var(--sp-xl);
   }
+
+  /* 狭い幅では名前カラムを詰めてバーの表示幅を確保する */
+  :root { --skill-name-w: 6rem; }
 
   /* 写真を名前の上に出す（狭い幅では横並びが窮屈になるため） */
   .profile-head {
