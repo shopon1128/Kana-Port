@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fight of Intelligence — 1台のキーボードで2人が遊ぶ10×10のターン制ボードゲーム。C++17とSFML 3で自作し、Windows版とmacOS版を配布しています。">
+  <title>Fight of Intelligence – C++ / SFML のターン制ボードゲーム | Personal Works</title>
+  <link rel="stylesheet" href="../../shared.css">
+  <link rel="stylesheet" href="fightint.css">
+</head>
+<body>
+  <header>
+    <a class="back-link" href="../index.html">← 作品一覧へ戻る</a>
+    <h1>Fight of Intelligence</h1>
+    <p class="header-sub">1台のキーボードで向かい合う、10×10のターン制ボードゲーム — C++17 / SFML 3 </p>
+  </header>
+
+  <main>
+    <section aria-label="ダウンロード">
+      <h2 class="section-label">Download</h2>
+      <div class="download-row">
+        <a class="cta" href="FightInt-windows.zip" download>
+          Windows版をダウンロード
+          <span class="cta-sub">zip / 約5.1MB / 64bit版 Windows 10・11</span>
+        </a>
+        <a class="cta" href="FightInt_mac.zip" download>
+          macOS版をダウンロード
+          <span class="cta-sub">zip / 約5.9MB / Apple Silicon</span>
+        </a>
+      </div>
+      <p class="note">
+        ブラウザ版はありません。zipを展開して、Windowsは <code>FightInt.exe</code>、
+        macOSは <code>FightInt.app</code> をそのまま起動してください。
+        必要なライブラリはすべて同梱しているので、別途インストールするものはありません。<br>
+        署名を付けていないため、初回起動時に警告が出ます。
+        Windowsは「WindowsによってPCが保護されました」と表示されるので、［詳細情報］→［実行］。
+        macOSは右クリック →［開く］、それでも開けない場合は
+        ［システム設定］→［プライバシーとセキュリティ］を開き、
+        下の方に出ている「"FightInt"は開発元を確認できないため…」の横の［このまま開く］を押してください。
+      </p>
+
+      <div class="controls">
+        <div><span class="key">W A S D</span> / <span class="key">↑ ← ↓ →</span></div>
+        <div>カーソルの移動、つかんだ駒の移動</div>
+        <div><span class="key">Space</span></div>
+        <div>駒をつかむ / 離す</div>
+        <div><span class="key">Esc</span></div>
+        <div>ルール表を開く</div>
+      </div>
+      <p class="note">
+        2人対戦専用です。1台のキーボードを交代で使うため、対面で遊ぶことを想定しています。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-label">Play Movie</h2>
+      <div class="video-frame">
+        <!-- 16MB あるので、ページを開いた時点では読み込まない（再生時に取得する） -->
+        <video controls preload="metadata" playsinline width="2380" height="1548">
+          <source src="Play.mp4" type="video/mp4">
+          お使いのブラウザは動画の再生に対応していません。
+          <a href="Play.mp4">動画をダウンロードして再生してください。</a>
+        </video>
+      </div>
+      <p class="note">実際のプレイの様子。音声はありません。</p>
+    </section>
+
+    <section>
+      <h2 class="section-label">About</h2>
+      <p>
+        10×10のマス目の上で、6種類の駒を動かして相手を全滅させたら勝ちのターン制ボードゲームです。
+        駒は<strong>1ターンに配られる4のMP</strong>を共有していて、移動も攻撃も1マスにつき1消費します。
+        1体を4マス走らせるのか、4体を1マスずつ動かすのか、
+        <strong>限られたMPをどの駒に割り振るか</strong>が毎ターンの判断になります。
+      </p>
+      <p>
+        駒は「つかんで動かす」操作です。カーソルを合わせてSpaceでつかむと、
+        その駒が行けるマスと手を出せる相手が即座に盤面に出ます。
+        攻撃した駒はそのターン中もう動かせなくなるので、
+        <strong>どの駒から動かすか</strong>という順番も重要です。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-label">Jobs</h2>
+      <p>
+        各プレイヤーは6種類の駒を1体ずつ持ちます。
+        HPの差と移動の癖が噛み合うように、役割を散らしています。
+      </p>
+      <div class="job-table-wrap">
+        <table class="job-table">
+          <caption>6ジョブの性能（HPは初期値）</caption>
+          <thead>
+            <tr><th>ジョブ</th><th>HP</th><th>特徴</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Sword</th><td>3</td>
+              <td>MPが2以上残っていれば、2消費して2ダメージの強攻撃になる</td>
+            </tr>
+            <tr>
+              <th>Knight</th><td>4</td>
+              <td>最もHPが高く、上下左右に隣り合った味方が受けるダメージを肩代わりする</td>
+            </tr>
+            <tr>
+              <th>Archer</th><td>2</td>
+              <td>進もうとしたマスの隣に敵がいると、移動せずその場から攻撃する。</td>
+            </tr>
+            <tr>
+              <th>Magician</th><td>2</td>
+              <td>縦方向の移動を1ターンに2回までMPなしで行える</td>
+            </tr>
+            <tr>
+              <th>Doctor</th><td>3</td>
+              <td>味方のHPを回復できる</td>
+            </tr>
+            <tr>
+              <th>Van</th><td>3</td>
+              <td>横方向の移動を1ターンに2回までMPなしで行える</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">画面の見方</h2>
+      <p>
+        このゲームは、駒ごとに移動の癖も攻撃の届く範囲も違います。
+        それを覚えないと遊べない状態にしたくなかったので、
+        <strong>「今この駒に何ができるか」をすべて盤面の色で示す</strong>ようにしました。
+        駒をつかんだ瞬間に、以下が同時に出ます。
+      </p>
+      <ul class="legend">
+        <li>
+          <span class="swatch" style="background:#203E38"></span>
+          <span><strong>行けるマス</strong>残りMPで到達できる場所。他の駒がいるマスは通れないので、囲まれていれば狭くなります</span>
+        </li>
+        <li>
+          <span class="swatch" style="background:#3E8E70"></span>
+          <span><strong>MPを使わずに行けるマス</strong>一部のジョブの能力で無料移動が届く範囲。同じ緑のまま明るさだけを変えて、お得感を出すようにしてます</span>
+        </li>
+        <li>
+          <span class="swatch" style="background:#22252E; box-shadow:inset 0 0 0 3px #FF8E30"></span>
+          <span><strong>攻撃できる相手</strong>今いるマスから手が届く敵。弓兵の変則的な射程もここに出るので、覚えていなくても分かるようにしました</span>
+        </li>
+        <li>
+          <span class="swatch" style="background:#22252E; box-shadow:inset 0 0 0 3px #7CDE98"></span>
+          <span><strong>回復できる味方</strong>Doctorの回復ができる相手を指してます</span>
+        </li>
+        <li>
+          <span class="swatch" style="background:#2C303A"></span>
+          <span><strong>肩代わりの効果範囲</strong>knightの肩代わりの効果範囲がわかりやすくなるように、常に表示しています</span>
+        </li>
+        <li>
+          <span class="swatch" style="background:#5C606C"></span>
+          <span><strong>行動済みの駒</strong>攻撃を終えてそのターンもう動かせない駒は暗くなります</span>
+        </li>
+      </ul>
+      <p>
+        残りMPは画面上部の丸4つで示しています。
+        <strong>残量がぱっと見で分かりやすい形</strong>にして、視線の動く先である盤面のすぐ真上に置きました。
+        丸の色がそのまま手番の色で、待機側の表示は暗く落としてあります。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-label">Tech</h2>
+      <div class="tech-tags">
+        <span class="tag">C++</span>
+        <span class="tag">SFML</span>
+        <span class="tag">CMake</span>
+        <span class="tag">Make</span>
+        <span class="tag">GitHub Actions</span>
+        <span class="tag">AddressSanitizer</span>
+        <span class="tag">Windows</span>
+        <span class="tag">macOS</span>
+      </div>
+    </section>
+  </main>
+
+  <footer><p>© 2026 Shopon</p></footer>
+</body>
+</html>

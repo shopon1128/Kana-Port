@@ -1,0 +1,173 @@
+/* ============================================================
+   fightint.css — Fight of Intelligence 紹介ページ専用
+   ------------------------------------------------------------
+   teamLab 準拠。角丸・影・グラデーションは持たせず、
+   枠線1pxと余白だけで階層をつくる。
+
+   本ページは仕様書が想定していない「動画 + ダウンロード + 一覧表」を
+   含むため、BattleAI ページと同じ理由で以下を外している:
+     ・コンテナ幅を読み幅に狭める
+     ・長文の line-height を 1.6 → 1.8 にする
+
+   色を持つのは「ゲーム画面の説明に使う見本（.swatch）」だけ。
+   これはUIの装飾ではなく、実際のゲーム画面の色をそのまま写した
+   資料であるため、無彩色の原則からは外れる（意図的）。
+   ============================================================ */
+
+/* 長文中心のページなので、一覧より狭い読み幅に落とす */
+body { max-width: var(--container-read); }
+
+main {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--sp-2xl);
+}
+
+/* flex の子は既定で min-width:auto になり、中身の最小幅より狭くなれない。
+   ジョブ表は横スクロールさせたいので 0 に落としておく */
+main > section { min-width: 0; }
+
+/* 日本語の長文は 1.7〜2.0 が読みやすいため 1.8 を採用する */
+main p {
+  font-size:   16px;
+  line-height: 1.8;
+}
+
+main section > p + p { margin-top: var(--sp-m); }
+
+/* ---------- ダウンロード ---------- */
+.download-row {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--sp-m);
+}
+
+/* ボタン内で「OS名」と「容量」を2段に見せる */
+.download-row .cta { text-align: center; }
+
+.cta-sub {
+  display:     block;
+  margin-top:  var(--sp-xs);
+  font-size:   11px;
+  line-height: 1.6;
+  color:       var(--muted);
+}
+
+.note {
+  margin-top:  var(--sp-m);
+  font-size:   13px;
+  line-height: 1.8;
+  color:       var(--muted);
+}
+
+/* ---------- 操作キー ---------- */
+.controls {
+  margin-top:            var(--sp-l);
+  display:               grid;
+  grid-template-columns: auto 1fr;
+  gap:                   var(--sp-s) var(--sp-m);
+  align-items:           center;
+  font-size:             14px;
+}
+
+.key {
+  display:        inline-block;
+  font-family:    var(--font-mono);
+  font-size:      12px;
+  letter-spacing: 0.02em;
+  color:          var(--fg);
+  border:         1px solid var(--line);
+  padding:        2px 8px;
+  white-space:    nowrap;
+}
+
+/* ---------- プレイ動画 ---------- */
+.video-frame {
+  border: 1px solid var(--line);
+  /* 動画の下に生じる inline 由来の余白を殺す */
+  line-height: 0;
+}
+
+.video-frame video {
+  display:   block;
+  width:     100%;
+  height:    auto;
+  max-width: 100%;
+}
+
+/* ---------- ジョブ一覧 ---------- */
+.job-table-wrap { overflow-x: auto; }
+
+.job-table {
+  width:           100%;
+  border-collapse: collapse;
+  font-size:       14px;
+  line-height:     1.7;
+}
+
+.job-table caption {
+  text-align:    left;
+  font-size:     13px;
+  color:         var(--muted);
+  margin-bottom: var(--sp-s);
+}
+
+.job-table th,
+.job-table td {
+  border:     1px solid var(--line);
+  padding:    var(--sp-s) var(--sp-m);
+  text-align: left;
+  vertical-align: top;
+}
+
+.job-table thead th {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ジョブ名とHPは折り返さない。説明文だけが伸び縮みする */
+.job-table tbody th,
+.job-table td:nth-child(2) { white-space: nowrap; }
+
+/* ---------- 画面の見方（凡例） ---------- */
+.legend {
+  list-style: none;
+  display:    grid;
+  gap:        var(--sp-m);
+}
+
+.legend li {
+  display:     grid;
+  grid-template-columns: 28px 1fr;
+  gap:         var(--sp-m);
+  align-items: start;
+  font-size:   14px;
+  line-height: 1.7;
+}
+
+/* 実際のゲーム画面から写した色見本。枠線付きの塗りで示す */
+.swatch {
+  width:      28px;
+  height:     28px;
+  border:     1px solid var(--line);
+  /* 色は各 li の style 属性で個別に与える */
+}
+
+.legend strong {
+  display:     block;
+  font-weight: 700;
+}
+
+/* ---------- 技術タグ ---------- */
+.tech-tags {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--sp-s);
+}
+
+/* ---------- レスポンシブ ---------- */
+@media (max-width: 768px) {
+  .download-row .cta { flex: 1 1 100%; }
+  .controls { grid-template-columns: 1fr; gap: var(--sp-xs) 0; }
+  .controls > div:nth-child(even) { margin-bottom: var(--sp-s); }
+}
