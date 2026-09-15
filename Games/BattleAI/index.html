@@ -17,7 +17,7 @@
 
   <main>
     <section class="play" aria-label="プレイ">
-      <a class="play-button" href="./BattleAI/">▶ Play in Browser</a>
+      <a class="play-button" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/">▶ Play in Browser</a>
       <p class="play-note">WebGL版 / PCキーボード推奨 / スマホ対応</p>
       <div class="controls">
         <div><span class="key">WASD</span>  移動</div>
@@ -303,7 +303,9 @@
         「最強」と「最高」を同時に満たせた理由だと考えています。
         なお本データは新しい地形生成ルールで取り直したもので、対人戦のデータはまだ含まれていません。
       </p>
-      <a class="play-button" href="battle_data.csv" download>Download battle_data.csv</a>
+      <!-- 別リポジトリに置いたため、download 属性はブラウザに無視される（クロスオリジン）。
+           CSV は Content-Type: text/csv で配信され、ブラウザ側でダウンロードされる -->
+      <a class="play-button" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/battle_data.csv">Download battle_data.csv</a>
     </section>
 
     <section>
