@@ -22,7 +22,8 @@
 .profile,
 .skills,
 .featured,
-.works { margin-bottom: var(--sp-2xl); }
+.works,
+.contact { margin-bottom: var(--sp-2xl); }
 
 /* 見出し頭の連番。数字は補助情報なので本文色を使わない */
 .section-no {
@@ -384,6 +385,61 @@
 .category-card:hover .card-title,
 .featured-card:hover .featured-title { color: var(--accent); }
 
+/* ============================================================
+   05 Contact
+   ============================================================ */
+.contact-list {
+  display:               grid;
+  grid-template-columns: max-content 1fr;
+  gap:                   var(--sp-m) var(--sp-l);
+  border-top:            1px solid var(--line);
+  padding-top:           var(--sp-l);
+  max-width:             var(--container-read);
+}
+
+.contact-list dt {
+  font-size:      12px;
+  line-height:    1.6;
+  letter-spacing: 0.02em;
+  color:          var(--muted);
+}
+
+.contact-list dd {
+  font-family:   var(--font-mono);
+  font-size:     14px;
+  line-height:   1.6;
+  min-width:     0;
+  overflow-wrap: anywhere;   /* 長いアドレスでも横にはみ出させない */
+}
+
+.contact-list a {
+  color:           var(--fg);
+  text-decoration: none;
+  border-bottom:   1px solid var(--line-ui);
+  transition:      color 0.15s, border-color 0.15s;
+}
+
+.contact-list a:hover,
+.contact-list a:focus-visible {
+  color:        var(--accent);
+  border-color: var(--accent);
+}
+
+/* 未記入のプレースホルダ。差し替え忘れに気づけるよう破線＋淡色にする。
+   .contact-list a と同じ詳細度では後勝ちにならないので、
+   セレクタを重ねて詳細度を上げる（!important は使わない） */
+.contact-list a.contact-todo {
+  border-bottom-style: dashed;
+  color:               var(--muted);
+}
+
+.contact-note {
+  margin-top:  var(--sp-l);
+  font-size:   13px;
+  line-height: 1.8;
+  color:       var(--muted);
+}
+
 /* ---------- レスポンシブ ---------- */
 @media (max-width: 1024px) {
   .featured-grid,
@@ -421,4 +477,13 @@
 
   .profile-meta dd { margin-bottom: var(--sp-m); }
   .profile-meta dd:last-child { margin-bottom: 0; }
+
+  /* 連絡先も同様に縦積みにする。メールアドレスは横幅を食うため */
+  .contact-list {
+    grid-template-columns: 1fr;
+    gap:                   var(--sp-xs);
+  }
+
+  .contact-list dd { margin-bottom: var(--sp-m); }
+  .contact-list dd:last-child { margin-bottom: 0; }
 }
