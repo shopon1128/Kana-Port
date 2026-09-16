@@ -28,6 +28,8 @@
           </p>
 
           <dl class="profile-meta">
+            <dt>希望職種</dt>
+            <dd class="profile-wish">ゲームAIエンジニア</dd>
             <dt>所属</dt>
             <dd>
               東京デザインテクノロジーセンター専門学校<br>
@@ -39,10 +41,16 @@
         </div>
 
         <div class="profile-photo">
-          <!-- <span class="placeholder">No Image</span> -->
-           <img src="Images/Profile.png" alt="山口 奏輝">
+           <img src="Images/Profile.png" alt="山口奏輝のオリキャラ">
         </div>
       </div>
+
+      <p class="profile-intro">
+        ゲーム制作とAI開発を並行して学んでいます。特に関心があるのは<strong>ゲームAI</strong>で、
+        「機械だからこその理不尽な強さ」ではなく、立ち回りの賢さを武器に戦うAIを作れないかを考えています。
+        <a href="Games/BattleAI/">Battle AI</a> では、反応速度などの制約を構造で保証した上で、
+        Optunaによるパラメータ最適化と、模倣学習・CMA-ESによる戦術選択の学習で敵AIを育てました。
+      </p>
     </section>
 
     <!-- ============================================================
@@ -61,13 +69,13 @@
         <div class="skill-col">
           <h3 class="skill-col-title">言語 <span>Languages</span></h3>
           <ul class="skill-list">
-            <li class="skill" style="--level: 70">
+            <li class="skill" style="--level: 65">
               <p class="skill-row">
                 <span class="skill-name">C++</span>
                 <span class="skill-bar" aria-hidden="true"></span>
                 <span class="skill-level"></span>
               </p>
-              <p class="skill-note">経験 5 年 / SFML</p>
+              <p class="skill-note">経験 4 年 / SFML</p>
             </li>
             <li class="skill" style="--level: 60">
               <p class="skill-row">
@@ -75,9 +83,9 @@
                 <span class="skill-bar" aria-hidden="true"></span>
                 <span class="skill-level"></span>
               </p>
-              <p class="skill-note">経験 3 年 / PyGameZero / Optuna / scikit-learn / numpy</p>
+              <p class="skill-note">経験 3 年 / Optuna / PyGameZero / scikit-learn / numpy</p>
             </li>
-            <li class="skill" style="--level: 55">
+            <li class="skill" style="--level: 65">
               <p class="skill-row">
                 <span class="skill-name">C#</span>
                 <span class="skill-bar" aria-hidden="true"></span>
@@ -123,7 +131,7 @@
               </p>
               <p class="skill-note">CLAUDE.md と Skill で規約を運用 / LESSONS.md に学びを蓄積</p>
             </li>
-            <li class="skill" style="--level: 45">
+            <li class="skill" style="--level: 50">
               <p class="skill-row">
                 <span class="skill-name">Git / GitHub</span>
                 <span class="skill-bar" aria-hidden="true"></span>
@@ -146,10 +154,10 @@
         <div class="skill-col">
           <h3 class="skill-col-title">得意領域 <span>Strengths</span></h3>
           <ul class="chip-list">
-            <li class="chip">機械学習</li>
             <li class="chip">ゲームプログラミング</li>
-            <li class="chip">データ分析</li>
             <li class="chip">Claude Code を用いた開発</li>
+            <li class="chip">機械学習</li>
+            <li class="chip">データ分析</li>
           </ul>
         </div>
 
@@ -175,6 +183,22 @@
           <p class="featured-lead">立ち回りの賢さだけで人間を追い詰める敵AIを、最適化と機械学習で育てた1vs1シューティング。</p>
         </a>
 
+        <a class="featured-card" href="Games/FightInt/">
+          <span class="featured-thumb">
+            <img src="Games/Images/FightInt.png" alt="Fight of Intelligence のプレイ画面">
+          </span>
+          <h3 class="featured-title">Fight of Intelligence</h3>
+          <p class="featured-lead">10×10のマス目の上で、6種類の駒を動かして相手を全滅させたら勝ちのターン制ボードゲーム。</p>
+        </a>
+
+        <a class="featured-card" href="Others/Model_pl/">
+          <span class="featured-thumb">
+            <img src="Others/Images/model_pl.png" alt="Claudeで作成した3Dモデル の画像">
+          </span>
+          <h3 class="featured-title">Claude Codeを用いた3Dモデルの生成</h3>
+          <p class="featured-lead">Blenderを動かすPythonコードをClaudeCodeで生成し、3Dキャラクターを作る試みの記録。</p>
+        </a>
+
         <a class="featured-card" href="Apps/BookLib/">
           <span class="featured-thumb">
             <img src="Apps/Images/BookLib.png" alt="BookLib の画面">
@@ -183,13 +207,7 @@
           <p class="featured-lead">フォルダ構成をいじらずに、蔵書PDFを表紙付きの本棚として検索・タグ管理できるMac用アプリ。</p>
         </a>
 
-        <a class="featured-card" href="Games/FightInt/">
-          <span class="featured-thumb">
-            <img src="Games/Images/FightInt.png" alt="Fight of Intelligence のプレイ画面">
-          </span>
-          <h3 class="featured-title">Fight of Intelligence</h3>
-          <p class="featured-lead">10×10のマス目の上で、6種類の駒を動かして相手を全滅させたら勝ちのターン制ボードゲーム。</p>
-        </a>
+
 
       </div>
     </section>
