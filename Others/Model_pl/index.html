@@ -235,41 +235,6 @@
     </section>
 
     <section>
-      <h2 class="section-label">Working with Claude Code</h2>
-      <p>
-        この作り方で効いたのは、<strong>AIが自分の出力を見られる</strong>ことでした。
-        Blenderをヘッドレスで実行してレンダリング画像を書き出せるので、
-        Claude自身が結果を見て「前髪が板に見える」と判断し、次の修正へ進めます。
-        私が指摘したのは、そこから漏れた「印象」の部分です。
-      </p>
-      <div class="split">
-        <div class="split-item">
-          <h3>人間が見たもの</h3>
-          <ul class="plain-list">
-            <li>顎が尖りすぎ／もっと丸顔でいい</li>
-            <li>表情が勝気。もっとおとなしい印象に</li>
-            <li>前髪がサイドの前に来ているのが不自然</li>
-            <li>下着がおむつに見える</li>
-          </ul>
-        </div>
-        <div class="split-item">
-          <h3>コード側の原因だったもの</h3>
-          <ul class="plain-list">
-            <li>顔を球面に貼っていたため、目から顎へ面が奥へ逃げて<strong>顔全体が下を向いていた</strong></li>
-            <li>上まぶた・目尻の跳ね上げ・眉の角度・口の大きさの4点の組み合わせ</li>
-            <li>前髪の覆う角度が、髪本体に開けた穴より4度広かった</li>
-            <li>丈が長い・幅が広い・脚ぐりが浅い、の3つが揃っていた</li>
-          </ul>
-        </div>
-      </div>
-      <p class="note">
-        印象の言葉と原因が1対1で対応しないのが、この工程のいちばん難しいところでした。
-        「顔が下を向いている」は頭を傾けた覚えがないので原因を探しにくく、
-        実際には<strong>断面の取り方</strong>の問題でした。回転ではなく形状の問題だと気づくのに時間がかかっています。
-      </p>
-    </section>
-
-    <section>
       <h2 class="section-label">Code</h2>
       <p>
         実際に動いているコードをそのまま公開しています。
@@ -312,7 +277,6 @@ FACE_LEVEL_RATIO = {
 
       <p class="code-files-intro">生成スクリプト一式（Python / Blender 3.4.1 で動作確認）</p>
       <!-- 引き出し式。コードは開いたときに code/*.py から読み込む（code-view.js）。
-           HTML に貼り付けると実ファイルと二重管理になるため。
            JS が動かない環境でも「GitHub で見る」から読める -->
       <ul class="code-files">
         <li>
@@ -351,7 +315,7 @@ FACE_LEVEL_RATIO = {
           </details>
         </li>
       </ul>
-      <p class="code-files-intro">切り分け用の使い捨てスクリプト</p>
+      <p class="code-files-intro">切り分け用のスクリプト</p>
       <ul class="code-files">
         <li>
           <details class="code-drawer">
@@ -405,9 +369,7 @@ FACE_LEVEL_RATIO = {
         </figure>
       </div>
       <p class="note">
-        すべて生成スクリプトが自動で書き出したプレビューです。
-        正面・側面・背面に加え、<strong>俯瞰</strong>と<strong>あおり</strong>のビューを用意しています。
-        首元の板も下着の隙間も、正面・側面・背面には写らなかったためです。
+        生成スクリプトが自動で書き出したプレビューです。
       </p>
     </section>
 
