@@ -311,19 +311,76 @@ FACE_LEVEL_RATIO = {
     """</code></pre>
 
       <p class="code-files-intro">生成スクリプト一式（Python / Blender 3.4.1 で動作確認）</p>
+      <!-- 引き出し式。コードは開いたときに code/*.py から読み込む（code-view.js）。
+           HTML に貼り付けると実ファイルと二重管理になるため。
+           JS が動かない環境でも「GitHub で見る」から読める -->
       <ul class="code-files">
-        <li><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/pl_spec.py">pl_spec.py</a><span>寸法・配色データのみ。形を変えるときはここだけ編集する</span></li>
-        <li><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/pl_mesh.py">pl_mesh.py</a><span>メッシュ生成。ロフト・頭部形状・髪・衣装</span></li>
-        <li><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/pl_face.py">pl_face.py</a><span>顔テクスチャをnumpyで描画</span></li>
-        <li><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/pl_rig.py">pl_rig.py</a><span>Humanoidボーンと頂点グループ、ウェイト検証</span></li>
-        <li><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/build_pl.py">build_pl.py</a><span>エントリポイント。組み立て・検証・FBX書き出し・レンダリング</span></li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">pl_spec.py</span><span class="code-desc">寸法・配色データのみ。形を変えるときはここだけ編集する</span></summary>
+            <pre class="code-block"><code data-src="code/pl_spec.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/pl_spec.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">pl_mesh.py</span><span class="code-desc">メッシュ生成。ロフト・頭部形状・髪・衣装</span></summary>
+            <pre class="code-block"><code data-src="code/pl_mesh.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/pl_mesh.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">pl_face.py</span><span class="code-desc">顔テクスチャをnumpyで描画</span></summary>
+            <pre class="code-block"><code data-src="code/pl_face.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/pl_face.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">pl_rig.py</span><span class="code-desc">Humanoidボーンと頂点グループ、ウェイト検証</span></summary>
+            <pre class="code-block"><code data-src="code/pl_rig.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/pl_rig.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">build_pl.py</span><span class="code-desc">エントリポイント。組み立て・検証・FBX書き出し・レンダリング</span></summary>
+            <pre class="code-block"><code data-src="code/build_pl.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/build_pl.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
       </ul>
       <p class="code-files-intro">切り分け用の使い捨てスクリプト</p>
       <ul class="code-files">
-        <li><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/test_face.py">test_face.py</a><span>顔テクスチャだけを出力して確認する</span></li>
-        <li><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/test_neck.py">test_neck.py</a><span>首元に何のパーツが写っているかを列挙し、部分レンダーを撮る</span></li>
-        <li><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/test_coat_radius.py">test_coat_radius.py</a><span>コートの外表面の実寸を測る</span></li>
-        <li><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/probe.py">probe.py</a><span>Blender実行環境の確認</span></li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">test_face.py</span><span class="code-desc">顔テクスチャだけを出力して確認する</span></summary>
+            <pre class="code-block"><code data-src="code/test_face.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/test_face.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">test_neck.py</span><span class="code-desc">首元に何のパーツが写っているかを列挙し、部分レンダーを撮る</span></summary>
+            <pre class="code-block"><code data-src="code/test_neck.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/test_neck.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">test_coat_radius.py</span><span class="code-desc">コートの外表面の実寸を測る</span></summary>
+            <pre class="code-block"><code data-src="code/test_coat_radius.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/test_coat_radius.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">probe.py</span><span class="code-desc">Blender実行環境の確認</span></summary>
+            <pre class="code-block"><code data-src="code/probe.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Others/Model_pl/code/probe.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
       </ul>
     </section>
 
@@ -370,5 +427,7 @@ FACE_LEVEL_RATIO = {
   </main>
 
   <footer><p>© 2026 Shopon</p></footer>
+
+  <script defer src="code-view.js"></script>
 </body>
 </html>
