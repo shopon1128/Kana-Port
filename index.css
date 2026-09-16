@@ -451,14 +451,6 @@
   border-color: var(--accent);
 }
 
-/* 未記入のプレースホルダ。差し替え忘れに気づけるよう破線＋淡色にする。
-   .contact-list a と同じ詳細度では後勝ちにならないので、
-   セレクタを重ねて詳細度を上げる（!important は使わない） */
-.contact-list a.contact-todo {
-  border-bottom-style: dashed;
-  color:               var(--muted);
-}
-
 .contact-note {
   margin-top:  var(--sp-l);
   font-size:   13px;
