@@ -129,7 +129,7 @@ def main() -> None:
     args = parser.parse_args()
 
     BRIDGE_DIR.mkdir(parents=True, exist_ok=True)
-    # 前回の残骸をUnityが誤って処理しないよう消しておく
+
     RESULT_PATH.unlink(missing_ok=True)
     PARAMS_PATH.unlink(missing_ok=True)
 
