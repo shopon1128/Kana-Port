@@ -31,6 +31,12 @@
 
 <!-- ここから下に新しいエントリを追記 -->
 
+## GitHub Pages に置いた .py がダウンロードされる / 文字化けする (2026-09-16)
+- 症状: ページから `<a href="code/pl_face.py">` で開くと、表示ではなくダウンロードになる。ローカル(file://)で開いたときは日本語コメントが文字化けする
+- 原因: **GitHub Pages は .py を `application/octet-stream` で返す**（実測）。バイナリ扱いなのでブラウザは表示せず保存し、charset も付かないので表示を試みた場合は文字コードを推測して化ける。`.css`→`text/css; charset=utf-8`、`.md`→`text/markdown; charset=utf-8` は付くので、拡張子ごとに挙動が違う
+- 解決: GitHub の blob ビュー（`https://github.com/<user>/<repo>/blob/main/<path>`）へリンクした。文字コードの推測が起きず、ハイライトと行番号も付く。link.js に `CODE_VIEW` として出典を持たせた
+- 教訓: **ソースコードを「ブラウザで読ませたい」なら Pages に直リンクしない。** BOM を付けても `octet-stream` では解決しない（ダウンロードは Content-Type で決まるため）。配信ヘッダは `curl -I` で必ず実測する。拡張子ごとに違うので、新しい種類のファイルを置いたら都度確認すること
+
 ## 作品カードに hidden を付けても消えない (2026-09-05)
 - 症状: タグ絞り込みで `card.hidden = true` にしても、カードが表示されたままになる
 - 原因: works.css の `.work-card { display: flex }` と、ブラウザ標準の `[hidden] { display: none }` は詳細度が同じ(0,1,0)。同点なら後勝ちで、作者スタイルの方が常に勝つ
