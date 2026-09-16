@@ -31,9 +31,9 @@ SAMPLER_SEED = 42  # 提案の再現性のためシードを固定
 
 # === v3探索空間(3層方式) ===
 # 層1・公平性の固定: SHOT_INTERVAL / DECISION_TICK_INTERVAL / BULLET_REACTION_TIME は
-#   理不尽な強さに直結するため探索しない(値はプレハブ参照アセット=v1を引き継ぐ)。
+#   理不尽な強さに直結するため探索しない。
 # 層2・製品判断の固定: 見せ場を事後の上書きではなく事前の制約にする。
-#   固定値と共適応した脇役パラメータを探させるのがv3の狙い。
+#   固定値と共適応した脇役パラメータを探させる。
 FIXED_PARAMS: dict[str, float] = {
     "FEINT_CHANCE": 0.5,  # フェイントは見せ場。2回の最適化で2回削られた=放置すれば必ず削られる
     "AIM_LEAD_RATE": 0.7,  # 重要度が2回とも最下位圏。対人間では現行値に実績あり
@@ -48,11 +48,11 @@ SEARCH_SPACE: list[tuple[str, float, float, bool]] = [
     ("FLANK_CHANCE", 0.0, 1.0, False),
     ("SEEN_CELL_COST", 0, 8, True),
     ("DANGER_CELL_COST", 6, 15, True),  # 2環境で一貫して高値だったため低域を切り捨て
-    ("ASSAULT_SHOT_BUDGET", 2, 5, True),  # 見せ場の床: 6以上は突撃が消滅するため範囲外
+    ("ASSAULT_SHOT_BUDGET", 2, 5, True),  # 見せ場の下限: 6以上は突撃が消滅するため範囲外
     ("RECOVER_EP_RATE", 0.2, 1.0, False),
     ("AMBUSH_PATIENCE", 2.0, 12.0, False),
-    ("STRAFE_SWITCH_INTERVAL", 0.4, 1.2, False),  # v3新規: 攻撃中のリズム(不規則さのもう半分)
-    ("DODGE_STRENGTH", 0.3, 1.0, False),  # v3新規: 弾回避の逸れ幅(反応時間0.3秒は公平性の枠のまま)
+    ("STRAFE_SWITCH_INTERVAL", 0.4, 1.2, False),  # v3: 攻撃中のリズム(不規則さのもう半分)
+    ("DODGE_STRENGTH", 0.3, 1.0, False),  # v3: 弾回避の逸れ幅(反応時間0.3秒は公平性の枠のまま)
 ]
 
 

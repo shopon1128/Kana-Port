@@ -164,7 +164,6 @@ public class MatchMetrics : MonoBehaviour
             return trialLabel;
         }
         //実際に出撃したAIを記録する(Shuffleの抽選結果やA/Bの上書きを反映済み)。
-        //メニューの選択(OptionSetting)を見ると、Shuffle時に全試合が"shuffle"になり分析できなくなる
         if (EnemySpawner.SpawnedAi != null)
         {
             return EnemySpawner.SpawnedAi.CsvLabel;
@@ -178,13 +177,12 @@ public class MatchMetrics : MonoBehaviour
     }
 
     //対戦相手をCSV用の文字列にする。人間なら"player"、ボットならその性格名(例: "bot_standard")。
-    //旧形式のis_bot列(1/0)を置き換えたもので、1→bot_standard / 0→player に対応する
     private string GetOpponentText()
     {
         return PlayerBot.Instance != null ? PlayerBot.Instance.CsvLabel : "player";
     }
 
-    //1試合1行でCSVに追記する(試合をまたいだ分析・学習用データ)
+    //1試合1行でCSVに追記する
     private void AppendCsvRow(bool a_isPlayerWin, float a_playerHp, float a_enemyHp)
     {
         //タイトルの設定でCSV保存がOFFなら書かない

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// AI超強化版の頭脳(ユーティリティAI)。
+/// AIの頭脳(ユーティリティAI)。
 /// 状況から各戦術の有効度を採点し、最も有効な戦術を選んで実行する。
 /// 公平性ルール: 戦術の変更は判断チック(0.25秒間隔)でのみ行い、フレーム単位の機械的な即応はしない。
 /// 弾回避も既存AIと同じ観測時間ベース(反応遅延あり)のみで、緊急ダッシュ回避のような理不尽な動きはしない。
@@ -92,7 +92,7 @@ public class EnemyAIPro : MonoBehaviour
     private bool _hasFlankGoal;
     private bool _flankRolled;//このエピソード(見失い区間)で回り込みの抽選を済ませたか
 
-    //戦術表示用(AI作品としての見せ場)。フォントアセットの日本語グリフの問題があるため英語表記
+    //戦術表示用。フォントアセットの日本語グリフの問題があるため英語表記
     public string CurrentTacticLabel => _tactic switch
     {
         Tactic.Search => "SEARCH",       //索敵
@@ -107,7 +107,7 @@ public class EnemyAIPro : MonoBehaviour
 
     //スポナーが生成前に指定するデータの差し替え(タイトルのAI選択用)。Awakeで一度だけ消費される
     public static EnemyAiProData PendingAiData;
-    //学習した戦術選択方策(段階1b)。設定されている間は ScoreTactic のargmaxの代わりにこれで選ぶ
+    //学習した戦術選択方策。設定されている間は ScoreTactic のargmaxの代わりにこれで選ぶ
     public static TacticPolicy PendingPolicy;
     private TacticPolicy _policy;
     private readonly float[] _policyScores = new float[7];
@@ -833,7 +833,6 @@ public class EnemyAIPro : MonoBehaviour
         }
 
         //隠れた後: 現在地が死角で相手の気配も遠いなら、動かずにEPを回復して次の手を待つ
-        //(無駄な移動やダッシュは残像・物音で位置をさらすだけ)
         Vector2Int myCell = _mapData.WorldToCell(transform.position);
         Vector2Int viewerCell = _mapData.WorldToCell(_lastKnownPlayerPos);
         bool inCover = !MapGenerator.Instance.IsCellLineClear(viewerCell, myCell);
@@ -898,7 +897,7 @@ public class EnemyAIPro : MonoBehaviour
         return bestSafeDistance >= 0f ? bestSafe : bestAny;
     }
 
-    //---- 弾回避(既存AIと同じ観測時間ベース。公平性のため強化しない) ----
+    //---- 弾回避(観測時間ベース) ----
 
     private void ApplyBulletDodge()
     {
