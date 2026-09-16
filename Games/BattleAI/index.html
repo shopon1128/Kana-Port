@@ -23,9 +23,9 @@
         <div><span class="key">WASD</span>  移動</div>
         <div><span class="key">SHIFT</span>  ダッシュ</div>
         <div><span class="key">↑←↓→</span>  上下左右へショット</div>
-        <div><span class="key">ESC</span>  一時停止</div>
+        <div><span class="key">ESC</span>  ポーズ</div>
       </div>
-      <p>※タイトル画面のオプションからキー割り当ての変更や、スマホ用のUI表示ができます。</p>
+      <p>※選択画面から対戦相手のAIを選べます。設定を開くと、キー割り当ての変更やスマホ用のUI表示、AIの戦術可視化を試合中でも切り替えられます。</p>
     </section>
 
     <section>
@@ -79,9 +79,12 @@
     <section>
       <h2 class="section-label">AI Lineup</h2>
       <p>
-        タイトル画面で選べる9体の敵AI。名前はその個体の持つ特徴に由来するもので、
+        専用の選択画面から選べる9体の敵AI。名前はその個体の持つ特徴に由来するもので、
         v1/v3といった番号は生まれた順の記録です。
         対戦データ(CSV)の<code>ai_type</code>列は各カードのラベルに対応します。
+      </p>
+      <p>
+        選んだ相手は<strong>体・ダッシュ残像・弾・命中エフェクトの色</strong>で見分けられます。
       </p>
 
       <p class="ai-group-label"><span>Featured</span></p>
@@ -96,7 +99,7 @@
             戦術の「選び方」を機械学習で作った個体。教師はSnipe AIで、その判断を
             <strong>99%の一致率</strong>で模倣したうえ、CMA-ES(進化戦略)で磨きました。
             遠距離での戦いを好みますが、撃てない位置に踏み込まれれば躊躇なく詰め、遮蔽の陰から不意打ちを仕掛ける、絶妙なバランス感を持つ個体です。
-            5種類の相手ボットすべてに77%以上で勝ち、得意不得意の差はわずか11ポイントと、<strong>相手を選ばない強さ</strong>を持った
+            5種類の相手ボットすべてに75%以上で勝ち、得意不得意の差はわずか14ポイントと、<strong>相手を選ばない強さ</strong>を持った
             <strong>現最強のAI</strong>です。
           </p>
         </article>
@@ -174,10 +177,11 @@
           </header>
           <p class="ai-persona">学習と進化がたどり着いた、もう一つの冷徹</p>
           <p>
-            戦術の「選び方」そのものを機械学習で作った個体。まず当時の王者(現Veteran AI)の判断を模倣学習で
+            戦術の「選び方」そのものを機械学習で作った個体。まず当時の最強(現Veteran AI)の判断を模倣学習で
             <strong>97%再現</strong>し、さらにCMA-ES(進化戦略)で磨いて、勝率は王者をわずかに上回りました。
             ただしその強さの正体は<strong>フェイント(見せ場)の封印</strong>であり、パラメータ最適化でそれをやったのがCold AI、
             <strong>学習+進化で独立に同じ結論に達した</strong>のがこのFrost AIです。
+            勝率だけを見るのであれば、このAIは現最強としたCrown AIすら上回ります。
           </p>
         </article>
         <article class="ai-card">
@@ -266,7 +270,7 @@
     <section class="download">
       <h2 class="section-label">Battle Data</h2>
       <p class="data-desc">
-        現行ビルドで収録した対戦データ(1試合1行・<strong>4,760試合</strong>)を公開しています。
+        現行ビルドで収録した対戦データ(1試合1行・<strong>6,097試合</strong>)を公開しています。
         <code>ai_type</code>列は上のAI Lineupのラベルに、<code>opponent</code>列は
         対戦相手(<code>player</code>=人間 / <code>bot_○○</code>=各性格のボット)に対応します。
         勝敗・両者の命中率・戦術ごとの滞在時間・フェイントの効果測定などが1行に入っており、pandasでそのまま読めます。
@@ -274,38 +278,94 @@
       <p class="data-desc">
         評価用のボットは<strong>5種類の性格</strong>を用意しました。単一の相手に対する勝率は、
         その相手の癖への適応度でもあるからです。実際、1種類だけで測っていた頃は上位7体が
-        78〜82%に張り付いて<strong>統計的に区別できなくなっていました</strong>が、
+        78〜82%に張り付いて統計的に区別できなくなっていましたが、
         性格を増やした途端、同じAI群が<strong>50%〜97%に展開</strong>しました。
       </p>
       <div class="result-table-wrap">
         <table class="result-table">
-          <caption>敵AI × 相手の性格 別の勝率(全9種・4,760試合)</caption>
+          <caption>敵AI × 相手の性格 別の勝率(全9種・対ボット6,068試合)</caption>
           <thead>
             <tr><th>敵AI</th><th>突撃</th><th>回避</th><th>標準</th><th>初心者</th><th>置き撃ち</th><th>合計</th><th>最大差</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Crown AI(v5)</strong></td><td>78%</td><td>77%</td><td>81%</td><td>81%</td><td>89%</td><td><strong>81%</strong></td><td><strong>11pt</strong></td></tr>
-            <tr><td>Frost AI(v4)</td><td>77%</td><td>74%</td><td>80%</td><td>89%</td><td>93%</td><td>81%</td><td>19pt</td></tr>
-            <tr><td>Snipe AI(v3)</td><td>75%</td><td>72%</td><td>73%</td><td>86%</td><td>95%</td><td>78%</td><td>23pt</td></tr>
-            <tr><td>Base AI</td><td>55%</td><td>74%</td><td>79%</td><td>94%</td><td>97%</td><td>77%</td><td>42pt</td></tr>
-            <tr><td>Veteran AI(v1)</td><td>66%</td><td>56%</td><td>74%</td><td>83%</td><td>83%</td><td>73%</td><td>27pt</td></tr>
-            <tr><td>Cold AI</td><td>59%</td><td>65%</td><td>72%</td><td>83%</td><td>96%</td><td>73%</td><td>36pt</td></tr>
-            <tr><td>Chaos AI</td><td>52%</td><td>50%</td><td>65%</td><td>79%</td><td>90%</td><td>65%</td><td>40pt</td></tr>
-            <tr><td>Craft AI</td><td>51%</td><td>56%</td><td>64%</td><td>83%</td><td>69%</td><td>64%</td><td>32pt</td></tr>
+            <tr><td>Frost AI(v4)</td><td>76%</td><td>75%</td><td>80%</td><td>90%</td><td>96%</td><td>82%</td><td>21pt</td></tr>
+            <tr><td><strong>Crown AI(v5)</strong></td><td>75%</td><td>76%</td><td>79%</td><td>81%</td><td>89%</td><td><strong>80%</strong></td><td><strong>14pt</strong></td></tr>
+            <tr><td>Snipe AI(v3)</td><td>78%</td><td>70%</td><td>73%</td><td>86%</td><td>94%</td><td>79%</td><td>24pt</td></tr>
+            <tr><td>Base AI</td><td>56%</td><td>71%</td><td>78%</td><td>94%</td><td>92%</td><td>77%</td><td>38pt</td></tr>
+            <tr><td>Cold AI</td><td>62%</td><td>66%</td><td>73%</td><td>82%</td><td>93%</td><td>74%</td><td>31pt</td></tr>
+            <tr><td>Veteran AI(v1)</td><td>62%</td><td>59%</td><td>73%</td><td>85%</td><td>87%</td><td>73%</td><td>28pt</td></tr>
+            <tr><td>Chaos AI</td><td>51%</td><td>52%</td><td>61%</td><td>82%</td><td>89%</td><td>66%</td><td>38pt</td></tr>
+            <tr><td>Craft AI</td><td>49%</td><td>59%</td><td>65%</td><td>84%</td><td>72%</td><td>65%</td><td>35pt</td></tr>
           </tbody>
         </table>
       </div>
       <p class="play-note">
-        <strong>平均は性質を隠します。</strong>合計勝率では Base AI 77% &gt; Veteran AI 73% ですが、
-        突撃してくる相手に限れば Veteran 66% &gt; Base 55% と逆転する。
-        単純な脳筋AI(Base)は相手の質に42ポイントも左右されるのに対し、
-        <strong>Crown AIの振れ幅は11ポイント</strong> — どんな相手にも通用する強さが、
-        「最強」と「最高」を同時に満たせた理由だと考えています。
-        なお本データは新しい地形生成ルールで取り直したもので、対人戦のデータはまだ含まれていません。
+        合計だけを見ると Frost AI 82% が Crown AI 80% を上回っていますが、この差は
+        <strong>統計的には区別できない程度の差</strong>(差2.4ポイント、p=0.23)です。
+        さらにそれは残像フェイントという、<strong>このゲームならではの要素の封印</strong>によって得た力であり、
+        <strong>このゲームの敵AIとして最強</strong>とするには不適格であると判断したため、Crown AIを現最強のAIとしています。
+        なお対人戦のデータも含まれていますが、こちらはまだまだデータ数が少ないため、結論を出すにはまだ足りません。
       </p>
-      <!-- 別リポジトリに置いたため、download 属性はブラウザに無視される（クロスオリジン）。
-           CSV は Content-Type: text/csv で配信され、ブラウザ側でダウンロードされる -->
-      <a class="play-button" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/battle_data.csv">Download battle_data.csv</a>
+      <a class="play-button" href="./battle_data.csv">Download battle_data.csv</a>
+    </section>
+
+    <section>
+      <h2 class="section-label">Code</h2>
+      <p>
+        この作品に置いて重要な6ファイルです。
+      </p>
+
+      <p class="code-files-intro">Unity側 — AIの頭脳と、測る仕組み(C#)</p>
+      <!-- 引き出し式。コードは開いたときに code/ から読み込む(ルートの code-view.js)。
+           JS が動かない環境でも「GitHub で見る」から読める -->
+      <ul class="code-files">
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">EnemyAIPro.cs</span><span class="code-desc">AIの頭脳。7戦術の採点・選択と実行。公平性ルール(判断周期・反応遅延・情報制限)もここで構造的に担保する</span></summary>
+            <pre class="code-block"><code data-src="code/EnemyAIPro.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/EnemyAIPro.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">OptimizationRunner.cs</span><span class="code-desc">Python連携の受け口。params.jsonを検知して敵AIに適用し、自動対戦の結果をresult.jsonへ返す</span></summary>
+            <pre class="code-block"><code data-src="code/OptimizationRunner.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/OptimizationRunner.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">MatchMetrics.cs</span><span class="code-desc">1試合1行のCSVを書き出す計測係。命中数を「弾側」ではなく「被弾側」で数えるなど、取りこぼさない工夫を入れてある</span></summary>
+            <pre class="code-block"><code data-src="code/MatchMetrics.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/MatchMetrics.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+      </ul>
+
+      <p class="code-files-intro">Python側 — 最適化と学習</p>
+      <ul class="code-files">
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">optimize.py</span><span class="code-desc">Optunaによる立ち回りパラメータの探索。公平性に関わる値は探索空間に入れない(報酬ハッキング対策)</span></summary>
+            <pre class="code-block"><code data-src="code/optimize.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/optimize.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">train_tactic_policy.py</span><span class="code-desc">模倣学習。「観測18次元 → 選んだ戦術」を線形softmaxで学習し、手書きの脳を再現する</span></summary>
+            <pre class="code-block"><code data-src="code/train_tactic_policy.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/train_tactic_policy.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">evolve_policy.py</span><span class="code-desc">CMA-ESで方策の重み133次元を進化させる。OOMで中断しても続きから走る再開設計と、上位候補の多段追試つき</span></summary>
+            <pre class="code-block"><code data-src="code/evolve_policy.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/evolve_policy.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+      </ul>
     </section>
 
     <section>
@@ -326,5 +386,7 @@
   </main>
 
   <footer><p>© 2026 Shopon</p></footer>
+
+  <script defer src="../../code-view.js"></script>
 </body>
 </html>

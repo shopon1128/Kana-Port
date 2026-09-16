@@ -340,6 +340,120 @@ main section > p + p { margin-top: var(--sp-m); }
   margin-top: var(--sp-m);
 }
 
+/* ---------- 引き出し式のコード表示 ----------
+   開閉は <details> のネイティブ機能。JS(code-view.js)はコードの読み込みだけを担当する。
+   スタイルは Others/Model_pl と揃えてあり、サイト内でコードの見え方を統一する */
+.code-block {
+  border:     1px solid var(--line);
+  background: var(--surface);
+  padding:    var(--sp-m);
+  overflow-x: auto;   /* 長い行はページを広げずブロック内で横スクロールさせる */
+}
+
+.code-block code {
+  display:     block;
+  background:  transparent;  /* shared.css の inline code の面を打ち消す */
+  padding:     0;
+  font-size:   13px;
+  line-height: 1.7;
+  white-space: pre;
+  word-break:  normal;       /* shared.css の break-all はコードでは折り返しが汚くなる */
+}
+
+.code-files-intro {
+  margin-top: var(--sp-l);
+  font-size:  14px;
+  color:      var(--muted);
+}
+
+.code-files {
+  list-style:     none;
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--sp-xs);
+  margin-top:     var(--sp-s);
+}
+
+.code-files li {
+  border: 1px solid var(--line);
+}
+
+.code-drawer summary {
+  display:       flex;
+  flex-wrap:     wrap;
+  align-items:   baseline;
+  gap:           var(--sp-s);
+  padding:       var(--sp-s) var(--sp-m);
+  padding-right: 2.5rem;   /* 右端の +/− と文字が重ならないように空ける */
+  cursor:        pointer;
+  position:      relative;
+  list-style:    none;     /* 既定の三角マーカーを消す */
+  transition:    background 0.15s;
+}
+
+/* Safari / 旧Chrome 用のマーカー消し */
+.code-drawer summary::-webkit-details-marker { display: none; }
+
+.code-drawer summary:hover { background: var(--surface); }
+
+.code-drawer summary:focus-visible {
+  outline:        2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* 開閉状態の記号。装飾なので読み上げ対象にしない */
+.code-drawer summary::after {
+  content:     '+';
+  position:    absolute;
+  right:       var(--sp-m);
+  font-family: var(--font-mono);
+  color:       var(--muted);
+}
+
+.code-drawer[open] summary::after { content: '−'; }
+
+.code-drawer[open] summary { border-bottom: 1px solid var(--line); }
+
+.code-name {
+  font-family: var(--font-mono);
+  font-size:   14px;
+  color:       var(--fg);
+  transition:  color 0.15s;
+}
+
+.code-drawer summary:hover .code-name { color: var(--accent); }
+
+.code-desc {
+  font-size:   13px;
+  line-height: 1.6;
+  color:       var(--muted);
+}
+
+/* 引き出しの中身。長いファイルでページが伸びきらないよう高さを制限する */
+.code-drawer .code-block {
+  border:     none;
+  max-height: 60vh;
+  overflow:   auto;
+}
+
+.code-foot {
+  padding:   0 var(--sp-m) var(--sp-m);
+  font-size: 12px;
+}
+
+.code-foot a {
+  color:           var(--muted);
+  text-decoration: none;
+  border-bottom:   1px solid var(--line-ui);
+  transition:      color 0.15s, border-color 0.15s;
+}
+
+.code-foot a:hover,
+.code-foot a:focus-visible {
+  color:        var(--accent);
+  border-color: var(--accent);
+}
+
 /* ---------- レスポンシブ ---------- */
 @media (max-width: 768px) {
   main { gap: var(--sp-xl); }
