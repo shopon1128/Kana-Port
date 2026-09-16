@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Claude Code に Blender の Python API を操作させ、SDキャラクターの3Dモデルを手続き的に生成した記録。寸法をデータとして持つ設計と、レンダリングを見ながら修正を回した試行錯誤を公開しています。">
+  <title>pl – Claude Codeを用いた3Dモデルの生成 | Personal Works</title>
+  <link rel="stylesheet" href="../../shared.css">
+  <link rel="stylesheet" href="model_pl.css">
+</head>
+<body>
+  <header>
+    <a class="back-link" href="../index.html">← 作品一覧へ戻る</a>
+    <h1>pl — Claude Codeによる3Dモデル生成</h1>
+    <p class="header-sub">手でモデリングせず、Blenderを動かすPythonコードとして3Dキャラクターを作る</p>
+  </header>
+
+  <main>
+    <section class="hero" aria-label="完成したモデル">
+      <img src="images/final_front.jpg" alt="完成したSDキャラクター pl の正面ビュー" width="560" height="840">
+      <img src="images/final_three_quarter.jpg" alt="pl の斜め前方からのビュー" width="560" height="840">
+      <img src="images/final_face.jpg" alt="pl の顔の寄り。前髪と表情" width="560" height="840">
+    </section>
+
+    <section>
+      <h2 class="section-label">About</h2>
+      <p>
+        SDキャラクターの3Dモデルを、<strong>Blenderを一度も手で触らずに</strong>作った記録です。
+        モデルは <code>.blend</code> ファイルではなく<strong>生成するPythonコード</strong>として存在し、
+        コマンド1本で実行するとメッシュ・顔テクスチャ・ボーンが組み上がり、
+        Unity向けのFBXまで書き出されます。
+      </p>
+      <p>
+        キャラクターの参考画像を用意し、Claude CodeでPythonコードを生成しました。
+        出てきたモデルをUnity上で確認し、「顎が尖りすぎ」「前髪が牙に見える」といった問題点を伝え、壁打ちしていきました。
+      </p>
+      <div class="stat-row">
+        <div class="stat"><span class="stat-num">7,632</span><span class="stat-label">頂点</span></div>
+        <div class="stat"><span class="stat-num">15,132</span><span class="stat-label">三角形</span></div>
+        <div class="stat"><span class="stat-num">19</span><span class="stat-label">ボーン</span></div>
+        <div class="stat"><span class="stat-num">14</span><span class="stat-label">マテリアル</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">Why Code</h2>
+      <p>
+        手でモデリングすると、「頭をもう少し丸く」の一言が頂点の引き直しになります。
+        コードで持てば、それは<strong>数値を1行変えて再実行するだけ</strong>になります。
+        実際このモデルは、顔の位置・髪の分け目・下着の形まで、すべて
+        <code>pl_spec.py</code> というデータファイルの数値で決まっています。
+      </p>
+      <div class="split">
+        <div class="split-item">
+          <h3>データとロジックを分ける</h3>
+          <p>
+            寸法・配色はすべて <code>pl_spec.py</code> に集約し、形を変えるときは原則このファイルだけを編集します。
+            メッシュを組む処理（<code>pl_mesh.py</code>）は「与えられた断面を積み上げる」ことだけを知っていて、
+            キャラクターの見た目については何も知りません。
+          </p>
+        </div>
+        <div class="split-item">
+          <h3>二重に持たない</h3>
+          <p>
+            あご・頭頂・目・口の高さは、頭の半径から<strong>導出</strong>します。
+            手打ちすると、頭の寸法を変えたときに顔だけが取り残されて静かにズレるためです。
+            実際に一度これで耳が足元に生成される事故が起きました（後述）。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">How It Works</h2>
+      <p>4つのモジュールが、それぞれ独立した役割を持っています。</p>
+      <ol class="steps">
+        <li>
+          <strong>寸法データ（pl_spec.py）</strong> —
+          参考画像をトレースし、全高1.20mに正規化した実寸で保持。約2.6頭身のSD体型。
+        </li>
+        <li>
+          <strong>メッシュ生成（pl_mesh.py）</strong> —
+          「同じ頂点数の閉ループ（リング）を積み上げて橋渡しする」ロフト方式で、
+          頭・髪・服・手足をすべて組み立てます。球や立方体を変形させるより、
+          断面をデータで持てるぶん結果が予測できます。
+        </li>
+        <li>
+          <strong>顔テクスチャ（pl_face.py）</strong> —
+          目・眉・口・頬をnumpyで描画。アニメ調の顔は立体で作るより<strong>平面の絵として貼る</strong>ほうが破綻しません。
+          描画はすべてメートル座標で行い、解像度やUVの縦横比が変わっても顔が歪まないようにしています。
+        </li>
+        <li>
+          <strong>リグ（pl_rig.py）</strong> —
+          Unity Humanoid互換の19ボーン。Blenderの自動ウェイトは使わず、
+          各パーツの生成側が「どのボーンに何割」を返す関数を持ち、明示的に割り当てます。
+        </li>
+      </ol>
+      <p class="note">
+        Blenderの自動ウェイトは、ボーンから離れた独立した塊を拾わずウェイト無し頂点を残すことがあります。
+        Unityの警告で気づくのでは遅いので、<strong>書き出し前にスクリプト内で全頂点のウェイトを検証</strong>しています。
+        同じ考え方で、境界辺（面が1つしか接していない辺）の数も毎回数え、穴がゼロであることを機械的に確認しています。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-label">Trial and Error</h2>
+      <p>
+        以下はすべて実際に出てきた中間状態です。
+        手でモデリングしていれば起きない種類の失敗が多く、
+        <strong>「見えている不自然さ」と「コード上の原因」が直感的に結びつかない</strong>ところが、この作り方の難しさでした。
+      </p>
+
+      <article class="case">
+        <div class="case-img">
+          <img src="images/step_cone.jpg" alt="髪が頭頂で円錐状に尖ってしまった初期の状態" width="560" height="840" loading="lazy">
+        </div>
+        <div class="case-body">
+          <h3>髪が円錐に尖る</h3>
+          <p class="case-symptom">症状 — 最初の生成。頭頂で髪が三角に尖った。</p>
+          <p>
+            髪の半径を「その高さの頭の半径＋一定の浮き量」で求めていたのが原因です。
+            頭頂では頭の半径が0になるため、髪の半径が浮き量だけになって尖ります。
+            正しくは<strong>頭を一回り大きくした楕円体</strong>の、その高さでの半径を使います。
+          </p>
+        </div>
+      </article>
+
+      <article class="case">
+        <div class="case-img">
+          <img src="images/step_covered.jpg" alt="髪が顔を完全に覆ってしまった状態" width="560" height="840" loading="lazy">
+        </div>
+        <div class="case-body">
+          <h3>顔が髪で完全に塞がる</h3>
+          <p class="case-symptom">症状 — 顔を出すための開口部が、幅0のまま生成された。</p>
+          <p>
+            補間関数のゼロ除算対策が原因でした。
+            <code>max(edge1 - edge0, 1e-9)</code> と書いていたため、
+            「高い位置から下がるほど1に近づく」という降順の指定をしたときに分母の符号ごと潰れ、
+            常に0を返していました。<strong>例外もエラーも出ず、ただ0が返るだけ</strong>なので発見が遅れます。
+            同じバグが独立に2ファイルへ書かれていました。
+          </p>
+        </div>
+      </article>
+
+      <article class="case">
+        <div class="case-img">
+          <img src="images/step_fang.jpg" alt="前髪が牙のような鋭い三角形の列になった状態" width="560" height="840" loading="lazy">
+        </div>
+        <div class="case-body">
+          <h3>前髪が牙になる</h3>
+          <p class="case-symptom">症状 — 毛束感を出そうとして、額に牙が並んだ。</p>
+          <p>
+            毛束の区切りを<strong>シルエットの切り込み</strong>で表現したのが誤りでした。
+            加えて三角波を使っていたため、折れ点がそのまま輪郭の角になっていました。
+            切り込みを48mm→13mmに浅くし、波を余弦に変え、
+            毛束感は<strong>手前への張り出し（面の起伏）</strong>で出す方式に変更。
+            陰影の差として読まれるので、1枚のパーツのまま毛の流れを表現できます。
+          </p>
+        </div>
+      </article>
+
+      <article class="case case--pair">
+        <div class="case-img case-img--pair">
+          <figure>
+            <img src="images/step_neck_before.jpg" alt="コートの首穴のふちが首を囲む板のように見えている状態" width="700" height="700" loading="lazy">
+            <figcaption>修正前</figcaption>
+          </figure>
+          <figure>
+            <img src="images/step_neck_after.jpg" alt="首から肩へ肌が連続し、板が消えた状態" width="700" height="700" loading="lazy">
+            <figcaption>修正後</figcaption>
+          </figure>
+        </div>
+        <div class="case-body">
+          <h3>首元に板が現れる</h3>
+          <p class="case-symptom">症状 — 首のまわりに、バケツの縁のような板が見える。</p>
+          <p>
+            コートの首穴の扱いで3回失敗しました。
+            <strong>開けっ放し</strong>にすると真上からコートの内側が丸見えになり、
+            <strong>蓋をする</strong>と首を囲む板ができ、
+            <strong>首に密着させる</strong>とコートが首に貼り付いて見えます。
+            正解は「穴は首から離したまま、素体（肩）を穴の高さより上まで伸ばす」でした。
+            穴から覗くのが肌になるので、塞がなくても内側が見えません。
+          </p>
+          <p class="case-lesson">
+            服に穴が開いていて中が見えるなら、蓋ではなく<strong>中身</strong>を作る。
+          </p>
+        </div>
+      </article>
+
+      <article class="case case--pair">
+        <div class="case-img case-img--pair">
+          <figure>
+            <img src="images/step_underwear_before.jpg" alt="下着の股から肌が覗いている状態" width="600" height="600" loading="lazy">
+            <figcaption>修正前</figcaption>
+          </figure>
+          <figure>
+            <img src="images/step_underwear_after.jpg" alt="股まで白い布で覆われた状態" width="620" height="620" loading="lazy">
+            <figcaption>修正後</figcaption>
+          </figure>
+        </div>
+        <div class="case-body">
+          <h3>正面からは見えない穴</h3>
+          <p class="case-symptom">症状 — 正面・側面・背面では気づかない位置に、肌が覗く隙間が残る。</p>
+          <p>
+            素体の胴の底面が平らな板で、それが下着の脚ぐりより下に出ていました。
+            正面ビューにはまったく写らないため、<strong>スカートを非表示にして真下から撮る</strong>確認を
+            別途行って初めて見つかりました。
+          </p>
+          <p class="case-lesson">
+            穴は「見えない角度」にできる。プレビューの角度を増やすだけでなく、
+            境界辺を数えて機械的に検出するほうが確実。
+          </p>
+        </div>
+      </article>
+
+      <article class="case">
+        <div class="case-body case-body--full">
+          <h3>耳だけが足元に生成される</h3>
+          <p class="case-symptom">症状 — 床の近くに白い破片が2つ浮いている。原因の見当もつかない。</p>
+          <p>
+            顔パーツの高さを「あごから頭頂までの比」で持つよう改善した直後に起きました。
+            耳の定義が <code>{"z": LEVEL["ear"]}</code> と書かれていたのですが、
+            <code>LEVEL["ear"]</code> はファイル下部で導出される値で、
+            耳の定義時点ではプレースホルダの <code>0.0</code> でした。
+            Pythonは辞書リテラルをその場で確定させるため、あとで更新しても反映されません。
+            <strong>耳だけが原点＝足元</strong>に作られていました。
+          </p>
+          <p class="case-lesson">
+            パーツごとのバウンディングボックスを出す使い捨てスクリプトで1分で特定できた。
+            原因不明の描画物は、まず「どのパーツか」を機械的に切り分けるのが速い。
+            以降、導出値が <code>0.0</code> のまま残っていたら例外を投げるガードを入れている。
+          </p>
+        </div>
+      </article>
+    </section>
+
+    <section>
+      <h2 class="section-label">Working with Claude Code</h2>
+      <p>
+        この作り方で効いたのは、<strong>AIが自分の出力を見られる</strong>ことでした。
+        Blenderをヘッドレスで実行してレンダリング画像を書き出せるので、
+        Claude自身が結果を見て「前髪が板に見える」と判断し、次の修正へ進めます。
+        私が指摘したのは、そこから漏れた「印象」の部分です。
+      </p>
+      <div class="split">
+        <div class="split-item">
+          <h3>人間が見たもの</h3>
+          <ul class="plain-list">
+            <li>顎が尖りすぎ／もっと丸顔でいい</li>
+            <li>表情が勝気。もっとおとなしい印象に</li>
+            <li>前髪がサイドの前に来ているのが不自然</li>
+            <li>下着がおむつに見える</li>
+          </ul>
+        </div>
+        <div class="split-item">
+          <h3>コード側の原因だったもの</h3>
+          <ul class="plain-list">
+            <li>顔を球面に貼っていたため、目から顎へ面が奥へ逃げて<strong>顔全体が下を向いていた</strong></li>
+            <li>上まぶた・目尻の跳ね上げ・眉の角度・口の大きさの4点の組み合わせ</li>
+            <li>前髪の覆う角度が、髪本体に開けた穴より4度広かった</li>
+            <li>丈が長い・幅が広い・脚ぐりが浅い、の3つが揃っていた</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note">
+        印象の言葉と原因が1対1で対応しないのが、この工程のいちばん難しいところでした。
+        「顔が下を向いている」は頭を傾けた覚えがないので原因を探しにくく、
+        実際には<strong>断面の取り方</strong>の問題でした。回転ではなく形状の問題だと気づくのに時間がかかっています。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-label">Code</h2>
+      <p>
+        実際に動いているコードをそのまま公開しています。
+        寸法データ（<code>pl_spec.py</code>）だけを読めば、
+        このキャラクターがどんな数値でできているかが分かるようにしてあります。
+      </p>
+
+      <h3 class="code-caption">寸法はすべてデータとして持つ（pl_spec.py 抜粋）</h3>
+      <pre class="code-block"><code># 顔パーツの高さは、あご(0.0)から頭頂(1.0)までの比で持つ。
+# 絶対値で持つと、頭の寸法を変えたときに顔だけ取り残されて位置がずれる。
+# 比を小さくするほどパーツが下に寄り、額が広くなって幼い印象になる。
+FACE_LEVEL_RATIO = {
+    "mouth": 0.138,
+    "eye":   0.300,
+    "brow":  0.468,
+    "ear":   0.196,  # アニメ調では目より少し下
+    "nose":  0.216,
+    "blush": 0.196,
+}</code></pre>
+
+      <h3 class="code-caption">失敗がそのままコメントとして残っている（pl_mesh.py 抜粋）</h3>
+      <pre class="code-block"><code>def _HairShellRadius(a_z):
+    """その高さでの髪の外側半径(x, y)。
+
+    「その高さの頭蓋の半径 ＋ 一定の浮き量」で求めてはいけない。
+    頭頂では頭蓋の半径が0になるため、髪の半径が浮き量だけになって円錐状に尖る。
+    正しくは **頭蓋を一回り大きくした楕円体** の、その高さでの半径を使う。
+
+    頭蓋の最大幅より下では、ボブは頭に沿わず真下へ落ちるので半径を一定に保つ。
+    """</code></pre>
+
+      <h3 class="code-caption">毛束感はシルエットではなく面の起伏で出す（pl_mesh.py 抜粋）</h3>
+      <pre class="code-block"><code>def _BangWave(a_theta):
+    """毛束の位置を表す 0..1 の波。1が毛束の中心、0が毛束の境目。
+
+    三角波（|frac*2-1|）を使うと折れ点がそのままシルエットの角になり、
+    深い切り込みと組み合わさって「牙の列」に見える。
+    余弦なら継ぎ目で傾きが0になるので、輪郭が滑らかにつながる。
+    """</code></pre>
+
+      <p class="code-files-intro">生成スクリプト一式（Python / Blender 3.4.1 で動作確認）</p>
+      <ul class="code-files">
+        <li><a href="code/pl_spec.py">pl_spec.py</a><span>寸法・配色データのみ。形を変えるときはここだけ編集する</span></li>
+        <li><a href="code/pl_mesh.py">pl_mesh.py</a><span>メッシュ生成。ロフト・頭部形状・髪・衣装</span></li>
+        <li><a href="code/pl_face.py">pl_face.py</a><span>顔テクスチャをnumpyで描画</span></li>
+        <li><a href="code/pl_rig.py">pl_rig.py</a><span>Humanoidボーンと頂点グループ、ウェイト検証</span></li>
+        <li><a href="code/build_pl.py">build_pl.py</a><span>エントリポイント。組み立て・検証・FBX書き出し・レンダリング</span></li>
+      </ul>
+      <p class="code-files-intro">切り分け用の使い捨てスクリプト</p>
+      <ul class="code-files">
+        <li><a href="code/test_face.py">test_face.py</a><span>顔テクスチャだけを出力して確認する</span></li>
+        <li><a href="code/test_neck.py">test_neck.py</a><span>首元に何のパーツが写っているかを列挙し、部分レンダーを撮る</span></li>
+        <li><a href="code/test_coat_radius.py">test_coat_radius.py</a><span>コートの外表面の実寸を測る</span></li>
+        <li><a href="code/probe.py">probe.py</a><span>Blender実行環境の確認</span></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="section-label">Gallery</h2>
+      <div class="gallery">
+        <figure>
+          <img src="images/final_front.jpg" alt="pl 正面" width="560" height="840" loading="lazy">
+          <figcaption>正面</figcaption>
+        </figure>
+        <figure>
+          <img src="images/final_side.jpg" alt="pl 側面" width="560" height="840" loading="lazy">
+          <figcaption>側面</figcaption>
+        </figure>
+        <figure>
+          <img src="images/final_back.jpg" alt="pl 背面" width="560" height="840" loading="lazy">
+          <figcaption>背面</figcaption>
+        </figure>
+        <figure>
+          <img src="images/final_three_quarter.jpg" alt="pl 斜め前方" width="560" height="840" loading="lazy">
+          <figcaption>斜め前方</figcaption>
+        </figure>
+      </div>
+      <p class="note">
+        すべて生成スクリプトが自動で書き出したプレビューです。
+        正面・側面・背面に加え、<strong>俯瞰</strong>と<strong>あおり</strong>のビューを用意しています。
+        首元の板も下着の隙間も、正面・側面・背面には写らなかったためです。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-label">Tech</h2>
+      <div class="tech-tags">
+        <span class="tag">Claude Code</span>
+        <span class="tag">Blender</span>
+        <span class="tag">Python</span>
+        <span class="tag">bpy / bmesh</span>
+        <span class="tag">numpy</span>
+        <span class="tag">FBX</span>
+        <span class="tag">Unity</span>
+        <span class="tag">Humanoid Rig</span>
+      </div>
+    </section>
+  </main>
+
+  <footer><p>© 2026 Shopon</p></footer>
+</body>
+</html>

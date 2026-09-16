@@ -1,0 +1,353 @@
+/* ============================================================
+   model_pl.css — pl（Claude Codeによる3Dモデル生成）紹介ページ専用
+   ------------------------------------------------------------
+   teamLab 準拠。色を持たず、枠線1pxと余白だけで階層をつくる。
+   本ページは仕様書が想定していない「長文＋レンダリング画像の比較」を
+   含むため、可読性のために以下2点だけ意図的に外している:
+     ・コンテナ幅を狭める
+     ・長文の line-height を 1.6 → 1.8 にする
+   ============================================================ */
+
+/* 長文中心のページなので、一覧より狭い読み幅に落とす */
+body { max-width: var(--container-read); }
+
+main {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--sp-2xl);
+}
+
+/* flex/grid の子は既定で min-width:auto になり、中身の最小幅より狭くなれない。
+   コードブロックは横に長い行を含むため、0 にしないと section が縮まず、
+   .code-block の overflow-x:auto が発動せずページ全体が横へはみ出す */
+main > section { min-width: 0; }
+
+/* 長文段落。teamLab の規定は 1.6 だが、同サイトに長文は存在しない。
+   日本語の長文は 1.7〜2.0 が読みやすいため 1.8 を採用する */
+main p {
+  font-size:   16px;
+  line-height: 1.8;
+}
+
+main section > p + p { margin-top: var(--sp-m); }
+
+/* ---------- ヒーロー ----------
+   完成形を3枚並べる。レンダリングの背景が無彩色なので、
+   枠線を付けず画像同士の間隔だけで区切る */
+.hero {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--sp-s);
+}
+
+.hero img {
+  width:      100%;
+  height:     auto;
+  background: var(--surface);  /* 読み込み前の面。画像と同系の暗さにする */
+}
+
+/* ---------- 数値 ---------- */
+.stat-row {
+  display:    flex;
+  flex-wrap:  wrap;
+  gap:        var(--sp-s);
+  margin-top: var(--sp-l);
+}
+
+.stat {
+  flex:      1 1 120px;
+  border:    1px solid var(--line);
+  padding:   var(--sp-m);
+  min-width: 0;
+}
+
+.stat-num {
+  display:     block;
+  font-family: var(--font-mono);
+  font-size:   22px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.stat-label {
+  display:        block;
+  margin-top:     var(--sp-xs);
+  font-size:      12px;
+  letter-spacing: 0.02em;
+  color:          var(--muted);
+}
+
+/* ---------- 2カラムの補足 ---------- */
+.split {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   var(--sp-m);
+  margin-top:            var(--sp-m);
+}
+
+.split-item {
+  border:    1px solid var(--line);
+  padding:   var(--sp-m) var(--sp-m) var(--sp-l);
+  min-width: 0;
+}
+
+.split-item h3 {
+  font-size:     15px;
+  font-weight:   700;
+  line-height:   1.5;
+  margin-bottom: var(--sp-s);
+}
+
+.split-item p {
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
+}
+
+.plain-list {
+  list-style:  none;
+  margin-top:  var(--sp-s);
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
+}
+
+.plain-list li {
+  padding-left: var(--sp-m);
+  position:     relative;
+}
+
+/* 記号ではなくハイフンで箇条を示す（装飾を足さない方針） */
+.plain-list li::before {
+  content:  "—";
+  position: absolute;
+  left:     0;
+  color:    var(--line-ui);
+}
+
+/* ---------- 手順 ---------- */
+.steps {
+  list-style:     none;
+  counter-reset:  step;
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--sp-s);
+  margin-top:     var(--sp-m);
+}
+
+.steps li {
+  counter-increment: step;
+  border:      1px solid var(--line);
+  padding:     var(--sp-m) var(--sp-m) var(--sp-m) 56px;
+  position:    relative;
+  font-size:   14px;
+  line-height: 1.8;
+}
+
+.steps li::before {
+  content:     counter(step, decimal-leading-zero);
+  position:    absolute;
+  left:        var(--sp-m);
+  top:         var(--sp-m);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size:   13px;
+  color:       var(--accent);
+}
+
+/* ---------- 補足文 ---------- */
+.note {
+  margin-top:  var(--sp-m);
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
+}
+
+/* ---------- 試行錯誤のケース ----------
+   画像と説明を横に並べる。画像が主役なので左に置く */
+.case {
+  display:               grid;
+  grid-template-columns: 220px 1fr;
+  gap:                   var(--sp-l);
+  align-items:           start;
+  border-top:            1px solid var(--line);
+  padding-top:           var(--sp-l);
+  margin-top:            var(--sp-l);
+}
+
+/* 比較2枚のときは画像側を広く取る */
+.case--pair { grid-template-columns: 300px 1fr; }
+
+.case-img { min-width: 0; }
+
+.case-img img {
+  width:      100%;
+  height:     auto;
+  background: var(--surface);
+}
+
+/* 修正前・修正後の2枚を縦に積む。横並びだと1枚が小さくなりすぎる */
+.case-img--pair {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--sp-s);
+}
+
+.case-img--pair figcaption {
+  margin-top:     var(--sp-xs);
+  font-size:      12px;
+  letter-spacing: 0.02em;
+  color:          var(--muted);
+}
+
+.case-body { min-width: 0; }
+
+/* 画像を持たないケースは本文を全幅に広げる */
+.case-body--full { grid-column: 1 / -1; }
+
+.case-body h3 {
+  font-size:     17px;
+  font-weight:   700;
+  line-height:   1.5;
+  margin-bottom: var(--sp-s);
+}
+
+.case-body p {
+  font-size:   14px;
+  line-height: 1.8;
+}
+
+.case-body p + p { margin-top: var(--sp-s); }
+
+/* 症状。何が見えていたかを最初に置く */
+.case-symptom {
+  color:      var(--muted);
+  border-left: 1px solid var(--line-ui);
+  padding-left: var(--sp-s);
+}
+
+/* そのケースから得た指針。1行で言い切る */
+.case-lesson {
+  border: 1px solid var(--line);
+  padding: var(--sp-s) var(--sp-m);
+  color:   var(--fg);
+}
+
+/* ---------- コード ---------- */
+.code-caption {
+  font-size:     14px;
+  font-weight:   700;
+  line-height:   1.5;
+  margin-top:    var(--sp-l);
+  margin-bottom: var(--sp-s);
+  color:         var(--muted);
+}
+
+.code-block {
+  border:     1px solid var(--line);
+  background: var(--surface);
+  padding:    var(--sp-m);
+  overflow-x: auto;   /* 長い行はページを広げずブロック内で横スクロールさせる */
+}
+
+.code-block code {
+  display:     block;
+  background:  transparent;  /* shared.css の inline code の面を打ち消す */
+  padding:     0;
+  font-size:   13px;
+  line-height: 1.7;
+  white-space: pre;
+  word-break:  normal;       /* shared.css の break-all はコードでは折り返しが汚くなる */
+}
+
+.code-files-intro {
+  margin-top: var(--sp-l);
+  font-size:  14px;
+  color:      var(--muted);
+}
+
+.code-files {
+  list-style:     none;
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--sp-xs);
+  margin-top:     var(--sp-s);
+}
+
+.code-files li {
+  display:     flex;
+  flex-wrap:   wrap;
+  align-items: baseline;
+  gap:         var(--sp-s);
+  border:      1px solid var(--line);
+  padding:     var(--sp-s) var(--sp-m);
+}
+
+.code-files a {
+  font-family:     var(--font-mono);
+  font-size:       14px;
+  text-decoration: none;
+  border-bottom:   1px solid var(--line-ui);
+  transition:      color 0.15s, border-color 0.15s;
+}
+
+.code-files a:hover,
+.code-files a:focus-visible {
+  color:        var(--accent);
+  border-color: var(--accent);
+}
+
+.code-files span {
+  font-size:   13px;
+  line-height: 1.6;
+  color:       var(--muted);
+}
+
+/* ---------- ギャラリー ---------- */
+.gallery {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   var(--sp-s);
+  margin-top:            var(--sp-m);
+}
+
+.gallery img {
+  width:      100%;
+  height:     auto;
+  background: var(--surface);
+}
+
+.gallery figcaption {
+  margin-top:     var(--sp-xs);
+  font-size:      12px;
+  letter-spacing: 0.02em;
+  color:          var(--muted);
+}
+
+/* ---------- タグ ---------- */
+.tech-tags {
+  display:    flex;
+  flex-wrap:  wrap;
+  gap:        var(--sp-s);
+  margin-top: var(--sp-m);
+}
+
+/* ---------- レスポンシブ ---------- */
+@media (max-width: 768px) {
+  main { gap: var(--sp-xl); }
+
+  /* 3枚並びは幅が足りない。2枚＋1枚に折り返す */
+  .hero { grid-template-columns: 1fr 1fr; }
+  .hero img:last-child { grid-column: 1 / -1; }
+
+  .split { grid-template-columns: 1fr; }
+  .gallery { grid-template-columns: 1fr 1fr; }
+
+  /* 画像と本文の横並びをやめ、画像を上に置く */
+  .case,
+  .case--pair { grid-template-columns: 1fr; gap: var(--sp-m); }
+
+  /* 縦積みでは比較2枚を横に並べたほうが見比べやすい */
+  .case-img--pair { flex-direction: row; }
+  .case-img--pair figure { flex: 1 1 0; min-width: 0; }
+}
