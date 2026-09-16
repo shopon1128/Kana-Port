@@ -20,6 +20,15 @@ const RP_APP_1    = "/ShoponApps_1";    // BookLib の配布zip
 const RP_OTHERS_1 = "/ShoponOthers_1";  // CLAUDE.md、3Dモデルなどの制作物
 
 /*
+ * ソースコードを「ブラウザで読ませる」リンクの出し先。
+ * GitHub Pages は .py を application/charset なしの octet-stream で返すため、
+ * 直リンクするとブラウザは表示せずダウンロードしてしまう（実測で確認）。
+ * GitHub の blob ビューなら文字コードの推測が起きず、
+ * シンタックスハイライトと行番号も付く。
+ */
+const CODE_VIEW = "https://github.com/shopon1128/Kana-Port/blob/main";
+
+/*
  * 組み立て例（HTML に直書きする実際の値）
  *   遊ぶ      : BASE_DOMAIN + RP_GAMES_1  + "/TheMeiro/"
  *               → https://shopon1128.github.io/ShoponGames_1/TheMeiro/
