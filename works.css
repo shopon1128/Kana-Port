@@ -145,6 +145,27 @@
   color:       var(--muted);
 }
 
+/* ---------- 制作時期・制作期間 ----------
+   日付は <time datetime="2026-03"> で持つ。表示文字列（2026年3月）とは別に
+   機械可読な値を残しておくと、あとで並べ替えや絞り込みに使える */
+.work-meta {
+  display:        flex;
+  flex-wrap:      wrap;
+  gap:            var(--sp-xs) var(--sp-s);
+  font-family:    var(--font-mono);
+  font-size:      12px;
+  line-height:    1.6;
+  letter-spacing: 0.02em;
+  color:          var(--muted);
+}
+
+/* 項目の区切り。装飾なので読み上げ対象にしない */
+.work-meta span + span::before {
+  content:      '/';
+  margin-right: var(--sp-s);
+  color:        var(--line-ui);
+}
+
 /* ---------- タグ行 ---------- */
 .work-tags {
   display:    flex;
