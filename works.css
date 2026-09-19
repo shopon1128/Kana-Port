@@ -1,32 +1,144 @@
 /* ============================================================
    works.css — 作品一覧ページ共通スタイル
-               Games/index.html・Apps/index.html で使用
-               （カード一覧 + タグ絞り込みUI）
+               Games/index.html・Apps/index.html・Others/index.html で使用
+               （カード一覧 + 並び替え + タグ絞り込みUI）
    ------------------------------------------------------------
    teamLab 準拠: カードは写真直置き。枠・影・角丸・背景色を持たせず、
    写真の四角そのものを区切りとして使う。
    ============================================================ */
 
+:root {
+  /* 「並び替え」「ジャンル」などの軸ラベルの幅。
+     固定幅にして、上下の行でボタンの開始位置を揃える */
+  --axis-label-w: 5.5rem;
+}
+
 /* ============================================================
-   タグ絞り込みUI（filter.js が制御する）
-   CTA の語彙（塗りなし＋1px枠）で構成し、選択中だけ白塗りにする
+   並び替えUI（sort.js が制御する）
+   絞り込みより上に置く。件数を変えず順序だけを変える操作なので、
+   絞り込みとは行を分けて別物だと分かるようにする
    ============================================================ */
-.filter {
+.sort {
   display:       flex;
   flex-wrap:     wrap;
-  align-items:   stretch;
-  gap:           var(--sp-s);
-  margin-bottom: var(--sp-m);
+  align-items:   baseline;
+  gap:           var(--sp-s) var(--sp-m);
+  margin-bottom: var(--sp-l);
 }
 
-/* タグの軸（形式 / 技術 / 入手）の区切り。filter.js が挿入する。
-   ボタンではないので aria-hidden 済み */
-.filter-sep {
-  width:      1px;
-  background: var(--line);
-  margin:     0 var(--sp-xs);
+.sort-btns {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--sp-s);
 }
 
+/* 軸ラベルと同じ見た目。絞り込みの行ラベルと縦に揃える */
+.sort-label,
+.filter-row-label {
+  flex:           0 0 var(--axis-label-w);
+  font-size:      12px;
+  line-height:    1.6;
+  letter-spacing: 0.08em;
+  color:          var(--muted);
+}
+
+/* ============================================================
+   タグ絞り込みUI（filter.js が制御する）
+   CTA の語彙（塗りなし＋1px枠）で構成し、選択中だけアクセント塗りにする
+
+   軸ごとに1行。先頭の軸だけ常に開き、残りは .filter-more に畳む
+   ============================================================ */
+.filter {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            var(--sp-m);
+  margin-bottom:  var(--sp-m);
+}
+
+/* 「軸ラベル + ボタン列」の1行 */
+.filter-row {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--sp-s) var(--sp-m);
+  width:     100%;
+}
+
+.filter-row-btns {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--sp-s);
+  /* ラベル分を引いた残り幅で折り返す。min-width:0 が無いと
+     ボタン列が縮まず、狭い画面で横にはみ出す */
+  flex:      1 1 0;
+  min-width: 0;
+}
+
+/* ---------- 折りたたみ（形式・技術・…） ---------- */
+.filter-more {
+  width: 100%;
+  /* 開いたときに中身が上下の行と混ざらないよう、左に1本入れて束ねる */
+  border-left: 1px solid var(--line);
+  padding-left: var(--sp-m);
+}
+
+.filter-more > summary {
+  font-size:      12px;
+  line-height:    1.6;
+  letter-spacing: 0.02em;
+  color:          var(--muted);
+  cursor:         pointer;
+  /* 既定の三角は位置の調整が効かないので、自前のマーカーに置き換える */
+  list-style:     none;
+  padding:        var(--sp-xs) 0;
+  transition:     color 0.15s;
+}
+
+.filter-more > summary::-webkit-details-marker { display: none; }
+
+.filter-more > summary::before {
+  content:      '＋';
+  display:      inline-block;
+  width:        1.25em;
+  color:        var(--line-ui);
+  transition:   color 0.15s;
+}
+
+.filter-more[open] > summary::before { content: '−'; }
+
+.filter-more > summary:hover,
+.filter-more > summary:hover::before { color: var(--accent); }
+
+.filter-more[open] > summary { margin-bottom: var(--sp-m); }
+
+.filter-more .filter-row + .filter-row { margin-top: var(--sp-m); }
+
+/* ---------- 選択の一括解除 ---------- */
+/* 下の .filter-clear が display を持つため、[hidden] だけでは消えない
+   （詳細度が同じ(0,1,0)で後勝ち。.work-card[hidden] と同じ事情） */
+.filter-clear[hidden] { display: none; }
+
+.filter-clear {
+  display:         inline-block;
+  font-family:     inherit;
+  font-size:       12px;
+  line-height:     1.6;
+  color:           var(--muted);
+  background:      transparent;
+  border:          0;
+  border-bottom:   1px solid var(--line-ui);
+  border-radius:   0;
+  padding:         var(--sp-xs) 0;
+  cursor:          pointer;
+  transition:      color 0.15s, border-color 0.15s;
+}
+
+.filter-clear:hover {
+  color:        var(--accent);
+  border-color: var(--accent);
+}
+
+.sort-btn,
 .filter-btn {
   font-family:    inherit;
   font-size:      14px;
@@ -43,15 +155,42 @@
   transition:     border-color 0.15s, background 0.15s, color 0.15s;
 }
 
-.filter-btn:hover {
+/* 件数はタグ名より一段落として、ラベルの一部に見えないようにする */
+.filter-btn {
+  display:     inline-flex;
+  align-items: baseline;
+  gap:         var(--sp-s);
+}
+
+.filter-count {
+  font-family: var(--font-mono);
+  font-size:   11px;
+  color:       var(--muted);
+}
+
+.sort-btn:hover,
+.filter-btn:hover:not(:disabled) {
   border-color: var(--accent);
   color:        var(--accent);
 }
 
+.filter-btn:hover:not(:disabled) .filter-count { color: var(--accent); }
+
+.sort-btn[aria-pressed="true"],
 .filter-btn[aria-pressed="true"] {
   background:   var(--badge-bg);
   color:        var(--badge-fg);
   border-color: var(--badge-bg);
+}
+
+.filter-btn[aria-pressed="true"] .filter-count { color: var(--badge-fg); }
+
+/* 選んでも0件にしかならないタグ。押せないことを示すだけで、
+   消しはしない（そのタグの存在自体は情報なので） */
+.filter-btn:disabled {
+  border-color: var(--line);
+  color:        var(--muted);
+  cursor:       default;
 }
 
 .filter-status {
@@ -199,5 +338,19 @@
   .works-list {
     grid-template-columns: 1fr;
     gap:                   var(--sp-xl);
+  }
+
+  /* 軸ラベルを固定幅で左に置くと、残り幅ではボタンが2〜3個しか
+     並ばなくなる。狭い画面ではラベルを上の行に逃がす */
+  .sort,
+  .filter-row {
+    flex-direction: column;
+    align-items:    stretch;
+    gap:            var(--sp-s);
+  }
+
+  .sort-label,
+  .filter-row-label {
+    flex: 0 0 auto;
   }
 }

@@ -1,47 +1,55 @@
 /* ============================================================
    filter.js — 作品一覧ページのタグ絞り込み
-               Games/index.html・Apps/index.html で使用
+               Games/index.html・Apps/index.html・Others/index.html で使用
    ------------------------------------------------------------
    タグの一覧はここに持たず、各 .work-card の data-tags 属性から
    毎回組み立てる。タグの二重管理を避けるため。
+
+   絞り込みは「軸をまたいで AND、同じ軸の中では 1 つだけ」。
+   例）形式=3D かつ 体制=個人制作。2D を選ぶと 3D は外れる。
    ============================================================ */
 (() => {
   'use strict';
 
-  /** 「すべて」ボタンが持つ data-tag の値（空文字＝絞り込み無し） */
-  const TAG_ALL = '';
-  const LABEL_ALL = 'すべて';
-
   /**
-   * 絞り込みボタンの表示順を、意味の軸ごとにまとめて定義する。
+   * 絞り込みの軸と、その中のタグの表示順を定義する。
    *
-   * ここにあるのは「並び順」だけで、どの作品がどのタグを持つかは
-   * 各カードの data-tags が唯一の情報源。二重管理にはならない。
+   * ここにあるのは「軸の名前」と「並び順」だけで、どの作品がどのタグを
+   * 持つかは各カードの data-tags が唯一の情報源。二重管理にはならない。
    *
-   * 件数順に並べると、作品が増えるたびに 2D と 3D が離れるなど
-   * 並びが動いてしまうため、軸で固定する。
-   * ここに無いタグは末尾のグループへ自動的に回るので、
-   * タグを増やすだけならこのファイルを触らなくてよい。
+   * 件数順に並べると、作品が増えるたびに 2D と 3D が離れるなど並びが
+   * 動いてしまうため、軸で固定する。ここに無いタグは MISC_GROUP へ
+   * 自動的に回るので、タグを増やすだけならこのファイルを触らなくてよい。
+   *
+   * 先頭の軸は常に開いた状態で表示し、残りは折りたたみに入る
+   * （来訪者が最初に絞りたいのはジャンルなので、それを先頭に置く）。
    */
   const TAG_GROUPS = [
-    // ジャンル。来訪者が最初に絞りたい軸なので先頭に置く
-    ['アクション', 'シューティング', '探索', 'パズル', '戦略',
-     'リズム', 'クリッカー', '知育', '対戦', '協力'],
-    ['2D', '3D'],                                                 // 形式
-    ['Unity', 'C++', 'Python', 'ゲームAI', '機械学習', 'SQLite',
-     'Claude', 'Blender'],                                       // 技術
-    ['macOS'],                                                    // 動作環境
-    ['ブラウザ', 'ダウンロード'],                                   // 入手・遊び方
-    ['個人制作', 'チーム開発'],                                     // 制作体制
-    ['個別ページあり'],                                            // 掘り下げ記事の有無
+    { name: 'ジャンル',   tags: ['アクション', 'シューティング', '探索', 'パズル', '戦略',
+                                'リズム', 'クリッカー', '知育', '対戦', '協力'] },
+    { name: '形式',       tags: ['2D', '3D'] },
+    { name: '技術',       tags: ['Unity', 'C++', 'Python', 'ゲームAI', '機械学習',
+                                'SQLite', 'Claude', 'Blender'] },
+    { name: '制作体制',   tags: ['個人制作', 'チーム開発'] },
+    { name: '入手・環境', tags: ['ブラウザ', 'ダウンロード', 'macOS'] },
+    { name: 'その他',     tags: ['個別ページあり'] },
   ];
+
+  /** 軸の定義から漏れたタグを受け止める軸の名前（TAG_GROUPS に実在させること） */
+  const MISC_GROUP = 'その他';
+
+  /**
+   * このタグ数以下なら折りたたまずに全軸を出す。
+   * Apps・Others はタグが少なく、折りたたむとかえって探しにくいため。
+   */
+  const COLLAPSE_THRESHOLD = 8;
 
   const filterBar = document.querySelector('#filter');
   const worksList = document.querySelector('#works-list');
   const statusText = document.querySelector('#filter-status');
   const noResult = document.querySelector('#no-result');
 
-  // このスクリプトは index.html 専用。想定の要素が無ければ何もしない
+  // このスクリプトは一覧ページ専用。想定の要素が無ければ何もしない
   // （絞り込みが動かなくても、カードはHTMLに直書きなので全件見える）
   if (filterBar === null || worksList === null) return;
 
@@ -57,99 +65,180 @@
       .map((t) => t.trim())
       .filter((t) => t.length > 0);
 
-  /**
-   * 全カードを走査してタグを集計し、TAG_GROUPS の順にまとめて返す。
-   * 戻り値は「グループの配列」で、空のグループは落とす
-   * （例: Apps ページには形式タグが無いので、そのグループは現れない）。
-   */
-  const collectTagGroups = () => {
-    const counts = new Map();
-    const firstSeen = new Map();
+  // タグ → 所属する軸の名前。カード内のチップを押したときに、
+  // どの軸を差し替えればよいか引くのに使う
+  const groupNameOf = new Map();
+  TAG_GROUPS.forEach((group) => {
+    group.tags.forEach((tag) => groupNameOf.set(tag, group.name));
+  });
 
-    cards.forEach((card, cardIndex) => {
-      tagsOf(card).forEach((tag) => {
-        counts.set(tag, (counts.get(tag) ?? 0) + 1);
-        if (!firstSeen.has(tag)) firstSeen.set(tag, cardIndex);
-      });
+  /**
+   * 全カードを走査してタグを集計し、TAG_GROUPS の順に軸を組み立てる。
+   * このページに実在しないタグと、空になった軸は落とす
+   * （例: Apps ページには形式タグが無いので、その軸は現れない）。
+   */
+  const buildGroups = () => {
+    const counts = new Map();
+    cards.forEach((card) => {
+      tagsOf(card).forEach((tag) => counts.set(tag, (counts.get(tag) ?? 0) + 1));
     });
 
-    // 定義済みグループ。このページに実在するタグだけを残す
-    const groups = TAG_GROUPS.map((group) => group.filter((tag) => counts.has(tag)));
+    const groups = TAG_GROUPS.map((group) => ({
+      name: group.name,
+      tags: group.tags.filter((tag) => counts.has(tag)),
+    }));
 
-    // どのグループにも属さないタグは末尾へ。
+    // どの軸にも属さないタグは MISC_GROUP の末尾へ。
     // 定義漏れがあっても絞り込みから消えないための受け皿
-    const known = new Set(TAG_GROUPS.flat());
+    const known = new Set(TAG_GROUPS.flatMap((group) => group.tags));
     const ungrouped = Array.from(counts.keys())
       .filter((tag) => !known.has(tag))
-      .sort((a, b) => {
-        const byCount = counts.get(b) - counts.get(a);
-        return byCount !== 0 ? byCount : firstSeen.get(a) - firstSeen.get(b);
-      });
-    groups.push(ungrouped);
+      .sort((a, b) => a.localeCompare(b, 'ja'));
 
-    return groups.filter((group) => group.length > 0);
+    if (ungrouped.length > 0) {
+      const misc = groups.find((group) => group.name === MISC_GROUP);
+      misc.tags = misc.tags.concat(ungrouped);
+      ungrouped.forEach((tag) => groupNameOf.set(tag, MISC_GROUP));
+    }
+
+    return groups.filter((group) => group.tags.length > 0);
   };
 
-  const createButton = (a_tag, a_label) => {
+  const groups = buildGroups();
+  if (groups.length === 0) return;
+
+  /** 軸名 → 選択中のタグ。空なら絞り込み無し */
+  const selected = new Map();
+
+  /** 選択の組み合わせ（軸名→タグ）を、そのカードがすべて満たすか */
+  const matches = (a_card, a_selection) => {
+    const tags = tagsOf(a_card);
+    for (const tag of a_selection.values()) {
+      if (!tags.includes(tag)) return false;
+    }
+    return true;
+  };
+
+  const countMatching = (a_selection) =>
+    cards.reduce((n, card) => n + (matches(card, a_selection) ? 1 : 0), 0);
+
+  // 生成したボタンの台帳。描画のたびに件数と押下状態を書き戻す
+  const buttons = [];
+  // 折りたたみ本体。タグが少ないページでは作らないので null のままになる
+  let moreBox = null;
+
+  const createButton = (a_groupName, a_tag) => {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'filter-btn';
     btn.dataset.tag = a_tag;
-    btn.textContent = a_label;
     btn.setAttribute('aria-pressed', 'false');
-    return btn;
+
+    const label = document.createElement('span');
+    label.textContent = a_tag;
+
+    // 件数。押す前に「効くタグかどうか」が分かるようにする
+    const count = document.createElement('span');
+    count.className = 'filter-count';
+
+    btn.append(label, count);
+    return { el: btn, groupName: a_groupName, tag: a_tag, countEl: count };
   };
 
-  /** グループ間の区切り線。装飾なので読み上げ対象から外す */
-  const createSeparator = () => {
-    const sep = document.createElement('span');
-    sep.className = 'filter-sep';
-    sep.setAttribute('aria-hidden', 'true');
-    return sep;
+  /** 「軸名 + ボタン列」の 1 行を組み立てる */
+  const createRow = (a_group) => {
+    const row = document.createElement('div');
+    row.className = 'filter-row';
+
+    const label = document.createElement('span');
+    label.className = 'filter-row-label';
+    label.textContent = a_group.name;
+
+    const box = document.createElement('div');
+    box.className = 'filter-row-btns';
+    a_group.tags.forEach((tag) => {
+      const entry = createButton(a_group.name, tag);
+      buttons.push(entry);
+      box.appendChild(entry.el);
+    });
+
+    row.append(label, box);
+    return row;
   };
 
-  /** 絞り込みボタンを生成して差し込む */
+  const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
+  clearBtn.className = 'filter-clear';
+  clearBtn.textContent = 'すべて解除';
+  clearBtn.hidden = true;
+
   const buildFilterBar = () => {
     const fragment = document.createDocumentFragment();
-    fragment.appendChild(createButton(TAG_ALL, LABEL_ALL));
-    collectTagGroups().forEach((group) => {
-      fragment.appendChild(createSeparator());
-      group.forEach((tag) => fragment.appendChild(createButton(tag, tag)));
-    });
+    const totalTags = groups.reduce((n, group) => n + group.tags.length, 0);
+
+    if (totalTags <= COLLAPSE_THRESHOLD) {
+      groups.forEach((group) => fragment.appendChild(createRow(group)));
+    } else {
+      const [first, ...rest] = groups;
+      fragment.appendChild(createRow(first));
+
+      // 折りたたみ。<details> は開閉・キーボード操作をブラウザが持っているので
+      // 自前で状態を持たない。見出しに軸名とタグ数を書き、中身があると分かるようにする
+      moreBox = document.createElement('details');
+      moreBox.className = 'filter-more';
+
+      const summary = document.createElement('summary');
+      const restTags = rest.reduce((n, group) => n + group.tags.length, 0);
+      summary.textContent =
+        `${rest.map((group) => group.name).join('・')} でさらに絞り込む（${restTags} 種）`;
+
+      moreBox.appendChild(summary);
+      rest.forEach((group) => moreBox.appendChild(createRow(group)));
+      fragment.appendChild(moreBox);
+    }
+
+    fragment.appendChild(clearBtn);
     filterBar.appendChild(fragment);
   };
 
   buildFilterBar();
 
   // ボタン生成後に取得する（生成前だと空になる）
-  const filterButtons = Array.from(filterBar.querySelectorAll('.filter-btn'));
   const tagChips = Array.from(worksList.querySelectorAll('.tag[data-tag]'));
 
-  /**
-   * 指定タグで表示を絞り込む。TAG_ALL なら全件表示。
-   */
-  const applyFilter = (a_tag) => {
+  /** 現在の選択にもとづいて、カードの表示・件数・状態表示を描き直す */
+  const render = () => {
     let visibleCount = 0;
-
     cards.forEach((card) => {
-      const matched = a_tag === TAG_ALL || tagsOf(card).includes(a_tag);
+      const matched = matches(card, selected);
       card.hidden = !matched;
       if (matched) visibleCount += 1;
     });
 
-    // 選択状態を、絞り込みボタンとカード内のタグチップの両方に反映する
-    filterButtons.forEach((btn) => {
-      btn.setAttribute('aria-pressed', String(btn.dataset.tag === a_tag));
+    // 件数は「その軸をこのタグに差し替えたら何件になるか」。
+    // 0 件にしかならない組み合わせは押せなくして、空振りを防ぐ
+    buttons.forEach(({ el, groupName, tag, countEl }) => {
+      const isOn = selected.get(groupName) === tag;
+      const trial = new Map(selected);
+      trial.set(groupName, tag);
+      const hits = countMatching(trial);
+
+      el.setAttribute('aria-pressed', String(isOn));
+      el.disabled = !isOn && hits === 0;
+      countEl.textContent = String(hits);
     });
+
+    const chosen = Array.from(selected.values());
     tagChips.forEach((chip) => {
-      chip.classList.toggle('tag--active', chip.dataset.tag === a_tag);
+      chip.classList.toggle('tag--active', chosen.includes(chip.dataset.tag));
     });
+    clearBtn.hidden = chosen.length === 0;
 
     if (statusText !== null) {
       statusText.textContent =
-        a_tag === TAG_ALL
+        chosen.length === 0
           ? `全 ${visibleCount} 件を表示中`
-          : `「${a_tag}」 ${visibleCount} 件を表示中`;
+          : `${chosen.map((t) => `「${t}」`).join('')} ${visibleCount} 件を表示中`;
     }
     if (noResult !== null) {
       noResult.hidden = visibleCount > 0;
@@ -157,21 +246,42 @@
   };
 
   /**
-   * 絞り込みバーとカード内チップの両方から呼ぶクリック処理。
-   * 同じタグをもう一度押したら解除して全件に戻す。
+   * 折りたたみの中のタグが選ばれたら開く。
+   * 選択したタグが見えないまま件数だけ減る、という状態を避ける
    */
+  const revealTag = (a_tag) => {
+    if (moreBox === null) return;
+    const entry = buttons.find((b) => b.tag === a_tag);
+    if (entry !== undefined && moreBox.contains(entry.el)) moreBox.open = true;
+  };
+
+  /** 同じタグをもう一度押したら、その軸の絞り込みだけ解除する */
+  const toggleTag = (a_tag) => {
+    const groupName = groupNameOf.get(a_tag);
+    if (groupName === undefined) return;
+
+    if (selected.get(groupName) === a_tag) {
+      selected.delete(groupName);
+    } else {
+      selected.set(groupName, a_tag);
+      revealTag(a_tag);
+    }
+    render();
+  };
+
   const handleTagClick = (a_event) => {
     const btn = a_event.target.closest('button[data-tag]');
-    if (btn === null) return;
-
-    const isActive = btn.getAttribute('aria-pressed') === 'true' ||
-                     btn.classList.contains('tag--active');
-    applyFilter(isActive ? TAG_ALL : btn.dataset.tag);
+    if (btn === null || btn.disabled) return;
+    toggleTag(btn.dataset.tag);
   };
 
   // 個別登録ではなくイベント委譲（カードやタグが増えても登録し直さないで済む）
   filterBar.addEventListener('click', handleTagClick);
   worksList.addEventListener('click', handleTagClick);
+  clearBtn.addEventListener('click', () => {
+    selected.clear();
+    render();
+  });
 
-  applyFilter(TAG_ALL);
+  render();
 })();
