@@ -21,8 +21,7 @@
    * 動いてしまうため、軸で固定する。ここに無いタグは MISC_GROUP へ
    * 自動的に回るので、タグを増やすだけならこのファイルを触らなくてよい。
    *
-   * 先頭の軸は常に開いた状態で表示し、残りは折りたたみに入る
-   * （来訪者が最初に絞りたいのはジャンルなので、それを先頭に置く）。
+   * 来訪者が最初に絞りたいのはジャンルなので、それを先頭に置く。
    */
   const TAG_GROUPS = [
     { name: 'ジャンル',   tags: ['アクション', 'シューティング', '探索', 'パズル', '戦略',
@@ -37,12 +36,6 @@
 
   /** 軸の定義から漏れたタグを受け止める軸の名前（TAG_GROUPS に実在させること） */
   const MISC_GROUP = 'その他';
-
-  /**
-   * このタグ数以下なら折りたたまずに全軸を出す。
-   * Apps・Others はタグが少なく、折りたたむとかえって探しにくいため。
-   */
-  const COLLAPSE_THRESHOLD = 8;
 
   const filterBar = document.querySelector('#filter');
   const worksList = document.querySelector('#works-list');
@@ -124,8 +117,10 @@
 
   // 生成したボタンの台帳。描画のたびに件数と押下状態を書き戻す
   const buttons = [];
-  // 折りたたみ本体。タグが少ないページでは作らないので null のままになる
-  let moreBox = null;
+
+  // 絞り込みUIを包んでいる折りたたみ（HTML側の <details class="works-tools">）。
+  // クラス名ではなく要素で辿るので、CSSの都合でクラス名が変わっても壊れない
+  const toolsBox = filterBar.closest('details');
 
   const createButton = (a_groupName, a_tag) => {
     const btn = document.createElement('button');
@@ -174,29 +169,7 @@
 
   const buildFilterBar = () => {
     const fragment = document.createDocumentFragment();
-    const totalTags = groups.reduce((n, group) => n + group.tags.length, 0);
-
-    if (totalTags <= COLLAPSE_THRESHOLD) {
-      groups.forEach((group) => fragment.appendChild(createRow(group)));
-    } else {
-      const [first, ...rest] = groups;
-      fragment.appendChild(createRow(first));
-
-      // 折りたたみ。<details> は開閉・キーボード操作をブラウザが持っているので
-      // 自前で状態を持たない。見出しに軸名とタグ数を書き、中身があると分かるようにする
-      moreBox = document.createElement('details');
-      moreBox.className = 'filter-more';
-
-      const summary = document.createElement('summary');
-      const restTags = rest.reduce((n, group) => n + group.tags.length, 0);
-      summary.textContent =
-        `${rest.map((group) => group.name).join('・')} でさらに絞り込む（${restTags} 種）`;
-
-      moreBox.appendChild(summary);
-      rest.forEach((group) => moreBox.appendChild(createRow(group)));
-      fragment.appendChild(moreBox);
-    }
-
+    groups.forEach((group) => fragment.appendChild(createRow(group)));
     fragment.appendChild(clearBtn);
     filterBar.appendChild(fragment);
   };
@@ -246,13 +219,11 @@
   };
 
   /**
-   * 折りたたみの中のタグが選ばれたら開く。
+   * 畳んだ状態でカード内のチップを押したときに、絞り込みUIを開く。
    * 選択したタグが見えないまま件数だけ減る、という状態を避ける
    */
-  const revealTag = (a_tag) => {
-    if (moreBox === null) return;
-    const entry = buttons.find((b) => b.tag === a_tag);
-    if (entry !== undefined && moreBox.contains(entry.el)) moreBox.open = true;
+  const revealFilterBar = () => {
+    if (toolsBox !== null) toolsBox.open = true;
   };
 
   /** 同じタグをもう一度押したら、その軸の絞り込みだけ解除する */
@@ -264,7 +235,7 @@
       selected.delete(groupName);
     } else {
       selected.set(groupName, a_tag);
-      revealTag(a_tag);
+      revealFilterBar();
     }
     render();
   };

@@ -16,19 +16,20 @@
   </header>
 
   <main>
-    <!-- 並び替えボタンは sort.js が生成する。並び順の基準は各カードの
-         .work-meta にある <time datetime="YYYY-MM">。
-         「推し順」＝下に書いた並び順そのものなので、推したい作品は上に置く -->
-    <div class="sort" id="sort" role="group" aria-label="並び替え"></div>
-
-    <!-- 絞り込みボタンは filter.js が各カードの data-tags から自動生成する
-         （ここにボタンを手書きしない）
-         軸と並び順は filter.js の TAG_GROUPS で定義。未定義のタグも
-         「その他」に自動で並ぶので、タグを増やすだけなら filter.js は触らなくてよい。
+    <!-- 並び替えと絞り込みは既定で畳んでおく。作品一覧が先に目に入るようにするため。
+         中身は JS が生成するので、ここにボタンを手書きしない。
+         ・並び替え … sort.js。基準は各カードの .work-meta にある <time datetime="YYYY-MM">。
+           「推し順」＝下に書いた並び順そのものなので、推したい作品は上に置く
+         ・絞り込み … filter.js。軸と並び順は TAG_GROUPS で定義。未定義のタグも
+           「その他」に自動で並ぶので、タグを増やすだけなら filter.js は触らなくてよい
          作品を追加するときは <article class="work-card" data-tags="..."> を
          1つコピーして、data-tags と .work-tags のチップを一致させる
          （チップの並びも ジャンル → 形式 → 技術 → 入手 の順に揃える） -->
-    <div class="filter" id="filter" role="group" aria-label="タグで絞り込み"></div>
+    <details class="works-tools">
+      <summary>並び替え・絞り込み</summary>
+      <div class="sort" id="sort" role="group" aria-label="並び替え"></div>
+      <div class="filter" id="filter" role="group" aria-label="タグで絞り込み"></div>
+    </details>
     <p class="filter-status" id="filter-status" role="status"></p>
 
     <div class="works-list" id="works-list">

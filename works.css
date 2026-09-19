@@ -14,8 +14,58 @@
 }
 
 /* ============================================================
+   並び替え・絞り込みパネル（HTML側の <details class="works-tools">）
+   ------------------------------------------------------------
+   既定では畳んでおき、作品一覧を先に見せる。
+   開閉とキーボード操作は <details> がブラウザ実装を持っているので、
+   JS で状態を持たない（filter.js は open を立てるだけ）
+   ============================================================ */
+.works-tools {
+  margin-bottom: var(--sp-l);
+}
+
+/* 畳んだときに画面に出る唯一の操作なので、CTA と同じ語彙
+   （塗りなし＋1px枠）で「押せるもの」だと分かるようにする */
+.works-tools > summary {
+  display:        inline-flex;
+  align-items:    center;
+  font-size:      14px;
+  line-height:    1.6;
+  letter-spacing: 0.02em;
+  color:          var(--fg);
+  border:         1px solid var(--line-ui);
+  border-radius:  0;
+  /* タッチターゲット確保のため縦は 10px 以上を取る */
+  padding:        10px 20px;
+  cursor:         pointer;
+  /* 既定の三角は位置の調整が効かないので、自前のマーカーに置き換える */
+  list-style:     none;
+  transition:     border-color 0.15s, color 0.15s;
+}
+
+.works-tools > summary::-webkit-details-marker { display: none; }
+
+.works-tools > summary::before {
+  content:      '＋';
+  display:      inline-block;
+  width:        1.5em;
+  color:        var(--line-ui);
+  transition:   color 0.15s;
+}
+
+.works-tools[open] > summary::before { content: '−'; }
+
+.works-tools > summary:hover,
+.works-tools > summary:hover::before { color: var(--accent); }
+
+.works-tools > summary:hover { border-color: var(--accent); }
+
+/* 開いたときだけ、中身との間隔を空ける */
+.works-tools[open] > summary { margin-bottom: var(--sp-l); }
+
+/* ============================================================
    並び替えUI（sort.js が制御する）
-   絞り込みより上に置く。件数を変えず順序だけを変える操作なので、
+   パネルの先頭に置く。件数を変えず順序だけを変える操作なので、
    絞り込みとは行を分けて別物だと分かるようにする
    ============================================================ */
 .sort {
@@ -46,7 +96,7 @@
    タグ絞り込みUI（filter.js が制御する）
    CTA の語彙（塗りなし＋1px枠）で構成し、選択中だけアクセント塗りにする
 
-   軸ごとに1行。先頭の軸だけ常に開き、残りは .filter-more に畳む
+   「ジャンル」「形式」などの軸ごとに1行。行の中で折り返す
    ============================================================ */
 .filter {
   display:        flex;
@@ -73,45 +123,6 @@
   flex:      1 1 0;
   min-width: 0;
 }
-
-/* ---------- 折りたたみ（形式・技術・…） ---------- */
-.filter-more {
-  width: 100%;
-  /* 開いたときに中身が上下の行と混ざらないよう、左に1本入れて束ねる */
-  border-left: 1px solid var(--line);
-  padding-left: var(--sp-m);
-}
-
-.filter-more > summary {
-  font-size:      12px;
-  line-height:    1.6;
-  letter-spacing: 0.02em;
-  color:          var(--muted);
-  cursor:         pointer;
-  /* 既定の三角は位置の調整が効かないので、自前のマーカーに置き換える */
-  list-style:     none;
-  padding:        var(--sp-xs) 0;
-  transition:     color 0.15s;
-}
-
-.filter-more > summary::-webkit-details-marker { display: none; }
-
-.filter-more > summary::before {
-  content:      '＋';
-  display:      inline-block;
-  width:        1.25em;
-  color:        var(--line-ui);
-  transition:   color 0.15s;
-}
-
-.filter-more[open] > summary::before { content: '−'; }
-
-.filter-more > summary:hover,
-.filter-more > summary:hover::before { color: var(--accent); }
-
-.filter-more[open] > summary { margin-bottom: var(--sp-m); }
-
-.filter-more .filter-row + .filter-row { margin-top: var(--sp-m); }
 
 /* ---------- 選択の一括解除 ---------- */
 /* 下の .filter-clear が display を持つため、[hidden] だけでは消えない

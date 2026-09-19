@@ -16,15 +16,18 @@
   </header>
 
   <main>
-    <!-- 並び替えボタンは sort.js が生成する。ただしカードが1件しかない間は
-         出ない（並べ替える意味がないため）。基準は .work-meta の <time> -->
-    <div class="sort" id="sort" role="group" aria-label="並び替え"></div>
-
-    <!-- 絞り込みボタンは filter.js が各カードの data-tags から自動生成する
-         （ここにボタンを手書きしない）
+    <!-- 並び替え（sort.js）と絞り込み（filter.js）。中身は JS が生成するので
+         ここにボタンを手書きしない。
+         いまはカードが1件しかないので sort.js は並び替えボタンを出さない。
+         そのため見出しも「絞り込み」にしてある。2件目を足したら
+         「並び替え・絞り込み」に直すこと（verify.py が件数と照合して検出する）。
          作品を追加するときは <article class="work-card" data-tags="..."> を
          1つコピーして、data-tags と .work-tags のチップを一致させる -->
-    <div class="filter" id="filter" role="group" aria-label="タグで絞り込み"></div>
+    <details class="works-tools">
+      <summary>絞り込み</summary>
+      <div class="sort" id="sort" role="group" aria-label="並び替え"></div>
+      <div class="filter" id="filter" role="group" aria-label="タグで絞り込み"></div>
+    </details>
     <p class="filter-status" id="filter-status" role="status"></p>
 
     <div class="works-list" id="works-list">
