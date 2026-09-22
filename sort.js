@@ -40,18 +40,18 @@
    * 'YYYY-MM' は辞書順がそのまま時系列順になる。
    * 日付を持たないカードは '' を返し、最も古いものとして扱う。
    */
-  const dateOf = (a_card) => {
-    const time = a_card.querySelector('.work-meta time[datetime]');
+  const dateOf = (card) => {
+    const time = card.querySelector('.work-meta time[datetime]');
     return time === null ? '' : time.getAttribute('datetime');
   };
 
   // 同じ月の作品は推し順で並べる。毎回同じ結果になるようにするため
-  const byPick = (a_x, a_y) => pickOrder.get(a_x) - pickOrder.get(a_y);
+  const byPick = (x, y) => pickOrder.get(x) - pickOrder.get(y);
 
   const COMPARATORS = {
     pick: byPick,
-    new: (a_x, a_y) => dateOf(a_y).localeCompare(dateOf(a_x)) || byPick(a_x, a_y),
-    old: (a_x, a_y) => dateOf(a_x).localeCompare(dateOf(a_y)) || byPick(a_x, a_y),
+    new: (x, y) => dateOf(y).localeCompare(dateOf(x)) || byPick(x, y),
+    old: (x, y) => dateOf(x).localeCompare(dateOf(y)) || byPick(x, y),
   };
 
   const buttons = [];
@@ -78,23 +78,23 @@
     sortBar.append(label, box);
   };
 
-  const applySort = (a_key) => {
-    const compare = COMPARATORS[a_key] ?? COMPARATORS[SORT_DEFAULT];
+  const applySort = (key) => {
+    const compare = COMPARATORS[key] ?? COMPARATORS[SORT_DEFAULT];
 
     // append は既存ノードを「移動」させる（複製ではない）。
     // hidden などカードが持っている状態はそのまま残る
     worksList.append(...cards.slice().sort(compare));
 
     buttons.forEach((btn) => {
-      btn.setAttribute('aria-pressed', String(btn.dataset.sort === a_key));
+      btn.setAttribute('aria-pressed', String(btn.dataset.sort === key));
     });
   };
 
   buildSortBar();
 
   // 個別登録ではなくイベント委譲
-  sortBar.addEventListener('click', (a_event) => {
-    const btn = a_event.target.closest('button[data-sort]');
+  sortBar.addEventListener('click', (event) => {
+    const btn = event.target.closest('button[data-sort]');
     if (btn === null) return;
     applySort(btn.dataset.sort);
   });

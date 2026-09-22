@@ -19,8 +19,8 @@
    * fetch の text() は Content-Type に関係なく常に UTF-8 で復号するため、
    * GitHub Pages が .py を octet-stream で返しても文字化けしない。
    */
-  const loadCode = async (a_drawer) => {
-    const target = a_drawer.querySelector('code[data-src]');
+  const loadCode = async (drawer) => {
+    const target = drawer.querySelector('code[data-src]');
     // 読み込み済み・要素なしは何もしない
     if (target === null || target.dataset.loaded === 'true') return;
 

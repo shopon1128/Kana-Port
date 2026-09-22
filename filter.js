@@ -52,8 +52,8 @@
    * カードの data-tags を配列にする。
    * 空タグ（"a,,b" や末尾カンマ）は落とす。
    */
-  const tagsOf = (a_card) =>
-    (a_card.dataset.tags ?? '')
+  const tagsOf = (card) =>
+    (card.dataset.tags ?? '')
       .split(',')
       .map((t) => t.trim())
       .filter((t) => t.length > 0);
@@ -104,16 +104,16 @@
   const selected = new Map();
 
   /** 選択の組み合わせ（軸名→タグ）を、そのカードがすべて満たすか */
-  const matches = (a_card, a_selection) => {
-    const tags = tagsOf(a_card);
-    for (const tag of a_selection.values()) {
+  const matches = (card, selection) => {
+    const tags = tagsOf(card);
+    for (const tag of selection.values()) {
       if (!tags.includes(tag)) return false;
     }
     return true;
   };
 
-  const countMatching = (a_selection) =>
-    cards.reduce((n, card) => n + (matches(card, a_selection) ? 1 : 0), 0);
+  const countMatching = (selection) =>
+    cards.reduce((n, card) => n + (matches(card, selection) ? 1 : 0), 0);
 
   // 生成したボタンの台帳。描画のたびに件数と押下状態を書き戻す
   const buttons = [];
@@ -122,37 +122,37 @@
   // クラス名ではなく要素で辿るので、CSSの都合でクラス名が変わっても壊れない
   const toolsBox = filterBar.closest('details');
 
-  const createButton = (a_groupName, a_tag) => {
+  const createButton = (groupName, tag) => {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'filter-btn';
-    btn.dataset.tag = a_tag;
+    btn.dataset.tag = tag;
     btn.setAttribute('aria-pressed', 'false');
 
     const label = document.createElement('span');
-    label.textContent = a_tag;
+    label.textContent = tag;
 
     // 件数。押す前に「効くタグかどうか」が分かるようにする
     const count = document.createElement('span');
     count.className = 'filter-count';
 
     btn.append(label, count);
-    return { el: btn, groupName: a_groupName, tag: a_tag, countEl: count };
+    return { el: btn, groupName, tag, countEl: count };
   };
 
   /** 「軸名 + ボタン列」の 1 行を組み立てる */
-  const createRow = (a_group) => {
+  const createRow = (group) => {
     const row = document.createElement('div');
     row.className = 'filter-row';
 
     const label = document.createElement('span');
     label.className = 'filter-row-label';
-    label.textContent = a_group.name;
+    label.textContent = group.name;
 
     const box = document.createElement('div');
     box.className = 'filter-row-btns';
-    a_group.tags.forEach((tag) => {
-      const entry = createButton(a_group.name, tag);
+    group.tags.forEach((tag) => {
+      const entry = createButton(group.name, tag);
       buttons.push(entry);
       box.appendChild(entry.el);
     });
@@ -227,21 +227,21 @@
   };
 
   /** 同じタグをもう一度押したら、その軸の絞り込みだけ解除する */
-  const toggleTag = (a_tag) => {
-    const groupName = groupNameOf.get(a_tag);
+  const toggleTag = (tag) => {
+    const groupName = groupNameOf.get(tag);
     if (groupName === undefined) return;
 
-    if (selected.get(groupName) === a_tag) {
+    if (selected.get(groupName) === tag) {
       selected.delete(groupName);
     } else {
-      selected.set(groupName, a_tag);
+      selected.set(groupName, tag);
       revealFilterBar();
     }
     render();
   };
 
-  const handleTagClick = (a_event) => {
-    const btn = a_event.target.closest('button[data-tag]');
+  const handleTagClick = (event) => {
+    const btn = event.target.closest('button[data-tag]');
     if (btn === null || btn.disabled) return;
     toggleTag(btn.dataset.tag);
   };
