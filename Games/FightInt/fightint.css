@@ -4,36 +4,13 @@
    teamLab 準拠。角丸・影・グラデーションは持たせず、
    枠線1pxと余白だけで階層をつくる。
 
-   本ページは仕様書が想定していない「動画 + ダウンロード + 一覧表」を
-   含むため、BattleAI ページと同じ理由で以下を外している:
-     ・コンテナ幅を読み幅に狭める
-     ・長文の line-height を 1.6 → 1.8 にする
+   ページの土台（読み幅・長文の行間）と .note は detail.css
+   （詳細ページ共通）にある。ここはこのページだけのものを置く。
 
    色を持つのは「ゲーム画面の説明に使う見本（.swatch）」だけ。
    これはUIの装飾ではなく、実際のゲーム画面の色をそのまま写した
    資料であるため、無彩色の原則からは外れる（意図的）。
    ============================================================ */
-
-/* 長文中心のページなので、一覧より狭い読み幅に落とす */
-body { max-width: var(--container-read); }
-
-main {
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--sp-2xl);
-}
-
-/* flex の子は既定で min-width:auto になり、中身の最小幅より狭くなれない。
-   ジョブ表は横スクロールさせたいので 0 に落としておく */
-main > section { min-width: 0; }
-
-/* 日本語の長文は 1.7〜2.0 が読みやすいため 1.8 を採用する */
-main p {
-  font-size:   16px;
-  line-height: 1.8;
-}
-
-main section > p + p { margin-top: var(--sp-m); }
 
 /* ---------- ダウンロード ---------- */
 .download-row {
@@ -50,13 +27,6 @@ main section > p + p { margin-top: var(--sp-m); }
   margin-top:  var(--sp-xs);
   font-size:   11px;
   line-height: 1.6;
-  color:       var(--muted);
-}
-
-.note {
-  margin-top:  var(--sp-m);
-  font-size:   13px;
-  line-height: 1.8;
   color:       var(--muted);
 }
 
@@ -156,13 +126,6 @@ main section > p + p { margin-top: var(--sp-m); }
 .legend strong {
   display:     block;
   font-weight: 700;
-}
-
-/* ---------- 技術タグ ---------- */
-.tech-tags {
-  display:   flex;
-  flex-wrap: wrap;
-  gap:       var(--sp-s);
 }
 
 /* ---------- レスポンシブ ---------- */

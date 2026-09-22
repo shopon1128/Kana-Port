@@ -1,0 +1,257 @@
+/* ============================================================
+   detail.css — 作品詳細ページ共通スタイル
+                Games/BattleAI・Games/FightInt・Apps/BookLib・
+                Others/Model_pl で使用
+   ------------------------------------------------------------
+   一覧3ページに works.css があるのと同じ役割を、詳細ページに対して
+   果たすファイル。読み込み順は shared.css → detail.css → ページ固有CSS。
+
+   ここに置くのは「複数の詳細ページが実際に同じ値で使っているもの」だけ。
+   1ページでしか使わないものはページ固有CSSに残す
+   （例: .controls は BattleAI と FightInt で中身が別物なので各ページ側）。
+
+   teamLab 準拠: 色を持たず、枠線1pxと余白だけで階層をつくる。
+   仕様書が想定していない「長文」を含むため、以下2点だけ意図的に外している:
+     ・コンテナ幅を読み幅(--container-read)に狭める
+     ・長文の line-height を 1.6 → 1.8 にする
+   ============================================================ */
+
+/* ============================================================
+   ページの土台
+   ============================================================ */
+
+/* 長文中心のページなので、一覧より狭い読み幅に落とす */
+body { max-width: var(--container-read); }
+
+main {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--sp-2xl);
+}
+
+/* flex/grid の子は既定で min-width:auto になり、中身の最小幅より狭くなれない。
+   表・コードブロック・長いURLを含む section を 0 にしておかないと section が
+   縮まず、内側の overflow-x:auto が発動せずページ全体が横へはみ出す */
+main > section { min-width: 0; }
+
+/* 長文段落。teamLab の規定は 1.6 だが、同サイトに長文は存在しない。
+   日本語の長文は 1.7〜2.0 が読みやすいため 1.8 を採用する */
+main p {
+  font-size:   16px;
+  line-height: 1.8;
+}
+
+main section > p + p { margin-top: var(--sp-m); }
+
+/* ---------- 補足文 ---------- */
+.note {
+  margin-top:  var(--sp-m);
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
+}
+
+/* ============================================================
+   手順ステップ
+   番号は counter で描く。HTML に数字を書かないので、
+   項目を入れ替えても採番がずれない
+   ============================================================ */
+.steps {
+  list-style:     none;
+  counter-reset:  step;
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--sp-s);
+  margin-top:     var(--sp-m);
+}
+
+.steps li {
+  counter-increment: step;
+  border:      1px solid var(--line);
+  padding:     var(--sp-m) var(--sp-m) var(--sp-m) 56px;
+  position:    relative;
+  font-size:   14px;
+  line-height: 1.8;
+}
+
+.steps li::before {
+  content:     counter(step, decimal-leading-zero);
+  position:    absolute;
+  left:        var(--sp-m);
+  top:         var(--sp-m);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size:   13px;
+  color:       var(--accent);
+}
+
+/* ============================================================
+   特徴カード
+   ============================================================ */
+.feature-grid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   var(--sp-m);
+  margin-top:            var(--sp-m);
+}
+
+.feature {
+  border:    1px solid var(--line);
+  padding:   var(--sp-m) var(--sp-m) var(--sp-l);
+  min-width: 0;   /* グリッドの子の min-width:auto による横はみ出しを防ぐ */
+}
+
+.feature h3 {
+  font-size:     15px;
+  font-weight:   700;
+  line-height:   1.5;
+  margin-bottom: var(--sp-s);
+}
+
+.feature p {
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
+}
+
+/* ============================================================
+   ダウンロード／配布セクション
+   ============================================================ */
+.download { text-align: center; }
+
+/* ============================================================
+   技術タグ
+   チップ自体の見た目（.tag）は shared.css。ここは並べ方だけ
+   ============================================================ */
+.tech-tags {
+  display:    flex;
+  flex-wrap:  wrap;
+  gap:        var(--sp-s);
+  margin-top: var(--sp-m);
+}
+
+/* ============================================================
+   引き出し式のコード表示
+   ------------------------------------------------------------
+   開閉は <details> のネイティブ機能。JS(code-view.js)はコードの
+   読み込みだけを担当するので、JSが動かなくても引き出しは開く
+   ============================================================ */
+.code-block {
+  border:     1px solid var(--line);
+  background: var(--surface);
+  padding:    var(--sp-m);
+  overflow-x: auto;   /* 長い行はページを広げずブロック内で横スクロールさせる */
+}
+
+.code-block code {
+  display:     block;
+  background:  transparent;  /* shared.css の inline code の面を打ち消す */
+  padding:     0;
+  font-size:   13px;
+  line-height: 1.7;
+  white-space: pre;
+  word-break:  normal;       /* shared.css の break-all はコードでは折り返しが汚くなる */
+}
+
+.code-files-intro {
+  margin-top: var(--sp-l);
+  font-size:  14px;
+  color:      var(--muted);
+}
+
+.code-files {
+  list-style:     none;
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--sp-xs);
+  margin-top:     var(--sp-s);
+}
+
+.code-files li {
+  border: 1px solid var(--line);
+}
+
+.code-drawer summary {
+  display:       flex;
+  flex-wrap:     wrap;
+  align-items:   baseline;
+  gap:           var(--sp-s);
+  padding:       var(--sp-s) var(--sp-m);
+  padding-right: 2.5rem;   /* 右端の +/− と文字が重ならないように空ける */
+  cursor:        pointer;
+  position:      relative;
+  list-style:    none;     /* 既定の三角マーカーを消す */
+  transition:    background 0.15s;
+}
+
+/* Safari / 旧Chrome 用のマーカー消し */
+.code-drawer summary::-webkit-details-marker { display: none; }
+
+.code-drawer summary:hover { background: var(--surface); }
+
+.code-drawer summary:focus-visible {
+  outline:        2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* 開閉状態の記号。装飾なので読み上げ対象にしない */
+.code-drawer summary::after {
+  content:     '+';
+  position:    absolute;
+  right:       var(--sp-m);
+  font-family: var(--font-mono);
+  color:       var(--muted);
+}
+
+.code-drawer[open] summary::after { content: '−'; }
+
+.code-drawer[open] summary { border-bottom: 1px solid var(--line); }
+
+.code-name {
+  font-family: var(--font-mono);
+  font-size:   14px;
+  color:       var(--fg);
+  transition:  color 0.15s;
+}
+
+.code-drawer summary:hover .code-name { color: var(--accent); }
+
+.code-desc {
+  font-size:   13px;
+  line-height: 1.6;
+  color:       var(--muted);
+}
+
+/* 引き出しの中身。長いファイルでページが伸びきらないよう高さを制限する */
+.code-drawer .code-block {
+  border:     none;
+  max-height: 60vh;
+  overflow:   auto;
+}
+
+.code-foot {
+  padding:   0 var(--sp-m) var(--sp-m);
+  font-size: 12px;
+}
+
+.code-foot a {
+  color:           var(--muted);
+  text-decoration: none;
+  border-bottom:   1px solid var(--line-ui);
+  transition:      color 0.15s, border-color 0.15s;
+}
+
+.code-foot a:hover,
+.code-foot a:focus-visible {
+  color:        var(--accent);
+  border-color: var(--accent);
+}
+
+/* ============================================================
+   レスポンシブ
+   ============================================================ */
+@media (max-width: 768px) {
+  main { gap: var(--sp-xl); }
+
+  .feature-grid { grid-template-columns: 1fr; }
+}
