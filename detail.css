@@ -1,7 +1,7 @@
 /* ============================================================
    detail.css — 作品詳細ページ共通スタイル
                 Games/BattleAI・Games/FightInt・Apps/BookLib・
-                Others/Model_pl で使用
+                Others/Model_pl・Others/ClaudeMd で使用
    ------------------------------------------------------------
    一覧3ページに works.css があるのと同じ役割を、詳細ページに対して
    果たすファイル。読み込み順は shared.css → detail.css → ページ固有CSS。

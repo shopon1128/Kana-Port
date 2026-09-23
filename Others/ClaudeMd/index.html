@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="私が実際に使っている汎用CLAUDE.mdと、その運用方法。Web用の規約 web-dev.md と、学びを蓄積する LESSONS.md もあわせて公開しています。">
+  <title>汎用CLAUDE.mdの作成と運用</title>
+  <link rel="stylesheet" href="../../shared.css">
+  <link rel="stylesheet" href="../../detail.css">
+</head>
+<body>
+  <header>
+    <a class="back-link" href="../index.html">← 作品一覧へ戻る</a>
+    <h1>汎用CLAUDE.mdの作成と運用</h1>
+    <p class="header-sub">プロジェクトごとに書き直さず、1つの土台をコピーして削って使う</p>
+  </header>
+
+  <main>
+    <section>
+      <h2 class="section-label">About</h2>
+      <p>
+        私が Claude Code を使って開発を進める際に読ませる<code>CLAUDE.md</code>の汎用版です。
+        新しいプロジェクトを始めるたびにこれをコピーし、そのプロジェクトに合わせて足したり削ったりして運用しています。
+      </p>
+      <p>
+        あわせて、Web 固有の規約をまとめた <code>web-dev.md</code> と、
+        プロジェクトで得た学びを蓄積する <code>LESSONS.md</code> を併用し、
+        セッションを跨いでも同じ失敗を繰り返さないようにしています。
+      </p>
+      <p class="note">
+        最終更新：<time datetime="2026-09-23">2026.9.23</time>（Claude Opus 5.5 の登場に合わせて見直しを実施）
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-label">Files</h2>
+      <p>役割ごとに3つのファイルに分けています。</p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>CLAUDE.md</h3>
+          <p>
+            どのプロジェクトでも共通の土台。基本原則・作業の進め方・事前に許可を取る操作・報告の書き方に加え、
+            Unity / C++ / Python / SQL / Blender の言語・ツール別セクションを持ちます。
+          </p>
+        </div>
+        <div class="feature">
+          <h3>web-dev.md</h3>
+          <p>
+            HTML / CSS / JavaScript / PHP を扱うプロジェクトだけに置く追加規約。
+            セキュリティ・アクセシビリティ・命名は、こちらが CLAUDE.md より優先されます。
+          </p>
+        </div>
+        <div class="feature">
+          <h3>LESSONS.md</h3>
+          <p>
+            そのプロジェクト固有の「はまった問題・意外な挙動」を1件5行前後で蓄積するファイル。
+            Claude には作業前に読ませ、新しい学びが出たら追記させます。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">How to Use</h2>
+      <p>新しいプロジェクトを始めるときの手順です。</p>
+      <ol class="steps">
+        <li>
+          <strong>コピーする</strong> —
+          汎用の <code>CLAUDE.md</code> をプロジェクトルートにコピーします。
+        </li>
+        <li>
+          <strong>プロジェクト情報を埋める</strong> —
+          概要・技術スタック・ビルド / テスト / 実行コマンド・手を触れない場所を書きます。
+          分からない項目は空欄で残さず<strong>行ごと消します</strong>。空欄があると、Claude が推測で補ってしまうためです。
+        </li>
+        <li>
+          <strong>不要なセクションを削る</strong> —
+          「基本原則」〜「命名規則（共通）」と「Git」はそのまま残し、
+          言語・ツール別のセクションは使うものだけを残します。
+        </li>
+        <li>
+          <strong>Web を扱うなら web-dev.md も置く</strong> —
+          扱わない場合は、CLAUDE.md 内の <code>web-dev.md</code> に触れている2行を消します。
+        </li>
+        <li>
+          <strong>LESSONS.md を育てる</strong> —
+          原因調査に手間取った問題や、予想と違う挙動に出会ったら、
+          「症状・原因・解決・教訓」の形式で追記します。誤りと分かったエントリは消します。
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2 class="section-label">Code</h2>
+      <!-- 引き出し式。開いたときに読み込む（code-view.js）。
+           汎用版の正本は ShoponOthers_1 にあり、このリポジトリの CLAUDE.md は
+           プロジェクト用に書き換わりうるため、ShoponOthers_1 の公開URLから読む。
+           JS が動かない環境でも「GitHub で見る」から読める -->
+      <ul class="code-files">
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">CLAUDE.md</span><span class="code-desc">全プロジェクト共通の土台</span></summary>
+            <pre class="code-block"><code data-src="https://shopon1128.github.io/ShoponOthers_1/CLAUDE.md">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/ShoponOthers_1/blob/main/CLAUDE.md">GitHub で見る</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">web-dev.md</span><span class="code-desc">Web（HTML / CSS / JS / PHP）を扱うときの追加規約</span></summary>
+            <pre class="code-block"><code data-src="https://shopon1128.github.io/ShoponOthers_1/web-dev.md">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/ShoponOthers_1/blob/main/web-dev.md">GitHub で見る</a></p>
+          </details>
+        </li>
+      </ul>
+      <ul class="code-files">
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">LESSONS.md</span><span class="code-desc">学びの蓄積（このポートフォリオ作成時に実際に使っているもの）</span></summary>
+            <pre class="code-block"><code data-src="../../LESSONS.md">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/LESSONS.md">GitHub で見る</a></p>
+          </details>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="section-label">Tech</h2>
+      <div class="tech-tags">
+        <span class="tag">Claude Code</span>
+        <span class="tag">Markdown</span>
+      </div>
+    </section>
+  </main>
+
+  <footer><p>© 2026 Shopon</p></footer>
+
+  <script defer src="../../code-view.js"></script>
+</body>
+</html>
