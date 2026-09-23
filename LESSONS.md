@@ -37,9 +37,15 @@
 - 解決: GitHub の blob ビュー（`https://github.com/<user>/<repo>/blob/main/<path>`）へリンクした。文字コードの推測が起きず、ハイライトと行番号も付く。link.js に `CODE_VIEW` として出典を持たせた
 - 教訓: **ソースコードを「ブラウザで読ませたい」なら Pages に直リンクしない。** BOM を付けても `octet-stream` では解決しない（ダウンロードは Content-Type で決まるため）。配信ヘッダは `curl -I` で必ず実測する。拡張子ごとに違うので、新しい種類のファイルを置いたら都度確認すること
 
+## subgrid にしたらカード内の題や期間の上下が妙に空いた (2026-09-23)
+- 症状: 期間とタグの段を隣のカードと揃えるため `.work-card` を `grid-template-rows: subgrid` にし、カード内だけ `row-gap: 16px` で上書きしたら、題の前後や期間→タグの間が 16px より大きく空いた(期間→タグが 61px)
+- 原因: 親 `.works-list` の行間(80px)とカード内の行間の差 64px を、WebKit がカード内の段へ割り振った。**subgrid の行は親と共有なので、カード内の段間とカード同士の間を別の gap にはできない**
+- 解決: 親の行間をカード内と同じ 16px にし、カード同士の残り 64px は `.work-card` の `margin-bottom` で作った。最後の行のぶんは `.works-list` の負の margin-bottom で打ち消した(WebKit で座標を実測して、変更前とカード高さ・ページ高さが一致することを確認)
+- 教訓: subgrid では `row-gap` をカード側で上書きしない。親子で同じ行間にして、カード間の余白は margin で作る。この Mac には Chrome も Node も無いが、`swift` スクリプトで WKWebView に `loadFileURL` し、`evaluateJavaScript` で getBoundingClientRect を出せば、Safari と同じエンジンで配置を数値で測れる
+
 ## 作品カードに hidden を付けても消えない (2026-09-05)
 - 症状: タグ絞り込みで `card.hidden = true` にしても、カードが表示されたままになる
-- 原因: works.css の `.work-card { display: flex }` と、ブラウザ標準の `[hidden] { display: none }` は詳細度が同じ(0,1,0)。同点なら後勝ちで、作者スタイルの方が常に勝つ
+- 原因: works.css の `.work-card { display: flex }`(2026-09-23 に grid へ変更。事情は同じ)と、ブラウザ標準の `[hidden] { display: none }` は詳細度が同じ(0,1,0)。同点なら後勝ちで、作者スタイルの方が常に勝つ
 - 解決: works.css に `.work-card[hidden] { display: none; }` を明示して打ち消した
 - 教訓: `display` を指定済みの要素を `hidden` で隠すときは、必ずセットで `[hidden]` の打ち消しを書く。このサイトは `.work-card` `.featured-card` など display 指定のカードが多いので、今後カードを増やすたびに同じ罠がある
 

@@ -11,6 +11,9 @@
   /* 「並び替え」「ジャンル」などの軸ラベルの幅。
      固定幅にして、上下の行でボタンの開始位置を揃える */
   --axis-label-w: 5.5rem;
+
+  /* 作品カード同士の縦の間隔（狭い画面では下のメディアクエリで詰める） */
+  --card-gap-y: var(--sp-2xl);
 }
 
 /* ============================================================
@@ -228,21 +231,35 @@
 .works-list {
   display:               grid;
   grid-template-columns: 1fr 1fr;
-  gap:                   var(--sp-2xl) var(--sp-l);
+  /* 行間はカード内の段の間隔。subgrid のカードと同じ値にしておかないと、
+     差の分をブラウザがカード内の段へ割り振り、題や期間の上下が不自然に空く
+     （WebKit で実測: 80px と 16px の差 64px が題・タグの前に散った） */
+  gap:                   var(--sp-m) var(--sp-l);
+  /* カード間の余白は下の .work-card の margin-bottom で作る。
+     最後の行のぶんは一覧の外に出さないよう打ち消す */
+  margin-bottom:         calc(-1 * (var(--card-gap-y) - var(--sp-m)));
 }
 
+/* 行を subgrid で親と共有し、隣のカードと段（写真・題・説明・期間・タグ）を
+   横一直線に揃える。flex の縦積みだと、説明文の長さの差で期間とタグが上下にずれる。
+   span の数は直下の子の数（.work-thumb〜.work-tags の5つ）と一致させること */
 .work-card {
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--sp-m);
-  animation:      fadeIn 0.4s ease both;
+  display:            grid;
+  grid-row:           span 5;
+  grid-template-rows: subgrid;
+  /* 行間 sp-m は親から受け継ぐ。カード間はそれとの差分だけ足す */
+  margin-bottom:      calc(var(--card-gap-y) - var(--sp-m));
+  /* 既定の stretch だと、段が隣に合わせて伸びたときにタグや期間の
+     折り返し行まで引き伸ばされる。中身は各段の上端に寄せる */
+  align-items:        start;
+  animation:          fadeIn 0.4s ease both;
   /* グリッドの子は既定で min-width:auto。長い作品名などで列が縮まなくなり、
      ウィンドウを狭めたときに横へはみ出すのを防ぐ */
-  min-width:      0;
+  min-width:          0;
 }
 
 /* 絞り込みで隠したカード。
-   上の .work-card { display: flex } と、ブラウザ標準の [hidden] { display: none }
+   上の .work-card { display: grid } と、ブラウザ標準の [hidden] { display: none }
    は詳細度が同じ(0,1,0)で後勝ちのため、[hidden] だけでは消えない */
 .work-card[hidden] { display: none; }
 
@@ -321,7 +338,6 @@
   display:    flex;
   gap:        var(--sp-s);
   flex-wrap:  wrap;
-  margin-top: auto;   /* カード高さが揃うようタグを下端に寄せる */
   padding-top: var(--sp-s);
 }
 
@@ -346,9 +362,12 @@
 
 /* ---------- レスポンシブ ---------- */
 @media (max-width: 768px) {
+  :root {
+    --card-gap-y: var(--sp-xl);
+  }
+
   .works-list {
     grid-template-columns: 1fr;
-    gap:                   var(--sp-xl);
   }
 
   /* 軸ラベルを固定幅で左に置くと、残り幅ではボタンが2〜3個しか
