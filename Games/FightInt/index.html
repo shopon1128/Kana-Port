@@ -166,6 +166,115 @@
     </section>
 
     <section>
+      <h2 class="section-label">Design</h2>
+      <p>
+        設計するにあたって決めたことです。それぞれ、下の Code にあるファイルと対応しています。
+      </p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>表示と実際の操作で、同じ判定を通す</h3>
+          <p>
+            盤面の「攻撃できる相手」の枠と、方向キーを押したときの実際の処理は、
+            どちらも <code>ResolveMove</code> という同じ関数に「このキーを押したら何が起きるか」を確認しています。
+            表示用と操作用で判定を別々に書くと、片方だけ直したときに「光っているのに攻撃できない」ずれが起きるためです。
+            行けるマスの計算も、Archerが敵の隣に踏み込めない判定や移動コストは同じ部品を使っています。
+            （<code>MoveRules.hpp</code> / <code>MoveRules.cpp</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>無料移動を含めた到達範囲を、正しく出す</h3>
+          <p>
+            MagicianとVanは1ターンに2回まで無料で動けるので、歩数だけでは行ける範囲が決まりません。
+            同じマスでも、無料移動を使い切って着いたか残して着いたかで、その先に行ける距離が変わるからです。
+            そこで「マス」と「無料移動を何回使ったか」の組を1つの状態として、最小の消費MPを探索しています。
+            1歩のコストは0か1しかないので、両端キューを使う0-1 BFSで求めています。
+            明るい緑（MPを使わずに行けるマス）もこの結果から出しています。
+            （<code>MoveRules.cpp</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>ジョブの違いは「上書き」だけで表す</h3>
+          <p>
+            元のコードは <code>name == "doctor"</code> のように、ジョブ名の文字列で分岐していました。
+            作り直しでは、攻撃コスト・移動コスト・回復できるか・肩代わりするか、といった能力を基底クラスの仮想関数にし、
+            各ジョブは自分の違いだけを上書きしています。
+            移動や攻撃の判定はジョブ名を一切見ないので（名前はログの表示にだけ使います）、ジョブを足しても判定のコードは触りません。
+            移動コストが「無料移動を何回使ったか」を引数で受け取るのは、到達範囲の探索で「もし2回使っていたら」を試算するためです。
+            （<code>Jobs.hpp</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>描画は、ゲームの状態を読むだけにする</h3>
+          <p>
+            描画クラスはゲーム本体を知らず、<code>HudState</code> という受け渡し用の値と盤面を、読み取り専用で受け取って絵にするだけです。
+            また描画先をウィンドウに固定せず <code>sf::RenderTarget</code> に対して描いているので、同じ絵を画像ファイルにも出せます。
+            ゲームを起動しなくても画面を画像で確認できるので、配色やレイアウトはこれを見ながら詰めました。
+            （<code>Renderer.hpp</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>色は「今できること」にだけ使う</h3>
+          <p>
+            数値と色はすべて1つのファイルに集め、ルール・見た目・リソースに分けています。
+            色は「行ける」「攻撃できる」「残りMP」のように今とれる行動にだけ使い、
+            Knightの肩代わり範囲のように「今そうなっているだけ」の情報は灰色に抑えました。
+            攻撃の枠を赤ではなくオレンジにしたのは1Pの駒の赤と紛れないため、といった理由も、コメントとしてその場に残しています。
+            （<code>Config.hpp</code>）
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">Code</h2>
+      <p>
+        この作品で設計の中心になっている5ファイルです。
+      </p>
+
+      <p class="code-files-intro">ゲームのルールと表示（C++）</p>
+      <!-- 引き出し式。コードは開いたときに code/ から読み込む(ルートの code-view.js)。
+           JS が動かない環境でも「GitHub で見る」から読める。
+           code/ はゲーム本体のリポジトリ（非公開）からのコピーなので、本体を直したらここも差し替える -->
+      <ul class="code-files">
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">MoveRules.hpp</span><span class="code-desc">判定の窓口。「画面のハイライトも実際の操作も、必ずここを通す」という約束を書いてある</span></summary>
+            <pre class="code-block"><code data-src="code/MoveRules.hpp">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/FightInt/code/MoveRules.hpp">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">MoveRules.cpp</span><span class="code-desc">「方向キーを押したら何が起きるか」の判定と、無料移動込みの到達範囲（0-1 BFS）、Knightの肩代わり範囲</span></summary>
+            <pre class="code-block"><code data-src="code/MoveRules.cpp">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/FightInt/code/MoveRules.cpp">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">Jobs.hpp</span><span class="code-desc">6ジョブの違い。基底クラスの仮想関数を、各ジョブが自分の分だけ上書きする</span></summary>
+            <pre class="code-block"><code data-src="code/Jobs.hpp">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/FightInt/code/Jobs.hpp">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">Renderer.hpp</span><span class="code-desc">描画の窓口。受け渡し用の HudState と、ウィンドウにも画像にも描ける仕組み</span></summary>
+            <pre class="code-block"><code data-src="code/Renderer.hpp">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/FightInt/code/Renderer.hpp">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">Config.hpp</span><span class="code-desc">ルール・見た目・リソースの定数。色の使い分けの理由をコメントで残してある</span></summary>
+            <pre class="code-block"><code data-src="code/Config.hpp">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/FightInt/code/Config.hpp">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+      </ul>
+    </section>
+
+    <section>
       <h2 class="section-label">Tech</h2>
       <div class="tech-tags">
         <span class="tag">C++</span>
@@ -181,5 +290,7 @@
   </main>
 
   <footer><p>© 2026 Shopon</p></footer>
+
+  <script defer src="../../code-view.js"></script>
 </body>
 </html>
