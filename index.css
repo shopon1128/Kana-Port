@@ -281,22 +281,37 @@
 }
 
 /* ============================================================
-   Featured Works — 推しの3作品
+   Featured Works — 推しの4作品
    写真 → タイトル → リード の縦積み。カードに枠を付けない
+   4列 → 2列(1024px以下)→ 1列(768px以下)。
+   4作品なので、どの幅でも最後の行に1枚だけ余ることがない
    ============================================================ */
 .featured-grid {
+  --featured-gap-y:      var(--sp-l);   /* カード同士の縦の間隔 */
+
   display:               grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:                   var(--sp-l);
+  grid-template-columns: repeat(4, 1fr);
+  /* 行間はカード内の段の間隔。subgrid のカードと同じ値にしておかないと、
+     差の分をブラウザがカード内の段へ割り振ってしまう（works.css の .works-list と同じ事情） */
+  gap:                   var(--sp-m) var(--sp-l);
+  /* カード間の余白は .featured-card の margin-bottom で作る。
+     最後の行のぶんは外に出さないよう打ち消す */
+  margin-bottom:         calc(-1 * (var(--featured-gap-y) - var(--sp-m)));
 }
 
+/* 行を subgrid で親と共有し、隣のカードと段（写真・タイトル・リード）を揃える。
+   flex の縦積みだと、タイトルが2行になったカードだけリードが下にずれる。
+   span の数は直下の子の数（.featured-thumb〜.featured-lead の3つ）と一致させること */
 .featured-card {
-  display:         flex;
-  flex-direction:  column;
-  gap:             var(--sp-m);
-  text-decoration: none;
-  color:           inherit;
-  min-width:       0;   /* グリッドの子の min-width:auto による横はみ出しを防ぐ */
+  display:            grid;
+  grid-row:           span 3;
+  grid-template-rows: subgrid;
+  /* 段が隣に合わせて伸びても、中身は各段の上端に寄せる */
+  align-items:        start;
+  margin-bottom:      calc(var(--featured-gap-y) - var(--sp-m));
+  text-decoration:    none;
+  color:              inherit;
+  min-width:          0;   /* グリッドの子の min-width:auto による横はみ出しを防ぐ */
 }
 
 .featured-thumb {
@@ -471,6 +486,13 @@
   .skills-grid {
     grid-template-columns: 1fr;
     gap:                   var(--sp-xl);
+  }
+
+  /* 上の gap は subgrid の段の間隔まで広げてしまうので、featured だけ戻す。
+     カード同士の間隔は --featured-gap-y 側で広げる */
+  .featured-grid {
+    --featured-gap-y: var(--sp-xl);
+    gap:              var(--sp-m) var(--sp-xl);
   }
 
   /* 狭い幅では名前カラムを詰めてバーの表示幅を確保する */
