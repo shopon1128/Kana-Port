@@ -38,7 +38,7 @@
         <strong>立ち回りの賢さだけで人間を追い詰める</strong>ボスを目指した作品です。
         立ち回りのパラメータはPython+Optunaの自動対戦ループで最適化し、戦術選択層はCMA-ESによる探索で学習させました。
         タイトル画面で9体の敵AIを切り替えられるので、
-        手作りの者から最適化された者まで、AIの進化を体感しながら遊べます。
+        手作りのものから最適化されたものまで、AIの進化を体感しながら遊べます。
       </p>
     </section>
 
@@ -116,7 +116,7 @@
             決めた戦術は粘り強くやり抜きます。
             <strong>第2〜4世代の挑戦者をすべて退け、長く「最強」の座を守り続けました</strong>。
             第5世代(Crown AI)にわずかな差で王座を譲りましたが、いまも全体の2位。
-            高い命中率を誇る一方、細かく不規則に動く相手は勝率が56%まで落ちる程に苦手としています。
+            高い命中率を誇る一方、細かく不規則に動く相手は勝率が59%まで落ちる程に苦手としています。
           </p>
         </article>
         <article class="ai-card">
@@ -193,7 +193,7 @@
           <p class="ai-persona">毎試合パラメータが変わる無法者</p>
           <p>
             立ち回りの14パラメータを試合ごとにランダム化する余興枠。射程も回避も突撃頻度も毎回バラバラで、
-            強い個体もちぐはぐな個体も出ます。データ上も勝率65%と、最適化・学習した個体(80%前後)に
+            強い個体もちぐはぐな個体も出ます。データ上も勝率66%と、最適化・学習した個体(73〜82%)に
             はっきり届きません。「<strong>最適化しないとこうなる</strong>」を逆説的に見せる存在です。
             公平性の枠(反応速度など)は固定なので、理不尽な動きにはなりません。
           </p>
@@ -209,6 +209,7 @@
             同時に<strong>データ収集の道具</strong>でもあり、全AIを同一条件・同一セッションで
             均等に戦わせられるので、下のCSVはこの仕組みで集めました。
             記録には抽選結果(実際に出たAI)が残ります。
+            なお抽選対象には、選択画面に載せていない<code>pro_optimized_v2</code>も含まれています。
           </p>
         </article>
       </div>
@@ -272,7 +273,7 @@
       <h2 class="section-label">Battle Data</h2>
       <p class="data-desc">
         現行ビルドで収録した対戦データ(1試合1行・<strong>6,097試合</strong>)を公開しています。
-        <code>ai_type</code>列は上のAI Lineupのラベルに、<code>opponent</code>列は
+        <code>ai_type</code>列は上のAI Lineupのラベルに(<code>pro_optimized_v2</code>だけは選択画面に無い、Shuffle AI専用の個体)、<code>opponent</code>列は
         対戦相手(<code>player</code>=人間 / <code>bot_○○</code>=各性格のボット)に対応します。
         勝敗・両者の命中率・戦術ごとの滞在時間・フェイントの効果測定などが1行に入っており、pandasでそのまま読めます。
       </p>
@@ -290,10 +291,11 @@
           </thead>
           <tbody>
             <tr><td>Frost AI(v4)</td><td>76%</td><td>75%</td><td>80%</td><td>90%</td><td>96%</td><td>82%</td><td>21pt</td></tr>
-            <tr><td><strong>Crown AI(v5)</strong></td><td>75%</td><td>76%</td><td>79%</td><td>81%</td><td>89%</td><td><strong>80%</strong></td><td><strong>14pt</strong></td></tr>
+            <tr><td>Crown AI(v5)</td><td>75%</td><td>76%</td><td>79%</td><td>81%</td><td>89%</td><td>80%</td><td>14pt</td></tr>
+            <tr><td>v2(選択画面なし)</td><td>74%</td><td>79%</td><td>73%</td><td>86%</td><td>94%</td><td>80%</td><td>21pt</td></tr>
             <tr><td>Snipe AI(v3)</td><td>78%</td><td>70%</td><td>73%</td><td>86%</td><td>94%</td><td>79%</td><td>24pt</td></tr>
             <tr><td>Base AI</td><td>56%</td><td>71%</td><td>78%</td><td>94%</td><td>92%</td><td>77%</td><td>38pt</td></tr>
-            <tr><td>Cold AI</td><td>62%</td><td>66%</td><td>73%</td><td>82%</td><td>93%</td><td>74%</td><td>31pt</td></tr>
+            <tr><td>Cold AI(v1_o)</td><td>62%</td><td>66%</td><td>73%</td><td>82%</td><td>93%</td><td>74%</td><td>31pt</td></tr>
             <tr><td>Veteran AI(v1)</td><td>62%</td><td>59%</td><td>73%</td><td>85%</td><td>87%</td><td>73%</td><td>28pt</td></tr>
             <tr><td>Chaos AI</td><td>51%</td><td>52%</td><td>61%</td><td>82%</td><td>89%</td><td>66%</td><td>38pt</td></tr>
             <tr><td>Craft AI</td><td>49%</td><td>59%</td><td>65%</td><td>84%</td><td>72%</td><td>65%</td><td>35pt</td></tr>
@@ -305,6 +307,8 @@
         <strong>統計的には区別できない程度の差</strong>(差2.4ポイント、p=0.23)です。
         さらにそれは残像フェイントという、<strong>このゲームならではの要素の封印</strong>によって得た力であり、
         <strong>このゲームの敵AIとして最強</strong>とするには不適格であると判断したため、Crown AIを現最強のAIとしています。
+        また、Shuffle AIの抽選にだけ登場するv2も合計ではCrown AIと同率(80%)ですが、
+        得意不得意の差が21ptと大きく目立った特徴もなかったため、選択画面には載せていません。
         なお対人戦のデータも含まれていますが、こちらはまだまだデータ数が少ないため、結論を出すにはまだ足りません。
       </p>
       <a class="play-button" href="./battle_data.csv">Download battle_data.csv</a>
@@ -313,7 +317,7 @@
     <section>
       <h2 class="section-label">Code</h2>
       <p>
-        この作品に置いて重要な6ファイルです。
+        この作品において重要な6ファイルです。
       </p>
 
       <p class="code-files-intro">Unity側 — AIの頭脳と、測る仕組み(C#)</p>
