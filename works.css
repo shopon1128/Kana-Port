@@ -14,6 +14,10 @@
 
   /* 作品カード同士の縦の間隔（狭い画面では下のメディアクエリで詰める） */
   --card-gap-y: var(--sp-2xl);
+
+  /* サムネイルの縦横比。題リンクのクリック範囲（.work-title a::after）も
+     これで同じ大きさにするので、変えるときは1か所で済む */
+  --thumb-ratio: 16 / 9;
 }
 
 /* ============================================================
@@ -256,6 +260,8 @@
   /* グリッドの子は既定で min-width:auto。長い作品名などで列が縮まなくなり、
      ウィンドウを狭めたときに横へはみ出すのを防ぐ */
   min-width:          0;
+  /* 題リンクのクリック範囲をサムネイルの上に広げる基準（.work-title a::after） */
+  position:           relative;
 }
 
 /* 絞り込みで隠したカード。
@@ -265,7 +271,7 @@
 
 /* ---------- サムネイル ---------- */
 .work-thumb {
-  aspect-ratio:    16 / 9;
+  aspect-ratio:    var(--thumb-ratio);
   overflow:        hidden;
   background:      var(--surface);
   display:         flex;
@@ -304,6 +310,19 @@
 }
 
 .work-title a:hover { color: var(--accent); }
+
+/* サムネイルを押しても題のリンク先へ飛べるよう、題リンクの当たり判定を
+   カード上端のサムネイル領域に重ねる。HTML で画像を <a> で包むと同じリンクが
+   2つになり、リンク先の二重管理と、読み上げ・Tab 移動の重複が起きるため。
+   カード全体には広げない（タグのボタンを押せなくなる） */
+.work-title a::after {
+  content:      '';
+  position:     absolute;
+  top:          0;
+  left:         0;
+  width:        100%;
+  aspect-ratio: var(--thumb-ratio);
+}
 
 /* ---------- 説明文 ---------- */
 .work-desc {
