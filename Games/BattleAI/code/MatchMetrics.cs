@@ -32,7 +32,7 @@ public class MatchMetrics : MonoBehaviour
     private CharaData _enemyData;
     private bool _isLogged;
 
-    //リザルト画面に表示する用のサマリ(UIフォントの都合で英語表記)
+    //リザルト画面に表示する用のサマリ(日本語。戦術名は表示名に直してから出す)
     public string ScreenSummary { get; private set; } = "";
 
     void Awake()
@@ -126,7 +126,7 @@ public class MatchMetrics : MonoBehaviour
         if (sortedTactics.Count > 0)
         {
             builder.Append("  戦術滞在: ");
-            AppendTacticTimes(builder, sortedTactics);
+            AppendTacticTimes(builder, sortedTactics, false);
             builder.AppendLine();
         }
         if (_feintHiddenCount > 0 || _plainHiddenCount > 0)
@@ -135,19 +135,19 @@ public class MatchMetrics : MonoBehaviour
         }
         Debug.Log(builder.ToString());
 
-        //リザルト画面用(英語表記)
+        //リザルト画面用
         StringBuilder screenBuilder = new();
-        screenBuilder.AppendLine($"TIME {Time.timeSinceLevelLoad:F1}s   HP  P:{playerHp:F0} / E:{enemyHp:F0}");
-        screenBuilder.AppendLine($"ACCURACY  P {_playerHits}/{_playerShots} ({ToRateText(_playerHits, _playerShots)})   E {_enemyHits}/{_enemyShots} ({ToRateText(_enemyHits, _enemyShots)})");
+        screenBuilder.AppendLine($"試合時間 {Time.timeSinceLevelLoad:F1}秒   残りHP  自分 {playerHp:F0} / 敵 {enemyHp:F0}");
+        screenBuilder.AppendLine($"命中率  自分 {_playerHits}/{_playerShots} ({ToRateText(_playerHits, _playerShots)})   敵 {_enemyHits}/{_enemyShots} ({ToRateText(_enemyHits, _enemyShots)})");
         if (sortedTactics.Count > 0)
         {
-            screenBuilder.Append("TACTICS  ");
-            AppendTacticTimes(screenBuilder, sortedTactics);
+            screenBuilder.Append("戦術  ");
+            AppendTacticTimes(screenBuilder, sortedTactics, true);
             screenBuilder.AppendLine();
         }
         if (_feintHiddenCount > 0 || _plainHiddenCount > 0)
         {
-            screenBuilder.Append($"HIDDEN avg  FEINT {ToAverage(_feintHiddenTotal, _feintHiddenCount):F1}s x{_feintHiddenCount}  /  PLAIN {ToAverage(_plainHiddenTotal, _plainHiddenCount):F1}s x{_plainHiddenCount}");
+            screenBuilder.Append($"見失い平均  フェイントあり {ToAverage(_feintHiddenTotal, _feintHiddenCount):F1}秒×{_feintHiddenCount}回  /  なし {ToAverage(_plainHiddenTotal, _plainHiddenCount):F1}秒×{_plainHiddenCount}回");
         }
         ScreenSummary = screenBuilder.ToString();
 
@@ -251,11 +251,15 @@ public class MatchMetrics : MonoBehaviour
         return a_count > 0 ? a_total / a_count : 0f;
     }
 
-    private void AppendTacticTimes(StringBuilder a_builder, List<KeyValuePair<string, float>> a_sortedTactics)
+    //戦術ごとの滞在時間を並べる。
+    private void AppendTacticTimes(StringBuilder a_builder, List<KeyValuePair<string, float>> a_sortedTactics, bool a_isForScreen)
     {
         for (int i = 0; i < a_sortedTactics.Count; i++)
         {
-            a_builder.Append($"{a_sortedTactics[i].Key} {a_sortedTactics[i].Value:F1}s");
+            string label = a_sortedTactics[i].Key;
+            string name = a_isForScreen ? EnemyAIPro.TacticDisplayName(label) : label;
+            string unit = a_isForScreen ? "秒" : "s";
+            a_builder.Append($"{name} {a_sortedTactics[i].Value:F1}{unit}");
             if (i < a_sortedTactics.Count - 1)
             {
                 a_builder.Append(" / ");

@@ -92,18 +92,53 @@ public class EnemyAIPro : MonoBehaviour
     private bool _hasFlankGoal;
     private bool _flankRolled;//このエピソード(見失い区間)で回り込みの抽選を済ませたか
 
-    //戦術表示用。フォントアセットの日本語グリフの問題があるため英語表記
-    public string CurrentTacticLabel => _tactic switch
+    //戦術ごとの名前。Labelは記録用の安定キーで、DisplayNameは画面表示用(ここだけ日本語にする)
+    private static readonly (Tactic Tactic, string Label, string DisplayName)[] TACTIC_NAMES =
     {
-        Tactic.Search => "SEARCH",       //索敵
-        Tactic.Approach => "APPROACH",   //接近
-        Tactic.Assault => "ASSAULT",     //強襲
-        Tactic.Ambush => "AMBUSH",       //隠密接近
-        Tactic.Attack => "ATTACK",       //攻撃
-        Tactic.Feint => "FEINT",         //フェイント
-        Tactic.Retreat => "RETREAT",     //離脱
-        _ => "-",
+        (Tactic.Search,   "SEARCH",   "索敵"),
+        (Tactic.Approach, "APPROACH", "接近"),
+        (Tactic.Assault,  "ASSAULT",  "強襲"),
+        (Tactic.Ambush,   "AMBUSH",   "隠密接近"),
+        (Tactic.Attack,   "ATTACK",   "攻撃"),
+        (Tactic.Feint,    "FEINT",    "フェイント"),
+        (Tactic.Retreat,  "RETREAT",  "離脱"),
     };
+    private const string UNKNOWN_TACTIC_LABEL = "-";
+
+    /// <summary>現在の戦術の記録用ラベル(英字の安定キー)</summary>
+    public string CurrentTacticLabel
+    {
+        get
+        {
+            foreach ((Tactic tactic, string label, string _) in TACTIC_NAMES)
+            {
+                if (tactic == _tactic)
+                {
+                    return label;
+                }
+            }
+            return UNKNOWN_TACTIC_LABEL;
+        }
+    }
+
+    /// <summary>現在の戦術の画面表示名</summary>
+    public string CurrentTacticDisplayName => TacticDisplayName(CurrentTacticLabel);
+
+    /// <summary>
+    /// 記録用ラベルを画面表示名に変換する。
+    /// メトリクスは集計をラベルで持っているので、表示の直前にここで日本語へ直す
+    /// </summary>
+    public static string TacticDisplayName(string a_label)
+    {
+        foreach ((Tactic _, string label, string displayName) in TACTIC_NAMES)
+        {
+            if (label == a_label)
+            {
+                return displayName;
+            }
+        }
+        return a_label;
+    }
 
     //スポナーが生成前に指定するデータの差し替え(タイトルのAI選択用)。Awakeで一度だけ消費される
     public static EnemyAiProData PendingAiData;

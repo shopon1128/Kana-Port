@@ -37,7 +37,7 @@
         「機械だからこその理不尽な反応速度で勝つ」のではなく、
         <strong>立ち回りの賢さだけで人間を追い詰める</strong>ボスを目指した作品です。
         立ち回りのパラメータはPython+Optunaの自動対戦ループで最適化し、戦術選択層はCMA-ESによる探索で学習させました。
-        タイトル画面で9体の敵AIを切り替えられるので、
+        選択画面で9体の敵AIを切り替えられるので、
         手作りのものから最適化されたものまで、AIの進化を体感しながら遊べます。
       </p>
     </section>
@@ -86,6 +86,11 @@
       </p>
       <p>
         選んだ相手は<strong>体・ダッシュ残像・弾・命中エフェクトの色</strong>で見分けられます。
+      </p>
+      <p>
+        選択画面のカードには、一言の性格と<strong>強さ・対応力・駆け引き</strong>の3項目(5段階)を載せています。
+        この評価は下のボット戦の勝率ではなく、<strong>人に遊んでもらった体感</strong>で付けました。
+        ボット相手の勝率と、人が感じる手強さの順位は一致しないためです(対人データが溜まったら見直す予定です)。
       </p>
 
       <p class="ai-group-label"><span>Featured</span></p>
@@ -152,7 +157,7 @@
             <h3>Cold AI</h3>
             <span class="ai-tag">ai_type: pro_optimized_v1_origin</span>
           </header>
-          <p class="ai-persona">勝つために見せ場を封印した素の最適化</p>
+          <p class="ai-persona">小細工なし。待ち構えて仕留める</p>
           <p>
             Veteran AIの素の姿。勝率だけを追った最適化はフェイントをほぼ使わず、
             偏差射撃も控える冷徹な立ち回りを選びました。Veteran AIとはフェイント・偏差・突撃の
@@ -176,7 +181,7 @@
             <h3>Frost AI</h3>
             <span class="ai-tag">ai_type: pro_learned_v4</span>
           </header>
-          <p class="ai-persona">学習と進化がたどり着いた、もう一つの冷徹</p>
+          <p class="ai-persona">まっすぐ、速く攻める</p>
           <p>
             戦術の「選び方」そのものを機械学習で作った個体。まず当時の最強(現Veteran AI)の判断を模倣学習で
             <strong>97%再現</strong>し、さらにCMA-ES(進化戦略)で磨いて、勝率は王者をわずかに上回りました。
