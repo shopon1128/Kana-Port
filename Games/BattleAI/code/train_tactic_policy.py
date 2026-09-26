@@ -29,7 +29,7 @@ FEATURES = [
     "can_see", "invincible", "has_contact", "clear_shot", "assault_budget", "feint_cd", "feint_running",
     "cur_search", "cur_approach", "cur_assault", "cur_ambush", "cur_attack", "cur_feint", "cur_retreat",
 ]
-# 戦術7種(ALL_TACTICS と同順)。この順序が方策の出力インデックスになる
+# 戦術7種(C#側 TacticCatalog.ALL と同順)。この順序が方策の出力インデックスになる
 TACTICS = ["search", "approach", "assault", "ambush", "attack", "feint", "retreat"]
 
 SEED = 42

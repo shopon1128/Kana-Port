@@ -322,7 +322,7 @@
     <section>
       <h2 class="section-label">Code</h2>
       <p>
-        この作品において重要な6ファイルです。
+        この作品において重要な8ファイルです。
       </p>
 
       <p class="code-files-intro">Unity側 — AIの頭脳と、測る仕組み(C#)</p>
@@ -331,9 +331,23 @@
       <ul class="code-files">
         <li>
           <details class="code-drawer">
-            <summary><span class="code-name">EnemyAIPro.cs</span><span class="code-desc">AIの頭脳。7戦術の採点・選択と実行。公平性ルール(判断周期・反応遅延・情報制限)もここで構造的に担保する</span></summary>
+            <summary><span class="code-name">EnemyAIPro.cs</span><span class="code-desc">AIの頭脳。状況から7戦術を採点して1つを選ぶ。公平性ルール(判断周期・反応遅延・情報制限)もここで構造的に担保する</span></summary>
             <pre class="code-block"><code data-src="code/EnemyAIPro.cs">開くと読み込みます…</code></pre>
             <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/EnemyAIPro.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">EnemyAIPro.Tactics.cs</span><span class="code-desc">選んだ戦術の実行。囮ダッシュのフェイント、側面への回り込み、死角への離脱、偏差射撃など、立ち回りの中身</span></summary>
+            <pre class="code-block"><code data-src="code/EnemyAIPro.Tactics.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/EnemyAIPro.Tactics.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">Tactic.cs</span><span class="code-desc">7戦術の定義と名前の一覧。並び順が学習方策の出力やCSVの列と対応するため、ここを唯一の定義元にしている</span></summary>
+            <pre class="code-block"><code data-src="code/Tactic.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/Tactic.cs">GitHub で見る（ハイライト付き）</a></p>
           </details>
         </li>
         <li>

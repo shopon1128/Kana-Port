@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using System.Reflection;
+using System.Text;
 using UnityEngine;
 
 /// <summary>
@@ -17,6 +17,11 @@ public class OptimizationRunner : MonoBehaviour
     private const string PARAMS_FILE_NAME = "params.json";
     private const string RESULT_FILE_NAME = "result.json";
     private const float POLL_INTERVAL = 0.5f;//params.jsonを確認する間隔(実時間の秒)
+    private const float GUI_LABEL_X = 10f;
+    private const float GUI_LABEL_Y_RUNNING = 40f;//連戦中はAUTO BATTLE表示(AutoBattleRunner)の下に出す
+    private const float GUI_LABEL_Y_IDLE = 15f;
+    private const float GUI_LABEL_WIDTH = 600f;
+    private const float GUI_LABEL_HEIGHT = 30f;
 
     public static OptimizationRunner Instance { get; private set; }
 
@@ -47,8 +52,7 @@ public class OptimizationRunner : MonoBehaviour
     private TrialParamsFile _applied;//適用済みの内容(画面表示用)
     private float _pollTimer;
 
-    //Python側との受け渡しフォルダ(プロジェクト直下のml/bridge)
-    public static string BridgeDirectory => Path.GetFullPath(Path.Combine(Application.dataPath, "..", "ml", "bridge"));
+    private static string BridgeDirectory => ProjectPaths.BridgeDirectory;
 
     //試行パラメータで戦っている間はその試行番号(メトリクスのai_type用)。未適用ならnull
     public static string AppliedTrialLabel => Instance != null && Instance._applied != null ? $"trial_{Instance._applied.trial}" : null;
@@ -111,7 +115,7 @@ public class OptimizationRunner : MonoBehaviour
     //次の試行を待つ。スタート演出が終わり次第ゲームを止め、params.jsonの更新を確認し続ける
     private void TickWaiting()
     {
-        if (StartSequenceManager.Instance == null || StartSequenceManager.Instance.IsGameStarted)
+        if (GameState.IsGameStarted)
         {
             Time.timeScale = 0f;//無意味な試合が進まないように停止(演出中に止めると演出と衝突するため開始後に)
         }
@@ -225,10 +229,10 @@ public class OptimizationRunner : MonoBehaviour
 
         //元アセットを守るため、コピーに対して上書きする
         EnemyAiProData copy = Instantiate(a_original);
-        var log = new System.Text.StringBuilder($"[Trial] #{file.trial} パラメータ適用:");
+        var log = new StringBuilder($"[Trial] #{file.trial} パラメータ適用:");
         foreach (TrialParam param in file.values)
         {
-            if (TrySetField(copy, param.name, param.value))
+            if (ScriptableFieldWriter.TrySetNumber(copy, param.name, param.value))
             {
                 log.Append($" {param.name}={param.value}");
             }
@@ -265,31 +269,6 @@ public class OptimizationRunner : MonoBehaviour
         return null;
     }
 
-    //非公開フィールドを型階層(EnemyAiProData→EnemyAiData)を遡って探し、値を設定する
-    private static bool TrySetField(object a_target, string a_fieldName, float a_value)
-    {
-        for (Type type = a_target.GetType(); type != null; type = type.BaseType)
-        {
-            FieldInfo field = type.GetField(a_fieldName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            if (field == null)
-            {
-                continue;
-            }
-            if (field.FieldType == typeof(float))
-            {
-                field.SetValue(a_target, a_value);
-                return true;
-            }
-            if (field.FieldType == typeof(int))
-            {
-                field.SetValue(a_target, Mathf.RoundToInt(a_value));
-                return true;
-            }
-            return false;//名前は合っているが対応していない型
-        }
-        return false;
-    }
-
     //試行パラメータで動作中であることを画面に明示する(素の設定と取り違えないように)
     void OnGUI()
     {
@@ -301,9 +280,8 @@ public class OptimizationRunner : MonoBehaviour
         };
         if (label != null)
         {
-            //連戦中はAUTO BATTLE表示(y=10)と重ならない位置に出す
-            float y = _state == OptState.Running ? 40f : 15f;
-            GUI.Label(new Rect(10, y, 600, 30), label);
+            float y = _state == OptState.Running ? GUI_LABEL_Y_RUNNING : GUI_LABEL_Y_IDLE;
+            GUI.Label(new Rect(GUI_LABEL_X, y, GUI_LABEL_WIDTH, GUI_LABEL_HEIGHT), label);
         }
     }
 }

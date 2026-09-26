@@ -12,8 +12,9 @@ public class MatchMetrics : MonoBehaviour
 {
     //v2形式(ai_type列で3種の敵AIを区別)。旧matches.csvはアーカイブとして残し、以後は書かない
     private const string CSV_FILE_NAME = "battle_data.csv";
-    //CSVの戦術列(EnemyAIProの戦術ラベルと一致させる。戦術を増やしたらここも更新する)
-    private static readonly string[] CSV_TACTIC_COLUMNS = { "SEARCH", "APPROACH", "ASSAULT", "AMBUSH", "ATTACK", "FEINT", "RETREAT" };
+    private const string CSV_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private const string HUMAN_OPPONENT_LABEL = "player";//対戦相手が人間のときのopponent列の値
+    private const string UNKNOWN_AI_LABEL = "unknown";
 
     public static MatchMetrics Instance { get; private set; }
 
@@ -116,42 +117,51 @@ public class MatchMetrics : MonoBehaviour
         float playerHp = Player.Instance != null ? Player.Instance.Data.nowHp : 0f;
         float enemyHp = _enemyData != null ? _enemyData.nowHp : 0f;
 
+        //戦術は滞在時間の長い順に並べて出す
         List<KeyValuePair<string, float>> sortedTactics = new(_tacticTimes);
-        sortedTactics.Sort((a, b) => b.Value.CompareTo(a.Value));
+        sortedTactics.Sort((a_lhs, a_rhs) => a_rhs.Value.CompareTo(a_lhs.Value));
 
-        //Console用(日本語)
+        Debug.Log(BuildConsoleSummary(a_isPlayerWin, playerHp, enemyHp, sortedTactics));
+        ScreenSummary = BuildScreenSummary(playerHp, enemyHp, sortedTactics);
+        AppendCsvRow(a_isPlayerWin, playerHp, enemyHp);
+    }
+
+    //Console用のサマリ(日本語。戦術は英字キーのままにしてCSVの列名と対応を取りやすくする)
+    private string BuildConsoleSummary(bool a_isPlayerWin, float a_playerHp, float a_enemyHp, List<KeyValuePair<string, float>> a_sortedTactics)
+    {
         StringBuilder builder = new();
-        builder.AppendLine($"[MatchMetrics] 決着: {(a_isPlayerWin ? "プレイヤーの勝ち" : "敵の勝ち")} | 試合時間 {Time.timeSinceLevelLoad:F1}秒 | 残HP: プレイヤー {playerHp:F0} / 敵 {enemyHp:F0}");
+        builder.AppendLine($"[MatchMetrics] 決着: {(a_isPlayerWin ? "プレイヤーの勝ち" : "敵の勝ち")} | 試合時間 {Time.timeSinceLevelLoad:F1}秒 | 残HP: プレイヤー {a_playerHp:F0} / 敵 {a_enemyHp:F0}");
         builder.AppendLine($"  命中率: プレイヤー {_playerHits}/{_playerShots} ({ToRateText(_playerHits, _playerShots)}) | 敵 {_enemyHits}/{_enemyShots} ({ToRateText(_enemyHits, _enemyShots)})");
-        if (sortedTactics.Count > 0)
+        if (a_sortedTactics.Count > 0)
         {
             builder.Append("  戦術滞在: ");
-            AppendTacticTimes(builder, sortedTactics, false);
+            AppendTacticTimes(builder, a_sortedTactics, false);
             builder.AppendLine();
         }
         if (_feintHiddenCount > 0 || _plainHiddenCount > 0)
         {
             builder.Append($"  見失い平均: フェイントあり {ToAverage(_feintHiddenTotal, _feintHiddenCount):F1}秒×{_feintHiddenCount}回 / なし {ToAverage(_plainHiddenTotal, _plainHiddenCount):F1}秒×{_plainHiddenCount}回 (フェイント試行 {_feintAttempts}回)");
         }
-        Debug.Log(builder.ToString());
+        return builder.ToString();
+    }
 
-        //リザルト画面用
-        StringBuilder screenBuilder = new();
-        screenBuilder.AppendLine($"試合時間 {Time.timeSinceLevelLoad:F1}秒   残りHP  自分 {playerHp:F0} / 敵 {enemyHp:F0}");
-        screenBuilder.AppendLine($"命中率  自分 {_playerHits}/{_playerShots} ({ToRateText(_playerHits, _playerShots)})   敵 {_enemyHits}/{_enemyShots} ({ToRateText(_enemyHits, _enemyShots)})");
-        if (sortedTactics.Count > 0)
+    //リザルト画面用のサマリ(戦術名は表示名に直してから出す)
+    private string BuildScreenSummary(float a_playerHp, float a_enemyHp, List<KeyValuePair<string, float>> a_sortedTactics)
+    {
+        StringBuilder builder = new();
+        builder.AppendLine($"試合時間 {Time.timeSinceLevelLoad:F1}秒   残りHP  自分 {a_playerHp:F0} / 敵 {a_enemyHp:F0}");
+        builder.AppendLine($"命中率  自分 {_playerHits}/{_playerShots} ({ToRateText(_playerHits, _playerShots)})   敵 {_enemyHits}/{_enemyShots} ({ToRateText(_enemyHits, _enemyShots)})");
+        if (a_sortedTactics.Count > 0)
         {
-            screenBuilder.Append("戦術  ");
-            AppendTacticTimes(screenBuilder, sortedTactics, true);
-            screenBuilder.AppendLine();
+            builder.Append("戦術  ");
+            AppendTacticTimes(builder, a_sortedTactics, true);
+            builder.AppendLine();
         }
         if (_feintHiddenCount > 0 || _plainHiddenCount > 0)
         {
-            screenBuilder.Append($"見失い平均  フェイントあり {ToAverage(_feintHiddenTotal, _feintHiddenCount):F1}秒×{_feintHiddenCount}回  /  なし {ToAverage(_plainHiddenTotal, _plainHiddenCount):F1}秒×{_plainHiddenCount}回");
+            builder.Append($"見失い平均  フェイントあり {ToAverage(_feintHiddenTotal, _feintHiddenCount):F1}秒×{_feintHiddenCount}回  /  なし {ToAverage(_plainHiddenTotal, _plainHiddenCount):F1}秒×{_plainHiddenCount}回");
         }
-        ScreenSummary = screenBuilder.ToString();
-
-        AppendCsvRow(a_isPlayerWin, playerHp, enemyHp);
+        return builder.ToString();
     }
 
     //敵AIの種類をCSV用の文字列にする(タイトルの選択を参照。設定が無い場合はPro有無だけで推定)
@@ -171,7 +181,7 @@ public class MatchMetrics : MonoBehaviour
         if (_optionSetting != null)
         {
             AiInfo info = AiCatalog.Find(_optionSetting.enemyAiType);
-            return info != null ? info.CsvLabel : "unknown";
+            return info != null ? info.CsvLabel : UNKNOWN_AI_LABEL;
         }
         return EnemyAIPro.Instance != null ? "pro_optimized_v1" : "base";
     }
@@ -179,7 +189,7 @@ public class MatchMetrics : MonoBehaviour
     //対戦相手をCSV用の文字列にする。人間なら"player"、ボットならその性格名(例: "bot_standard")。
     private string GetOpponentText()
     {
-        return PlayerBot.Instance != null ? PlayerBot.Instance.CsvLabel : "player";
+        return PlayerBot.Instance != null ? PlayerBot.Instance.CsvLabel : HUMAN_OPPONENT_LABEL;
     }
 
     //1試合1行でCSVに追記する
@@ -193,7 +203,7 @@ public class MatchMetrics : MonoBehaviour
 
         try
         {
-            string directory = GetCsvDirectory();
+            string directory = ProjectPaths.MetricsDirectory;
             Directory.CreateDirectory(directory);
             string path = Path.Combine(directory, CSV_FILE_NAME);
 
@@ -203,9 +213,9 @@ public class MatchMetrics : MonoBehaviour
                 header.Append("timestamp,player_win,duration_sec,player_hp,enemy_hp,");
                 header.Append("player_shots,player_hits,enemy_shots,enemy_hits,");
                 header.Append("feint_attempts,feint_hidden_count,feint_hidden_avg,plain_hidden_count,plain_hidden_avg");
-                foreach (string tactic in CSV_TACTIC_COLUMNS)
+                foreach (Tactic tactic in TacticCatalog.ALL)
                 {
-                    header.Append($",tactic_{tactic.ToLowerInvariant()}");
+                    header.Append($",tactic_{TacticCatalog.Label(tactic).ToLowerInvariant()}");
                 }
                 header.AppendLine(",ai_type,opponent");
                 File.WriteAllText(path, header.ToString());
@@ -214,16 +224,16 @@ public class MatchMetrics : MonoBehaviour
             //小数点の書式が実行環境の言語設定に依存しないよう、必ずInvariantCultureで書く
             CultureInfo culture = CultureInfo.InvariantCulture;
             StringBuilder row = new();
-            row.Append(System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", culture));
+            row.Append(System.DateTime.Now.ToString(CSV_TIMESTAMP_FORMAT, culture));
             row.Append($",{(a_isPlayerWin ? 1 : 0)}");
             row.Append($",{Time.timeSinceLevelLoad.ToString("F1", culture)}");
             row.Append($",{a_playerHp.ToString("F0", culture)},{a_enemyHp.ToString("F0", culture)}");
             row.Append($",{_playerShots},{_playerHits},{_enemyShots},{_enemyHits}");
             row.Append($",{_feintAttempts},{_feintHiddenCount},{ToAverage(_feintHiddenTotal, _feintHiddenCount).ToString("F2", culture)}");
             row.Append($",{_plainHiddenCount},{ToAverage(_plainHiddenTotal, _plainHiddenCount).ToString("F2", culture)}");
-            foreach (string tactic in CSV_TACTIC_COLUMNS)
+            foreach (Tactic tactic in TacticCatalog.ALL)
             {
-                _tacticTimes.TryGetValue(tactic, out float time);
+                _tacticTimes.TryGetValue(TacticCatalog.Label(tactic), out float time);
                 row.Append($",{time.ToString("F1", culture)}");
             }
             row.AppendLine($",{GetAiTypeText()},{GetOpponentText()}");
@@ -234,16 +244,6 @@ public class MatchMetrics : MonoBehaviour
             //WebGLなどファイル書き込みできない環境では諦める(ゲーム進行は止めない)
             Debug.LogWarning($"[MatchMetrics] CSV保存に失敗: {exception.Message}");
         }
-    }
-
-    private string GetCsvDirectory()
-    {
-#if UNITY_EDITOR
-        //エディタではプロジェクト直下に置く(Pythonなどから読みやすい)
-        return Path.Combine(Application.dataPath, "..", "MetricsLogs");
-#else
-        return Path.Combine(Application.persistentDataPath, "MetricsLogs");
-#endif
     }
 
     private float ToAverage(float a_total, int a_count)
@@ -257,7 +257,7 @@ public class MatchMetrics : MonoBehaviour
         for (int i = 0; i < a_sortedTactics.Count; i++)
         {
             string label = a_sortedTactics[i].Key;
-            string name = a_isForScreen ? EnemyAIPro.TacticDisplayName(label) : label;
+            string name = a_isForScreen ? TacticCatalog.DisplayName(label) : label;
             string unit = a_isForScreen ? "秒" : "s";
             a_builder.Append($"{name} {a_sortedTactics[i].Value:F1}{unit}");
             if (i < a_sortedTactics.Count - 1)
