@@ -1,0 +1,117 @@
+/* ============================================================
+   backfire.css — BACKFIRE（チーム制作）紹介ページ専用
+   ------------------------------------------------------------
+   teamLab 準拠。色を持たず、枠線1pxと余白だけで階層をつくる。
+
+   ページの土台・.feature・.tech-tags・.code-* は detail.css
+   （詳細ページ共通）にある。ここはこのページだけのものを置く。
+   プレイボタンは BattleAI、操作表と動画枠は FightInt と同じ見た目に揃えている
+   （値が同じでも、各ページ固有CSSに置く方針に合わせて複製している）。
+   ============================================================ */
+
+/* ---------- プレイボタン ---------- */
+.play { text-align: center; }
+
+/* CTA は塗りなし・枠線のみ（仕様書の Outlined CTA） */
+.play-button {
+  display:         inline-block;
+  font-size:       14px;
+  line-height:     1.6;
+  color:           var(--fg);
+  background:      transparent;
+  border:          1px solid var(--line-ui);
+  padding:         16px 32px;
+  margin-top:      var(--sp-m);
+  text-decoration: none;
+  transition:      border-color 0.15s;
+}
+
+.play-button:hover,
+.play-button:focus-visible {
+  border-color: var(--accent);
+  color:        var(--accent);
+}
+
+.play-note {
+  margin-top:  var(--sp-m);
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
+}
+
+/* ---------- 操作キー ---------- */
+/* 左に入力、右に動作。入力はキーボードとコントローラーを並べて書く */
+.controls {
+  display:               grid;
+  grid-template-columns: auto 1fr;
+  gap:                   var(--sp-s) var(--sp-m);
+  align-items:           center;
+  max-width:             fit-content;
+  margin:                var(--sp-l) auto 0;
+  border:                1px solid var(--line);
+  padding:               var(--sp-m) var(--sp-l);
+  font-size:             14px;
+  text-align:            left;
+}
+
+.key {
+  display:        inline-block;
+  font-family:    var(--font-mono);
+  font-size:      12px;
+  letter-spacing: 0.02em;
+  color:          var(--fg);
+  border:         1px solid var(--line);
+  padding:        2px 8px;
+  white-space:    nowrap;
+}
+
+/* ---------- プレイ動画 ---------- */
+.video-frame {
+  border: 1px solid var(--line);
+  /* 動画の下に生じる inline 由来の余白を殺す */
+  line-height: 0;
+}
+
+.video-frame video {
+  display:   block;
+  width:     100%;
+  height:    auto;
+  max-width: 100%;
+}
+
+/* ---------- チームと担当 ---------- */
+/* 人数・担当・期間の3項目。見出しと値を横に並べる */
+.team-facts {
+  display:               grid;
+  grid-template-columns: auto 1fr;
+  gap:                   var(--sp-s) var(--sp-l);
+  margin-top:            var(--sp-m);
+  border:                1px solid var(--line);
+  padding:               var(--sp-m) var(--sp-l);
+  font-size:             14px;
+  line-height:           1.7;
+}
+
+.team-facts dt { color: var(--muted); }
+
+/* detail.css の段落間隔は p + p にしか付かないので、表の直後の段落にも同じ間隔を空ける */
+.team-facts + p { margin-top: var(--sp-m); }
+
+/* 担当一覧・イベントの条件と種類で使う箇条書き */
+.plain-list {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--sp-s);
+  margin-top:     var(--sp-s);
+  padding-left:   1.2em;
+  font-size:      14px;
+  line-height:    1.8;
+}
+
+.plain-list strong { font-weight: 700; }
+
+/* ---------- レスポンシブ ---------- */
+@media (max-width: 768px) {
+  .controls { grid-template-columns: 1fr; gap: var(--sp-xs) 0; }
+  .controls > div:nth-child(even) { margin-bottom: var(--sp-s); }
+}

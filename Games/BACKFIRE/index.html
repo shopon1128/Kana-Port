@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BACKFIRE — 撃ち落としたウイルスが強くなって相手に返る、2人対戦シューティング。Unity 6による10人のチーム制作で、プログラマーとして試合中イベント・プレイヤー操作・決着からリザルトまでの演出などを担当しました。ブラウザでプレイできます。">
+  <title>BACKFIRE – チーム制作の2人対戦シューティング</title>
+  <link rel="stylesheet" href="../../shared.css">
+  <link rel="stylesheet" href="../../detail.css">
+  <link rel="stylesheet" href="backfire.css">
+</head>
+<body>
+  <header>
+    <a class="back-link" href="../index.html">← 作品一覧へ戻る</a>
+    <h1>BACKFIRE</h1>
+    <p class="header-sub">撃ち落としたウイルスが、強くなって相手に返る — 2人対戦シューティング / 10人のチーム制作</p>
+  </header>
+
+  <main>
+    <section class="play" aria-label="プレイ">
+      <a class="play-button" href="https://shopon1128.github.io/ShoponGames_1/BACKFIRE/">▶ Play in Browser</a>
+      <p class="play-note">WebGL版 / 2人対戦専用 / ゲームパッド</p>
+      <div class="controls">
+        <div><span class="key">スティック・十字キーの左右</span></div>
+        <div>砲台の向きを変える</div>
+        <div><span class="key">各ボタン</span></div>
+        <div>ショット（長押しでチャージショット）</div>
+        <div><span class="key">Start</span>（ゲームパッド）</div>
+        <div>ポーズ</div>
+      </div>
+      <p class="play-note">
+        1人に1台ずつ入力デバイスが必要です（ゲームパッド2台）。<br>
+        キャラクター選択画面で、それぞれのデバイスから参加してください。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-label">About</h2>
+      <p>
+        2人のプレイヤーが落ちてくるウイルスを砲台から出るアワで倒し、相手の陣地へ送る対戦シューティングです。
+        ウイルスが陣地下端に触れると、レベルに応じたダメージを受けます。
+      </p>
+      <p>
+        倒したウイルスは消えずに、<strong>1段階強くなって相手の陣地に送られます</strong>。
+        自分の陣地を守るために撃つほど相手への攻撃になり、相手が撃ち返せば、さらに強くなって戻ってきます。
+        連続で撃ち落とすとコンボが伸びて弾が3方向・5方向に広がり、
+        ボタンを長押しすると、ウイルスを貫通しながら大きくなるチャージショットを撃てます。
+      </p>
+      <p>
+        HPは顔のアイコンと連動していて、HP残量に応じて表情が変わります。
+        制限時間は3分で、決着がつかなければ<strong>サドンデス</strong>に入り、両者のHPが1になります。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="section-label">Play Movie</h2>
+      <div class="video-frame">
+        <!-- 46MB あるので、ページを開いた時点では読み込まない（再生時に取得する） -->
+        <video controls preload="metadata" playsinline width="1920" height="1200">
+          <source src="https://shopon1128.github.io/ShoponGames_1/BACKFIRE/Play.mp4" type="video/mp4">
+          お使いのブラウザは動画の再生に対応していません。
+          <a href="https://shopon1128.github.io/ShoponGames_1/BACKFIRE/Play.mp4">動画をダウンロードして再生してください。</a>
+        </video>
+      </div>
+      <p class="note">プレイ映像（音声が流れます）</p>
+    </section>
+
+    <section>
+      <h2 class="section-label">Team</h2>
+      <dl class="team-facts">
+        <dt>チーム</dt><dd>10人のチーム制作</dd>
+        <dt>担当</dt><dd>プログラマー</dd>
+        <dt>期間</dt><dd>2026年4月〜9月（約半年）</dd>
+      </dl>
+      <p>
+        下の Events・Design・Code で紹介している仕組みとコードは、私が担当した部分です。主な担当は次のとおりです。
+      </p>
+      <ul class="plain-list">
+        <li><strong>試合中のイベント</strong> — 試合の停滞を検知して、ウイルスの加速などのイベントを起こす仕組み</li>
+        <li><strong>プレイヤー操作</strong> — 砲台の回転、ショットとチャージショットの入力、撃った後の反動</li>
+        <li><strong>HPと被弾演出</strong> — HPゲージと顔アイコンの切り替え、被弾時のゲージ点滅と陣地の揺れ</li>
+        <li><strong>決着からリザルトまで</strong> — KO演出、時間切れのサドンデス、ウイルスで画面を覆ってスコア画面へ切り替える遷移、スコア画面の演出</li>
+        <li><strong>タイトル画面</strong> — フェードイン、ロゴの揺れ、背景に降るウイルス</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="section-label">Events</h2>
+      <p>
+        試合が停滞したことを検知すると、盤面をかき乱すイベントを起こす仕組みを作りました。
+        イベントは10秒間続き、終わってから20秒間は次のイベントが起きません。
+      </p>
+      <p class="code-files-intro">発生する条件</p>
+      <ul class="plain-list">
+        <li>開始から60秒たっても、両者のHPが50%を超えている</li>
+        <li>どちらかのHPが25%を切った（プレイヤーごとに1回ずつ。このときBGMも危険時の曲に切り替わる）</li>
+        <li>20秒ごとの判定で、どちらかのHPの減りが5%未満だった（条件を満たさなかったときは、次の判定を10秒後に早める）</li>
+      </ul>
+      <p class="code-files-intro">起きるイベント（4種類から抽選）</p>
+      <ul class="plain-list">
+        <li><strong>ウイルスがふえた！</strong> — 0〜1秒おきに、両方の陣地へ3体ずつウイルスを追加する</li>
+        <li><strong>ウイルスがつよくなった！</strong> — 自然に出てくるウイルスが、最弱のLv1ではなく最強のLv5になる</li>
+        <li><strong>ウイルスがはやくなった！</strong> — すべてのウイルスの速度が2倍になる</li>
+        <li><strong>ウイルスがぶんれつした！</strong> — 撃ち落として相手に送るウイルスが、1体ではなく2体になる</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="section-label">Design</h2>
+      <p>
+        担当部分を作るにあたって工夫したことです。それぞれ、下の Code にあるファイルと対応しています。
+      </p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>押しっぱなしを「回数」ではなく「状態」で扱う</h3>
+          <p>
+            このゲームはショットにゲームパッドのほぼすべてのボタンを割り当てているため、
+            あるボタンを押したまま別のボタンを押し、先のボタンだけ離すと、チャージがリセットされてしまう問題が発生しました。
+            そこで入力を受け取る関数は「今押されているか」を記録するだけにし、
+            押した瞬間・離した瞬間は、毎フレームの状態の変化から求めるようにしました。
+            （<code>PlayerManager.cs</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>イベントの調整をインスペクターから容易にできるように。</h3>
+          <p>
+            イベントの種類・発生比率・イベントメッセージを構造体にまとめ、Inspector で編集できるようにしています。
+            比率を変えたり文言を直したりするときに、コードを触らずに済みます。
+            イベントの発生確率を%ではなく比で管理するとこで、インスペクターで値を変更しても矛盾が発生しないようにしました。
+            （<code>EventManager.cs</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>画面が隠れている間に、シーンを切り替える</h3>
+          <p>
+            リザルトからスコア画面へは、400体のウイルスが降り注いで画面を埋め、弾けて次の画面が現れる演出でつないでいます。
+            ウイルスが画面を覆い切った瞬間に裏でシーンを読み込み、スコア画面の準備も隠れているうちに済ませます。
+            落下先は格子状に配ってから少しずつずらし、隙間ができないようにしました。
+            落下は着地の瞬間に速度が0になるよう減速させています。
+            （<code>VirusTransitionController.cs</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>演出は止めずに、縮めてスキップする</h3>
+          <p>
+            ウイルスの遷移とスコア画面の登場演出は、ボタンを押すと短縮できます。
+            途中でコルーチンを強制停止すると、キャラやラベルが中途半端な位置に残るため、
+            スキップされたらフラグを立て、演出側が自分で最後の状態まで進めて終わるようにしました。
+            決着時は時間を止めているので、これらの演出は時間停止の影響を受けない経過時間で動かしています。
+            （<code>ResultManager.cs</code> / <code>MainGameManager.cs</code>）
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-label">Code</h2>
+      <p>
+        このゲームで私が書いたコードです。
+        他のメンバーが書いた行は「……(チームメンバー担当のため省略)……」に置き換えています。
+        他のメンバーの担当と入り組んでいるファイルは、私が主に書いたメソッドだけを抜き出しました。
+      </p>
+
+      <p class="code-files-intro">試合中</p>
+      <!-- 引き出し式。コードは開いたときに code/ から読み込む(ルートの code-view.js)。
+           JS が動かない環境でも「GitHub で見る」から読める。-->
+      <ul class="code-files">
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">EventManager.cs</span><span class="code-desc">試合の停滞を3つの条件で検知し、4種類のイベントを比率で抽選して起こす</span></summary>
+            <pre class="code-block"><code data-src="code/EventManager.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BACKFIRE/code/EventManager.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">PlayerManager.cs（抜粋）</span><span class="code-desc">砲台の回転、押した瞬間・離した瞬間の判定、チャージ、撃った後の反動、HPに応じた状態の切り替え</span></summary>
+            <pre class="code-block"><code data-src="code/PlayerManager.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BACKFIRE/code/PlayerManager.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">PlayerHpManager.cs</span><span class="code-desc">HPゲージと顔アイコンの反映、被弾時のゲージ点滅と陣地の揺れ</span></summary>
+            <pre class="code-block"><code data-src="code/PlayerHpManager.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BACKFIRE/code/PlayerHpManager.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">MainGameManager.cs（抜粋）</span><span class="code-desc">時間切れのサドンデス、KO演出、リザルトからスコア画面へ進むまでの入力待ちとスキップ</span></summary>
+            <pre class="code-block"><code data-src="code/MainGameManager.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BACKFIRE/code/MainGameManager.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+      </ul>
+
+      <p class="code-files-intro">リザルト演出</p>
+      <ul class="code-files">
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">VirusTransitionController.cs</span><span class="code-desc">ウイルスが降り注いで画面を埋め、弾けて次の画面を見せる遷移。画面が隠れている間にシーンを切り替える</span></summary>
+            <pre class="code-block"><code data-src="code/VirusTransitionController.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BACKFIRE/code/VirusTransitionController.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">ResultManager.cs</span><span class="code-desc">スコア画面の演出</span></summary>
+            <pre class="code-block"><code data-src="code/ResultManager.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BACKFIRE/code/ResultManager.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">ResultData.cs</span><span class="code-desc">勝敗・撃破数・最大コンボを次のシーンへ渡す ScriptableObject</span></summary>
+            <pre class="code-block"><code data-src="code/ResultData.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BACKFIRE/code/ResultData.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+      </ul>
+
+      <p class="code-files-intro">タイトル演出</p>
+      <ul class="code-files">
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">TitleAnimationManager.cs</span><span class="code-desc">白からのフェードイン、ロゴの揺れ、比率に応じて背景に降らせるウイルス</span></summary>
+            <pre class="code-block"><code data-src="code/TitleAnimationManager.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BACKFIRE/code/TitleAnimationManager.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="section-label">Tech</h2>
+      <div class="tech-tags">
+        <span class="tag">Unity 6</span>
+        <span class="tag">C#</span>
+        <span class="tag">チーム開発</span>
+        <span class="tag">WebGL</span>
+      </div>
+    </section>
+  </main>
+
+  <footer><p>© 2026 山口奏輝</p></footer>
+
+  <script defer src="../../code-view.js"></script>
+</body>
+</html>
