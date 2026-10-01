@@ -14,6 +14,19 @@
     <a class="back-link" href="../index.html">← 作品一覧へ戻る</a>
     <h1>Battle AI</h1>
     <p class="header-sub">「立ち回りで勝つ」敵AI — ユーティリティAI × Optuna最適化の1vs1シューティング</p>
+    <nav class="toc" aria-label="目次">
+      <ol class="toc-list">
+        <li><a href="#about">About</a></li>
+        <li><a href="#ai-design">AI Design</a></li>
+        <li><a href="#ai-lineup">AI Lineup</a></li>
+        <li><a href="#fairness-rules">Fairness Rules</a></li>
+        <li><a href="#optuna-optimization">Optuna Optimization</a></li>
+        <li><a href="#machine-learning">Machine Learning</a></li>
+        <li><a href="#battle-data">Battle Data</a></li>
+        <li><a href="#code">Code</a></li>
+        <li><a href="#tech">Tech</a></li>
+      </ol>
+    </nav>
   </header>
 
   <main>
@@ -29,7 +42,7 @@
       <p>※選択画面から対戦相手のAIを選べます。設定を開くと、キー割り当ての変更やスマホ用のUI表示、AIの戦術可視化を試合中でも切り替えられます。</p>
     </section>
 
-    <section>
+    <section id="about">
       <h2 class="section-label">About</h2>
       <p>
         ランダム生成される遮蔽物マップで、敵ボスと1vs1で撃ち合うトップダウンシューティングです。
@@ -42,7 +55,7 @@
       </p>
     </section>
 
-    <section>
+    <section id="ai-design">
       <h2 class="section-label">AI Design</h2>
       <p>
         敵AIは<strong>ユーティリティAI</strong>方式。7つの戦術を0.25秒ごとに採点し、
@@ -77,7 +90,7 @@
       </div>
     </section>
 
-    <section>
+    <section id="ai-lineup">
       <h2 class="section-label">AI Lineup</h2>
       <p>
         専用の選択画面から選べる9体の敵AI。名前はその個体の持つ特徴に由来するもので、
@@ -220,7 +233,7 @@
       </div>
     </section>
 
-    <section>
+    <section id="fairness-rules">
       <h2 class="section-label">Fairness Rules</h2>
       <p>強いだけのAIは簡単に作れてしまうので、「理不尽の禁止」を構造で保証しています。</p>
       <div class="fairness-box">
@@ -234,7 +247,7 @@
       </div>
     </section>
 
-    <section>
+    <section id="optuna-optimization">
       <h2 class="section-label">Optuna Optimization</h2>
       <p>
         立ち回りのパラメータ12項目を、Python(Optuna)とUnityをファイル連携させた自動対戦ループで探索しました。
@@ -255,7 +268,7 @@
       </p>
     </section>
 
-    <section>
+    <section id="machine-learning">
       <h2 class="section-label">Machine Learning</h2>
       <p>
         Optuna最適化(上)が調整したのは「立ち回りの数値」でした。次の一歩は、それまで手書きだった
@@ -274,7 +287,7 @@
       </p>
     </section>
 
-    <section class="download">
+    <section id="battle-data" class="download">
       <h2 class="section-label">Battle Data</h2>
       <p class="data-desc">
         現行ビルドで収録した対戦データ(1試合1行・<strong>6,097試合</strong>)を公開しています。
@@ -319,7 +332,7 @@
       <a class="play-button" href="./battle_data.csv">Download battle_data.csv</a>
     </section>
 
-    <section>
+    <section id="code">
       <h2 class="section-label">Code</h2>
       <p>
         この作品において重要な8ファイルです。
@@ -392,7 +405,7 @@
       </ul>
     </section>
 
-    <section>
+    <section id="tech">
       <h2 class="section-label">Tech</h2>
       <div class="tech-tags">
         <span class="tag">Unity 6</span>

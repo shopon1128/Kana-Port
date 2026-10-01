@@ -43,6 +43,36 @@ main p {
 
 main section > p + p { margin-top: var(--sp-m); }
 
+/* ============================================================
+   目次
+   ------------------------------------------------------------
+   ヘッダー末尾に h2 の見出しを横に並べる。画面上部へ追従させないのは、
+   読み幅の狭い紙面を常時バーで占有したくないため。
+   項目は HTML に直書きしている。h2 を足す・改名するときは、
+   同じページの <nav class="toc"> と section の id も合わせて直すこと
+   ============================================================ */
+.toc { margin-top: var(--sp-l); }
+
+.toc-list {
+  list-style: none;
+  display:    flex;
+  flex-wrap:  wrap;
+  gap:        var(--sp-xs) var(--sp-l);
+}
+
+.toc-list a {
+  display:         inline-block;
+  padding:         var(--sp-xs) 0;   /* タップ領域の高さを 24px 以上にする（WCAG 2.5.8） */
+  font-size:       13px;
+  line-height:     1.6;
+  color:           var(--muted);
+  text-decoration: none;
+  transition:      color 0.15s;
+}
+
+.toc-list a:hover,
+.toc-list a:focus-visible { color: var(--accent); }
+
 /* ---------- 補足文 ---------- */
 .note {
   margin-top:  var(--sp-m);
