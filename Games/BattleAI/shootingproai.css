@@ -76,6 +76,145 @@
 
 .controls div > .key:first-child { margin-left: 0; }
 
+/* ---------- プレイ動画 ---------- */
+/* BACKFIRE / FightInt のページと同じ枠 */
+.video-frame {
+  border:      1px solid var(--line);
+  margin-top:  var(--sp-m);
+  /* 動画の下に生じる inline 由来の余白を殺す */
+  line-height: 0;
+}
+
+.video-frame video {
+  display:   block;
+  width:     100%;
+  height:    auto;
+  max-width: 100%;
+}
+
+/* ---------- 表示モードの比較 ---------- */
+/* ゲーム版とAI作品版を同じ大きさで横に並べ、違いを見比べられるようにする */
+.mode-grid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   var(--sp-m);
+  margin-top:            var(--sp-m);
+}
+
+.mode-grid figure {
+  border:    1px solid var(--line);
+  min-width: 0;   /* グリッドの子の min-width:auto による横はみ出しを防ぐ */
+}
+
+.mode-grid img {
+  display: block;
+  width:   100%;
+  height:  auto;
+}
+
+.mode-grid figcaption {
+  padding:     var(--sp-s) var(--sp-m) var(--sp-m);
+  font-size:   13px;
+  line-height: 1.7;
+  color:       var(--muted);
+}
+
+.mode-grid figcaption strong { color: var(--fg); }
+
+/* ---------- 試聴リスト ---------- */
+/* 再生ボタン / 曲名と説明 / 時間 の3列。再生中の行だけ、下の罫線がアクセント色で伸びて進捗を示す
+   （--progress は sound-player.js が 0〜1 で書き込む） */
+.sound-list {
+  list-style: none;
+  margin-top: var(--sp-s);
+  border-top: 1px solid var(--line);
+}
+
+.sound-list + .code-files-intro { margin-top: var(--sp-l); }
+
+.sound-item {
+  position:              relative;
+  display:               grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items:           center;
+  gap:                   var(--sp-m);
+  padding:               12px 0;
+  border-bottom:         1px solid var(--line);
+}
+
+.sound-item::after {
+  content:    '';
+  position:   absolute;
+  left:       0;
+  bottom:     -1px;
+  height:     1px;
+  width:      calc(var(--progress, 0) * 100%);
+  background: var(--accent);
+}
+
+/* 塗りなし・枠線のみ（ページの CTA と同じ扱い） */
+.sound-play {
+  display:     grid;
+  place-items: center;
+  width:       40px;
+  height:      40px;
+  border:      1px solid var(--line-ui);
+  transition:  border-color 0.15s;
+}
+
+.sound-play:hover,
+.sound-play:focus-visible,
+.is-playing .sound-play { border-color: var(--accent); }
+
+/* 再生の三角。文字(▶)は iOS で絵文字に化けることがあるので枠線で描く */
+.sound-play::before {
+  content:      '';
+  width:        0;
+  height:       0;
+  margin-left:  3px;   /* 三角は重心が左に寄って見えるので、少し右へずらす */
+  border-style: solid;
+  border-width: 6px 0 6px 10px;
+  border-color: transparent transparent transparent var(--fg);
+}
+
+/* 再生中は停止の四角 */
+.is-playing .sound-play::before {
+  width:        10px;
+  height:       10px;
+  margin-left:  0;
+  border:       0;
+  background:   var(--accent);
+}
+
+.sound-body { min-width: 0; }
+
+.sound-name {
+  font-size:   15px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.sound-meta {
+  margin-left:    var(--sp-s);
+  font-size:      11px;
+  font-weight:    400;
+  letter-spacing: 0.02em;
+  color:          var(--muted);
+}
+
+.sound-desc {
+  font-size:   13px;
+  line-height: 1.7;
+  color:       var(--muted);
+}
+
+.sound-time {
+  font-family:          var(--font-mono);
+  font-size:            12px;
+  font-variant-numeric: tabular-nums;
+  color:                var(--muted);
+}
+
 /* ---------- 戦術チップ ---------- */
 .tactic-list {
   display:    flex;
@@ -119,6 +258,22 @@
 .feature-media--fill {
   object-fit:      cover;
   object-position: left top;
+}
+
+/* 画像付きのカードを文字だけのカードと同じ列に置くと、隣のカードの下に大きな空白ができる。
+   横幅いっぱいに広げ、画像と文章を左右に並べて高さを揃える */
+.feature--wide {
+  grid-column:           1 / -1;
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   var(--sp-m) var(--sp-l);
+  align-items:           start;
+}
+
+/* 枠は素材(16:10)に合わせ、4:3 の余白を出さない */
+.feature--wide .feature-media {
+  aspect-ratio:  auto;
+  margin-bottom: 0;
 }
 
 /* ---------- AIプロフィールカード ---------- */
@@ -205,6 +360,46 @@
   color:       var(--muted);
 }
 
+/* ---------- AIの簡易一覧(Others) ---------- */
+/* Featured ほど語ることのない個体は、1体1行に畳んでページの長さを抑える。
+   名前の列幅を揃えて、縦に眺めたときに比べやすくする */
+.ai-compact {
+  list-style: none;
+  margin-top: var(--sp-m);
+  border-top: 1px solid var(--line);
+}
+
+.ai-compact li {
+  display:               grid;
+  grid-template-columns: 13em 1fr;
+  gap:                   var(--sp-xs) var(--sp-l);
+  padding:               var(--sp-m) 0;
+  border-bottom:         1px solid var(--line);
+}
+
+.ai-compact-head {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            var(--sp-xs);
+  min-width:      0;
+}
+
+.ai-compact h3 {
+  font-size:   15px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* ai_type は長いもの(pro_optimized_v1_origin)があるので、枠からはみ出さず折り返す */
+.ai-compact .ai-tag { overflow-wrap: anywhere; }
+
+.ai-compact p {
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
+}
+
 /* ---------- 公平性ルール ---------- */
 .fairness-box {
   border:      1px solid var(--line);
@@ -223,6 +418,10 @@
 }
 
 /* ---------- 対戦データ配布 ---------- */
+/* detail.css の .download は中央揃え(ボタンを中央に置くため)。
+   このページの配布欄は長文と表を含むので、見出しは他の章と同じく左に揃える */
+.download .section-label { text-align: left; }
+
 .download .data-desc {
   text-align:  left;
   margin-top:  var(--sp-m);
@@ -277,5 +476,8 @@
 /* ---------- レスポンシブ ---------- */
 @media (max-width: 768px) {
   .ai-grid,
+  .mode-grid,
+  .feature--wide,
+  .ai-compact li,
   .controls { grid-template-columns: 1fr; }
 }

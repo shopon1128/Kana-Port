@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Battle AI — ユーティリティAIの敵ボスをOptunaで強化した1vs1シューティング。公平性ルールで「理不尽じゃないのに強い」を目指したゲームAI作品。ブラウザでプレイできます。">
-  <title>Battle AI – シューティングゲームAIの作成</title>
+  <meta name="description" content="Battle AI — 視界とダッシュ残像で駆け引きする1vs1見下ろしシューティング。立ち回りで勝つ敵AIを、Optunaと機械学習で鍛えました。ブラウザでプレイできます。">
+  <title>Battle AI – 1vs1見下ろしシューティング</title>
   <link rel="stylesheet" href="../../shared.css">
   <link rel="stylesheet" href="../../detail.css">
   <link rel="stylesheet" href="shootingproai.css">
@@ -13,10 +13,14 @@
   <header>
     <a class="back-link" href="../index.html">← 作品一覧へ戻る</a>
     <h1>Battle AI</h1>
-    <p class="header-sub">「立ち回りで勝つ」敵AI — ユーティリティAI × Optuna最適化の1vs1シューティング</p>
+    <p class="header-sub">視界とダッシュ残像で駆け引きする1vs1見下ろしシューティング — 「立ち回りで勝つ」敵AIと撃ち合う</p>
     <nav class="toc" aria-label="目次">
       <ol class="toc-list">
+        <li><a href="#play-movie">Play Movie</a></li>
         <li><a href="#about">About</a></li>
+        <li><a href="#game">Game</a></li>
+        <li><a href="#display-modes">Display Modes</a></li>
+        <li><a href="#game-design">Game Design</a></li>
         <li><a href="#ai-design">AI Design</a></li>
         <li><a href="#ai-lineup">AI Lineup</a></li>
         <li><a href="#fairness-rules">Fairness Rules</a></li>
@@ -24,6 +28,7 @@
         <li><a href="#machine-learning">Machine Learning</a></li>
         <li><a href="#battle-data">Battle Data</a></li>
         <li><a href="#code">Code</a></li>
+        <li><a href="#sound">Sound</a></li>
         <li><a href="#tech">Tech</a></li>
       </ol>
     </nav>
@@ -42,17 +47,142 @@
       <p>※選択画面から対戦相手のAIを選べます。設定を開くと、キー割り当ての変更やスマホ用のUI表示、AIの戦術可視化を試合中でも切り替えられます。</p>
     </section>
 
+    <section id="play-movie">
+      <h2 class="section-label">Play Movie</h2>
+      <div class="video-frame">
+        <!-- 約8MB あるので、ページを開いた時点では読み込まない（再生時に取得する） -->
+        <video controls preload="metadata" playsinline width="1920" height="1080">
+          <source src="https://shopon1128.github.io/ShoponGames_1/BattleAI/Play.mp4" type="video/mp4">
+          お使いのブラウザは動画の再生に対応していません。
+          <a href="https://shopon1128.github.io/ShoponGames_1/BattleAI/Play.mp4">動画をダウンロードして再生してください。</a>
+        </video>
+      </div>
+    </section>
+
     <section id="about">
       <h2 class="section-label">About</h2>
       <p>
-        ランダム生成される遮蔽物マップで、敵ボスと1vs1で撃ち合うトップダウンシューティングです。
-        ただし主役はプレイヤーではなく<strong>敵AI</strong>。
+        ランダムに生成される遮蔽物マップで、敵AIと1vs1で撃ち合う見下ろし型シューティングです。
+        見えるのは自分の視線が通る範囲だけ。ダッシュは速い代わりに残像が相手の視界にまで残り、
+        撃つにも走るにも同じEPを使う —
+        <strong>「隠れる・覗く・居場所がバレる」の駆け引き</strong>を軸にゲームを組み立てました。
+      </p>
+      <p>
+        対戦相手の敵AIは、その駆け引きを人間と同じルールの上で使いこなします。
         「機械だからこその理不尽な反応速度で勝つ」のではなく、
-        <strong>立ち回りの賢さだけで人間を追い詰める</strong>ボスを目指した作品です。
-        立ち回りのパラメータはPython+Optunaの自動対戦ループで最適化し、戦術選択層はCMA-ESによる探索で学習させました。
+        <strong>立ち回りの賢さだけで人間を追い詰める</strong>ボスが目標です。
+        立ち回りのパラメータはPython+Optunaの自動対戦ループで最適化し、戦術の選び方は模倣学習とCMA-ESで学習させました。
         選択画面で9体の敵AIを切り替えられるので、
         手作りのものから最適化されたものまで、AIの進化を体感しながら遊べます。
       </p>
+    </section>
+
+    <section id="game">
+      <h2 class="section-label">Game</h2>
+      <p>
+        先に3発当てた方が勝ち。ルールはそれだけですが、駆け引きを生む仕組みを4つ入れています。
+      </p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>視線が通る範囲しか見えない</h3>
+          <p>遮蔽の向こうはフォグで暗くなり、そこにいる相手の姿も消えます。視線の判定は対称なので、「自分から見えない場所」は「相手から見られていない場所」でもあります。隠れる・覗く・回り込むが、そのまま攻防になります。</p>
+        </div>
+        <div class="feature">
+          <h3>ダッシュは速いが、居場所がバレる</h3>
+          <p>ダッシュ中は移動速度が2倍。その代わり残像はフォグより手前に描かれ、視界の外にいても相手に見えてしまいます。逃げるか、詰めるか、位置を明かしてでも急ぐかを毎回選ぶことになります。</p>
+        </div>
+        <div class="feature">
+          <h3>撃つのも走るのも、同じリソースで</h3>
+          <p>ショット1発でEP15、ダッシュは秒間30を消費し、EPは秒間15ずつ回復します。追いかけるためにダッシュを使いすぎると、追いついたときに撃てません。EPが足りないショットは不発音で知らせ、EP切れの間もダッシュは1.5倍速に落ちて続けられます。</p>
+        </div>
+        <div class="feature">
+          <h3>被弾時にスタン+無敵</h3>
+          <p>被弾すると0.5秒スタンし、その後1秒間は無敵になります。連続ヒットで一気に削り切られることはなく、1発ごとに仕切り直しが起きます。スタンしたキャラは視界の外でも表示されるので、遮蔽越しに当てた弾も手応えが分かります。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="display-modes">
+      <h2 class="section-label">Display Modes</h2>
+      <p>
+        同じ試合を2つの見せ方で遊べます。<strong>ゲーム版</strong>では敵の考えは一切見えず、
+        <strong>AI作品版</strong>では今の戦術・AIが記憶した危険地帯・試合後の分析が画面に出ます。
+        設定から、試合中でも切り替えられます。
+      </p>
+      <div class="mode-grid">
+        <figure>
+          <img src="https://shopon1128.github.io/ShoponGames_1/BattleAI/Game_mode.jpg" alt="ゲーム版の対戦画面。プレイヤーの視線が通る範囲だけが明るく、その外側はフォグで暗い" width="1920" height="1200" loading="lazy">
+          <figcaption><strong>ゲーム版</strong> — AIの思考は隠されているので、AIとの駆け引きを最大限楽しめます。</figcaption>
+        </figure>
+        <figure>
+          <img src="https://shopon1128.github.io/ShoponGames_1/BattleAI/AI_mode.jpg" alt="AI作品版の対戦画面。右上に敵AIの現在の戦術が表示され、AIが記憶した危険地帯が赤く塗られている" width="1920" height="1192" loading="lazy">
+          <figcaption><strong>AI作品版</strong> — AIの思考が開示された状態で遊べます。右上に今の戦術。赤みがかったセルは、AIが射線が通っていて危険だと記憶している場所です。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="game-design">
+      <h2 class="section-label">Game Design</h2>
+      <p>
+        ゲーム側で工夫したことです。それぞれ、下の Code にあるファイルと対応しています。
+      </p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>人間もAIもボットも、同じ「体」を動かす</h3>
+          <p>
+            移動・ダッシュ・EP・被弾はすべて共通の基底クラスが受け持ち、誰が操作するかは「入力値を書き込む頭脳」の違いでしかありません。
+            キーボード、スマホUI、学習用のボット、敵AIが同じ入口から体を動かすので、
+            AIだけ速く動ける・EPを無視できる、といったズルは構造上起こりません。
+            自動対戦で人間の代わりにボットを座らせられるのも、この作りのおかげです。
+            （<code>Character.cs</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>引っかからない地形を、生成ルールで保証する</h3>
+          <p>
+            キャラが壁の角に貼り付く問題を、最初は移動側の補正で直そうとしましたが、3回作り直しても解決せず全廃しました。
+            真因は地形が作る隙間だったため、禁止する配置を「幅1の隙間」と「斜めの角だけの接触」の2つに絞って生成ルールで根治。
+            それ以外は自由に置けるので遮蔽が密着して不定形の塊になり、地形の表情も増えました。
+            密着で生まれる「誰も入れない空洞」は、塗りつぶし探索で見つけて埋めています。
+            （<code>MapGenerator.cs</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>BGMと効果音を、すべてコードで合成する</h3>
+          <p>
+            音源素材は使わず、発振器・エンベロープ・フィルタ・ドラムをPython(NumPy / SciPy)で書き、
+            譜面データからBGM 3曲と効果音をWAVに書き出しています。
+            ノイズや揺らぎの乱数もシードを固定しているので、同じ譜面からは毎回同じ音が出ます。
+            ゲーム側では、曲の切り替えをシーン名の対応表で、ボタンの操作音の割り当てを自動で行うので、各シーンでの配線は不要です。
+            下の <a href="#sound">Sound</a> で試聴できます。
+            （<code>synth.py</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>スマホでも、キーボードと同じ動きにそろえる</h3>
+          <p>
+            スマホではジョイスティックで移動しますが、アナログ入力のままだと好きな角度・速さで動けてしまい、
+            キーボードで遊ぶ人やAIと条件がずれます。そこでスティックの入力を等速の8方向へ量子化し、
+            斜めも速くならないよう単位ベクトルにそろえました。
+            ダッシュは「押している間ずっと有効」を表すため、指を離した瞬間にしか反応しない標準のボタンではなく、押下と解放を直接検知しています。
+            縦横比の狭い画面では、マップの全幅が収まるようカメラを自動で引きます。
+            （<code>PhoneUIController.cs</code>）
+          </p>
+        </div>
+        <div class="feature feature--wide">
+          <img class="feature-media" src="https://shopon1128.github.io/ShoponGames_1/BattleAI/Metrics.jpg" alt="AI作品版のリザルト画面。両者の残りHPと命中率、敵AIが各戦術に使った時間の割合を示すレーダーチャートが表示されている" width="1920" height="1194" loading="lazy">
+          <div>
+            <h3>対戦相手の癖を対数のレーダーで見せる</h3>
+            <p>
+              AI作品版のリザルトでは、敵AIがこの試合でどの戦術に時間を使ったかをレーダーチャートで見せます。
+              割合をそのまま半径にすると、どの試合でも長い索敵・離脱に形が支配され、
+              平均との倍率にすると、今度は平均1〜2%の接近・強襲だけがトゲになります。
+              そこで半径を「全試合平均に対する倍率のlog2」にし、2倍と1/2倍が基準円(破線)から等距離に来るようにしました。
+              （<code>TacticRadarView.cs</code>）
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="ai-design">
@@ -109,6 +239,9 @@
         この評価は下のボット戦の勝率ではなく、<strong>人に遊んでもらった体感</strong>で付けました。
         ボット相手の勝率と、人が感じる手強さの順位は一致しないためです(対人データが溜まったら見直す予定です)。
       </p>
+      <p>
+        ここでは、学習で生まれた対照的な2体と、その比較基準になった1体を Featured として詳しく紹介します。
+      </p>
 
       <p class="ai-group-label"><span>Featured</span></p>
       <div class="ai-grid">
@@ -128,17 +261,16 @@
         </article>
         <article class="ai-card">
           <header>
-            <h3>Veteran AI</h3>
-            <span class="ai-tag">ai_type: pro_optimized_v1</span>
+            <h3>Frost AI</h3>
+            <span class="ai-tag">ai_type: pro_learned_v4</span>
           </header>
-          <p class="ai-persona">歴戦 — 4世代の挑戦者を退け続けた古豪</p>
+          <p class="ai-persona">速攻 — 見せ場を捨てて、勝率の頂点に立った</p>
           <p>
-            第1回Optuna最適化によって導かれたパラメータに対し、フェイント・偏差射撃・突撃の3項目だけを人間が手調整した
-            ハイブリッドAI。撃たれた場所を執拗に迂回し、攻撃中は不規則なダッシュで狙いを外させ、
-            決めた戦術は粘り強くやり抜きます。
-            <strong>第2〜4世代の挑戦者をすべて退け、長く「最強」の座を守り続けました</strong>。
-            第5世代(Crown AI)にわずかな差で王座を譲りましたが、いまも全体の2位。
-            高い命中率を誇る一方、細かく不規則に動く相手は勝率が59%まで落ちる程に苦手としています。
+            戦術の「選び方」そのものを機械学習で作った個体。まず当時の最強(現Veteran AI)の判断を模倣学習で
+            <strong>97%再現</strong>し、さらにCMA-ES(進化戦略)で磨いて、勝率は王者をわずかに上回りました。
+            ただしその強さの正体は<strong>フェイント(見せ場)の封印</strong>であり、パラメータ最適化でそれをやったのがCold AI、
+            <strong>学習+進化で独立に同じ結論に達した</strong>のがこのFrost AIです。
+            勝率だけを見るのであれば、このAIは現最強としたCrown AIすら上回ります。
           </p>
         </article>
         <article class="ai-card">
@@ -156,85 +288,32 @@
       </div>
 
       <p class="ai-group-label"><span>Others</span></p>
-      <div class="ai-grid">
-        <article class="ai-card">
-          <header>
-            <h3>Base AI</h3>
-            <span class="ai-tag">ai_type: base</span>
-          </header>
-          <p class="ai-persona">まっすぐ来る脳筋ファイター</p>
-          <p>
-            索敵→追跡→攻撃→離脱の4状態だけで動くステートマシン型で、全AIのご先祖的な個体。隠密も駆け引きも知らず、
-            見つけたら追いかけて自由角度で撃ちまくります。単純ゆえに手数が多く、
-            ボットには意外と強い一方、遮蔽を使う人間には動きを読まれがちです。
-          </p>
-        </article>
-        <article class="ai-card">
-          <header>
-            <h3>Cold AI</h3>
-            <span class="ai-tag">ai_type: pro_optimized_v1_origin</span>
-          </header>
-          <p class="ai-persona">小細工なし。待ち構えて仕留める</p>
-          <p>
-            Veteran AIの素の姿。勝率だけを追った最適化はフェイントをほぼ使わず、
-            偏差射撃も控える冷徹な立ち回りを選びました。Veteran AIとはフェイント・偏差・突撃の
-            <strong>3項目だけ</strong>が違い、その差が「魅せない強さ」として表れます。
-          </p>
-        </article>
-        <article class="ai-card">
-          <header>
-            <h3>Snipe AI</h3>
-            <span class="ai-tag">ai_type: pro_optimized_v3</span>
-          </header>
-          <p class="ai-persona">間合いの外から仕留める遠距離型スナイパー</p>
-          <p>
-            第3回最適化(見せ場を最初から制約に組み込んだ共適応設計)で生まれた個体で、
-            現最強のCrown AIを育てた教師でもあります。
-            遠い間合いを徹底して保ち、引き撃ちで削り、詰められれば全力で回避します。
-          </p>
-        </article>
-        <article class="ai-card">
-          <header>
-            <h3>Frost AI</h3>
-            <span class="ai-tag">ai_type: pro_learned_v4</span>
-          </header>
-          <p class="ai-persona">まっすぐ、速く攻める</p>
-          <p>
-            戦術の「選び方」そのものを機械学習で作った個体。まず当時の最強(現Veteran AI)の判断を模倣学習で
-            <strong>97%再現</strong>し、さらにCMA-ES(進化戦略)で磨いて、勝率は王者をわずかに上回りました。
-            ただしその強さの正体は<strong>フェイント(見せ場)の封印</strong>であり、パラメータ最適化でそれをやったのがCold AI、
-            <strong>学習+進化で独立に同じ結論に達した</strong>のがこのFrost AIです。
-            勝率だけを見るのであれば、このAIは現最強としたCrown AIすら上回ります。
-          </p>
-        </article>
-        <article class="ai-card">
-          <header>
-            <h3>Chaos AI</h3>
-            <span class="ai-tag">ai_type: chaos</span>
-          </header>
-          <p class="ai-persona">毎試合パラメータが変わる無法者</p>
-          <p>
-            立ち回りの14パラメータを試合ごとにランダム化する余興枠。射程も回避も突撃頻度も毎回バラバラで、
-            強い個体もちぐはぐな個体も出ます。データ上も勝率66%と、最適化・学習した個体(73〜82%)に
-            はっきり届きません。「<strong>最適化しないとこうなる</strong>」を逆説的に見せる存在です。
-            公平性の枠(反応速度など)は固定なので、理不尽な動きにはなりません。
-          </p>
-        </article>
-        <article class="ai-card">
-          <header>
-            <h3>Shuffle AI</h3>
-            <span class="ai-tag">ai_type: 抽選結果が記録される</span>
-          </header>
-          <p class="ai-persona">毎試合、誰が出てくるか分からない</p>
-          <p>
-            試合ごとに他のAIから1体を抽選して出撃させる枠。次に何と戦うか分からないまま挑む遊び方ができます。
-            同時に<strong>データ収集の道具</strong>でもあり、全AIを同一条件・同一セッションで
-            均等に戦わせられるので、下のCSVはこの仕組みで集めました。
-            記録には抽選結果(実際に出たAI)が残ります。
-            なお抽選対象には、選択画面に載せていない<code>pro_optimized_v2</code>も含まれています。
-          </p>
-        </article>
-      </div>
+      <ul class="ai-compact">
+        <li>
+          <div class="ai-compact-head"><h3>Veteran AI</h3><span class="ai-tag">pro_optimized_v1</span></div>
+          <p>歴戦 — 第1回Optuna最適化の値に、フェイント・偏差射撃・突撃の3項目だけ人間が手を入れたハイブリッド。<strong>第2〜4世代の挑戦者をすべて退け</strong>、長く最強の座を守った古豪です。</p>
+        </li>
+        <li>
+          <div class="ai-compact-head"><h3>Cold AI</h3><span class="ai-tag">pro_optimized_v1_origin</span></div>
+          <p>Veteran AIの素の姿。勝率だけを追った最適化はフェイントも偏差射撃もほぼ使わない、「魅せない強さ」を選びました。</p>
+        </li>
+        <li>
+          <div class="ai-compact-head"><h3>Snipe AI</h3><span class="ai-tag">pro_optimized_v3</span></div>
+          <p>遠い間合いを保って引き撃ちで削る遠距離型。見せ場を最初から制約に組み込んだ第3回最適化の個体で、Crown AIの教師でもあります。</p>
+        </li>
+        <li>
+          <div class="ai-compact-head"><h3>Base AI</h3><span class="ai-tag">base</span></div>
+          <p>索敵→追跡→攻撃→離脱の4状態だけで動く、全AIのご先祖。手数は多いものの、遮蔽を使う人間には動きを読まれがちです。</p>
+        </li>
+        <li>
+          <div class="ai-compact-head"><h3>Chaos AI</h3><span class="ai-tag">chaos</span></div>
+          <p>立ち回りの14パラメータを毎試合ランダム化する余興枠。勝率66%と最適化・学習した個体に届かない、「<strong>最適化しないとこうなる</strong>」の見本です。</p>
+        </li>
+        <li>
+          <div class="ai-compact-head"><h3>Shuffle AI</h3><span class="ai-tag">抽選結果を記録</span></div>
+          <p>毎試合、他のAIから1体を抽選して出撃させる枠。全AIを同条件で均等に戦わせる<strong>データ収集の道具</strong>でもあり、下のCSVはこの仕組みで集めました(抽選には選択画面にない<code>pro_optimized_v2</code>も含む)。</p>
+        </li>
+      </ul>
     </section>
 
     <section id="fairness-rules">
@@ -339,12 +418,44 @@
     <section id="code">
       <h2 class="section-label">Code</h2>
       <p>
-        この作品において重要な8ファイルです。
+        この作品において重要な13ファイルです。
       </p>
 
-      <p class="code-files-intro">Unity側 — AIの頭脳と、測る仕組み(C#)</p>
       <!-- 引き出し式。コードは開いたときに code/ から読み込む(ルートの code-view.js)。
            JS が動かない環境でも「GitHub で見る」から読める -->
+      <p class="code-files-intro">Unity側 — ゲームの土台(C#)</p>
+      <ul class="code-files">
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">Character.cs</span><span class="code-desc">プレイヤーと敵に共通する「体」。移動・ダッシュ・EP・被弾(スタン+無敵)を受け持ち、誰が操作するかは入力値を書く側に任せる</span></summary>
+            <pre class="code-block"><code data-src="code/Character.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/Character.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">MapGenerator.cs</span><span class="code-desc">遮蔽物マップのランダム生成。引っかかる配置を禁じるルールと、誰も入れない空洞の穴埋め。経路探索・視線判定もここで提供する</span></summary>
+            <pre class="code-block"><code data-src="code/MapGenerator.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/MapGenerator.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">TacticRadarView.cs</span><span class="code-desc">リザルトの戦術レーダー。半径を「全試合平均に対する倍率のlog2」にして、どの軸も同じ重みで読めるようにする</span></summary>
+            <pre class="code-block"><code data-src="code/TacticRadarView.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/TacticRadarView.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">PhoneUIController.cs</span><span class="code-desc">スマホ用の操作UI。スティックの入力を等速8方向へ量子化し、キーボードと同じ入口からプレイヤーを動かす</span></summary>
+            <pre class="code-block"><code data-src="code/PhoneUIController.cs">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/PhoneUIController.cs">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+      </ul>
+
+      <p class="code-files-intro">Unity側 — AIの頭脳と、測る仕組み(C#)</p>
       <ul class="code-files">
         <li>
           <details class="code-drawer">
@@ -383,7 +494,7 @@
         </li>
       </ul>
 
-      <p class="code-files-intro">Python側 — 最適化と学習</p>
+      <p class="code-files-intro">Python側 — 最適化・学習・音の合成</p>
       <ul class="code-files">
         <li>
           <details class="code-drawer">
@@ -406,6 +517,96 @@
             <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/evolve_policy.py">GitHub で見る（ハイライト付き）</a></p>
           </details>
         </li>
+        <li>
+          <details class="code-drawer">
+            <summary><span class="code-name">synth.py</span><span class="code-desc">BGM/SE合成の基本部品。発振器・エンベロープ・フィルタ・エフェクト・ドラムをNumPy/SciPyで書いたもの</span></summary>
+            <pre class="code-block"><code data-src="code/synth.py">開くと読み込みます…</code></pre>
+            <p class="code-foot"><a href="https://github.com/shopon1128/Kana-Port/blob/main/Games/BattleAI/code/synth.py">GitHub で見る（ハイライト付き）</a></p>
+          </details>
+        </li>
+      </ul>
+    </section>
+
+    <section id="sound">
+      <h2 class="section-label">Sound</h2>
+      <p>
+        ゲームで鳴っているBGMと効果音です。すべて Python のコードで合成しました。
+        BGMは試聴用にAACへ変換しています。
+      </p>
+      <!-- 再生は sound-player.js が同じページ内で行う。JS が動かない環境では
+           リンクとして音源ファイルが開くので、そのまま聴ける -->
+      <p class="code-files-intro">BGM</p>
+      <ul class="sound-list">
+        <li class="sound-item">
+          <a class="sound-play" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/bgm_title.m4a" aria-label="タイトルを再生"></a>
+          <div class="sound-body">
+            <p class="sound-name">タイトル <span class="sound-meta">Aマイナー / 124BPM</span></p>
+            <p class="sound-desc">霧が晴れていくようなイントロから、刻みだけ → 主旋律 → 少し高揚するサビへ。ゲームと同じく、イントロに続けてループ本体が流れます</p>
+          </div>
+          <span class="sound-time">0:50</span>
+        </li>
+        <li class="sound-item">
+          <a class="sound-play" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/bgm_battle.m4a" aria-label="対戦を再生"></a>
+          <div class="sound-body">
+            <p class="sound-name">対戦 <span class="sound-meta">Dマイナー / 150BPM</span></p>
+            <p class="sound-desc">前半は刻みとベースだけで、索敵中の張り詰めた空気を作り、後半で主旋律が入ります</p>
+          </div>
+          <span class="sound-time">0:51</span>
+        </li>
+        <li class="sound-item">
+          <a class="sound-play" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/bgm_result.m4a" aria-label="リザルトを再生"></a>
+          <div class="sound-body">
+            <p class="sound-name">リザルト <span class="sound-meta">Cメジャー / 92BPM</span></p>
+            <p class="sound-desc">勝ち・負けのどちらでも流れるので、喜びにも悔しさにも寄せない「一息つく」曲調にしました</p>
+          </div>
+          <span class="sound-time">0:42</span>
+        </li>
+      </ul>
+
+      <p class="code-files-intro">効果音</p>
+      <ul class="sound-list">
+        <li class="sound-item">
+          <a class="sound-play" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/se_shot.wav" aria-label="ショットを再生"></a>
+          <div class="sound-body">
+            <p class="sound-name">ショット</p>
+            <p class="sound-desc">両陣営が頻繁に撃つので、短く、耳に刺さらない高さにしています</p>
+          </div>
+        </li>
+        <li class="sound-item">
+          <a class="sound-play" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/se_ep_empty.wav" aria-label="不発を再生"></a>
+          <div class="sound-body">
+            <p class="sound-name">不発(EP不足)</p>
+            <p class="sound-desc">ショットと同じ下降の動きを、低く短くこもらせた「出かかってしぼむ」音</p>
+          </div>
+        </li>
+        <li class="sound-item">
+          <a class="sound-play" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/se_damage.wav" aria-label="被弾を再生"></a>
+          <div class="sound-body">
+            <p class="sound-name">被弾</p>
+            <p class="sound-desc">ザラついた打撃と下降音で、「当たった」がはっきり分かるように</p>
+          </div>
+        </li>
+        <li class="sound-item">
+          <a class="sound-play" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/se_click.wav" aria-label="操作音を再生"></a>
+          <div class="sound-body">
+            <p class="sound-name">操作音</p>
+            <p class="sound-desc">ボタンや切り替えに自動で付く、短く明るい2音</p>
+          </div>
+        </li>
+        <li class="sound-item">
+          <a class="sound-play" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/se_decide.wav" aria-label="スタートを再生"></a>
+          <div class="sound-body">
+            <p class="sound-name">スタート / リトライ</p>
+            <p class="sound-desc">上昇する3音のあと、左右に跳ねるエコーが画面の暗転に溶けていきます</p>
+          </div>
+        </li>
+        <li class="sound-item">
+          <a class="sound-play" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/se_back.wav" aria-label="戻るを再生"></a>
+          <div class="sound-body">
+            <p class="sound-name">戻る</p>
+            <p class="sound-desc">下降する2音。スタートの音より柔らかく、控えめに</p>
+          </div>
+        </li>
       </ul>
     </section>
 
@@ -414,9 +615,13 @@
       <div class="tech-tags">
         <span class="tag">Unity 6</span>
         <span class="tag">C#</span>
+        <span class="tag">Input System</span>
+        <span class="tag">URP</span>
+        <span class="tag">手続き的マップ生成</span>
         <span class="tag">ユーティリティAI</span>
         <span class="tag">A*経路探索</span>
         <span class="tag">Python</span>
+        <span class="tag">NumPy / SciPy(音声合成)</span>
         <span class="tag">Optuna</span>
         <span class="tag">模倣学習</span>
         <span class="tag">CMA-ES</span>
@@ -429,5 +634,6 @@
   <footer><p>© 2026 山口奏輝</p></footer>
 
   <script defer src="../../code-view.js"></script>
+  <script defer src="sound-player.js"></script>
 </body>
 </html>
