@@ -50,24 +50,62 @@ main section > p + p { margin-top: var(--sp-m); }
    読み幅の狭い紙面を常時バーで占有したくないため。
    項目は HTML に直書きしている。h2 を足す・改名するときは、
    同じページの <nav class="toc"> と section の id も合わせて直すこと
-   ============================================================ */
-.toc { margin-top: var(--sp-l); }
 
+   横一列に並べた muted の文字だけでは、サブコピーの続きやタグ列に見えて
+   目次と気づかれなかった。そこで枠・「目次」の見出し・番号・縦の段組みで
+   「本の目次」と同じ形にしている
+   ============================================================ */
+.toc {
+  margin-top: var(--sp-l);
+  border:     1px solid var(--line);
+  padding:    var(--sp-m) var(--sp-l);
+}
+
+/* nav の aria-label="目次" と読み上げが二重にならないよう、代替テキストを空にする。
+   「/ ""」構文を解釈できないブラウザは2行目を捨てて1行目を使う */
+.toc::before {
+  content:       "目次";
+  content:       "目次" / "";
+  display:       block;
+  margin-bottom: var(--sp-s);
+  font-size:     12px;
+  line-height:   1.6;
+  letter-spacing: 0.02em;   /* 12px以下だけ潰れ防止に微量付与（shared.css と同じ） */
+  color:         var(--muted);
+}
+
+/* 段組みにすると上から下へ読む順になり、項目数がページごとに違っても段数だけが変わる */
 .toc-list {
-  list-style: none;
-  display:    flex;
-  flex-wrap:  wrap;
-  gap:        var(--sp-xs) var(--sp-l);
+  list-style:    none;
+  counter-reset: toc;
+  column-width:  180px;
+  column-gap:    var(--sp-l);
+}
+
+.toc-list li {
+  counter-increment: toc;
+  break-inside:      avoid;   /* 1項目が段の境目で上下に割れないようにする */
 }
 
 .toc-list a {
-  display:         inline-block;
+  display:         inline-flex;
+  align-items:     baseline;
+  gap:             var(--sp-s);
   padding:         var(--sp-xs) 0;   /* タップ領域の高さを 24px 以上にする（WCAG 2.5.8） */
-  font-size:       13px;
+  font-size:       14px;
   line-height:     1.6;
-  color:           var(--muted);
+  color:           var(--fg);
   text-decoration: none;
   transition:      color 0.15s;
+}
+
+/* 番号は ol の順序と同じ情報なので読み上げない */
+.toc-list a::before {
+  content:     counter(toc, decimal-leading-zero);
+  content:     counter(toc, decimal-leading-zero) / "";
+  font-family: var(--font-mono);
+  font-size:   12px;
+  color:       var(--muted);
 }
 
 .toc-list a:hover,
