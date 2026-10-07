@@ -321,5 +321,17 @@ main section > p + p { margin-top: var(--sp-m); }
 @media (max-width: 768px) {
   main { gap: var(--sp-xl); }
 
+  /* column-width の基準では1段になり、項目の多いページでは最初の画面が目次で埋まる。
+     長い項目が折り返すのは許容して2段に固定し、段の幅を稼ぐため内側の余白も詰める */
+  .toc { padding: var(--sp-m); }
+
+  /* column-width が残っていると column-count は「最大段数」扱いになり、
+     180px×2 が入らない幅では1段に戻ってしまうため auto に戻す */
+  .toc-list {
+    column-width: auto;
+    column-count: 2;
+    column-gap:   var(--sp-m);
+  }
+
   .feature-grid { grid-template-columns: 1fr; }
 }
