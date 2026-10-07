@@ -15,7 +15,8 @@
 const BASE_DOMAIN = "https://shopon1128.github.io";
 
 // 各リポジトリ名
-const RP_GAMES_1  = "/ShoponGames_1";   // ゲームのWebGLビルド、FightInt の配布zip
+const RP_GAMES_1  = "/ShoponGames_1";   // ゲームのWebGLビルド、FightInt の配布zipなど
+const RP_GAMES_2  = "/ShoponGames_2";   // ゲームのWebGLビルド
 const RP_APP_1    = "/ShoponApps_1";    // BookLib の配布zip
 const RP_OTHERS_1 = "/ShoponOthers_1";  // CLAUDE.md、3Dモデルなどの制作物
 
