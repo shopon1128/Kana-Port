@@ -207,6 +207,56 @@
 
 .mode-grid figcaption strong { color: var(--fg); }
 
+/* ---------- 試聴リストの引き出し ---------- */
+/* ページの長さを抑えるため試聴リストは畳んでおく。
+   開閉の見た目は同じページの Code の引き出し(detail.css の .code-drawer)に合わせる */
+.sound-drawer {
+  margin-top: var(--sp-m);
+  border:     1px solid var(--line);
+}
+
+.sound-drawer summary {
+  position:      relative;
+  padding:       var(--sp-s) var(--sp-m);
+  padding-right: 2.5rem;   /* 右端の +/− と文字が重ならないように空ける */
+  font-size:     14px;
+  line-height:   1.6;
+  cursor:        pointer;
+  list-style:    none;     /* 既定の三角マーカーを消す */
+  transition:    background 0.15s;
+}
+
+/* Safari / 旧Chrome 用のマーカー消し */
+.sound-drawer summary::-webkit-details-marker { display: none; }
+
+.sound-drawer summary:hover { background: var(--surface); }
+
+.sound-drawer summary:focus-visible {
+  outline:        2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* 開閉状態の記号。装飾なので読み上げ対象にしない */
+.sound-drawer summary::after {
+  content:     '+';
+  content:     '+' / '';
+  position:    absolute;
+  right:       var(--sp-m);
+  font-family: var(--font-mono);
+  color:       var(--muted);
+}
+
+.sound-drawer[open] summary::after {
+  content: '−';
+  content: '−' / '';
+}
+
+.sound-drawer[open] summary { border-bottom: 1px solid var(--line); }
+
+/* 中身は枠の内側に余白を取って並べる */
+.sound-drawer > :not(summary) { margin-inline: var(--sp-m); }
+.sound-drawer > :last-child   { margin-bottom: var(--sp-m); }
+
 /* ---------- 試聴リスト ---------- */
 /* 再生ボタン / 曲名と説明 / 時間 の3列。再生中の行だけ、下の罫線がアクセント色で伸びて進捗を示す
    （--progress は sound-player.js が 0〜1 で書き込む） */

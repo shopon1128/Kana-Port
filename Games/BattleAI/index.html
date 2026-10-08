@@ -81,13 +81,13 @@
         <li><a href="#about">About</a></li>
         <li><a href="#game">Game</a></li>
         <li><a href="#display-modes">Display Modes</a></li>
-        <li><a href="#game-design">Game Design</a></li>
         <li><a href="#ai-design">AI Design</a></li>
         <li><a href="#ai-lineup">AI Lineup</a></li>
         <li><a href="#fairness-rules">Fairness Rules</a></li>
         <li><a href="#optuna-optimization">Optuna Optimization</a></li>
         <li><a href="#machine-learning">Machine Learning</a></li>
         <li><a href="#battle-data">Battle Data</a></li>
+        <li><a href="#game-design">Game Design</a></li>
         <li><a href="#decisions">Decisions</a></li>
         <li><a href="#code">Code</a></li>
         <li><a href="#sound">Sound</a></li>
@@ -168,70 +168,6 @@
           <img src="https://shopon1128.github.io/ShoponGames_1/BattleAI/AI_mode.jpg" alt="AI作品版の対戦画面。右上に敵AIの現在の戦術が表示され、AIが記憶した危険地帯が赤く塗られている" width="1920" height="1192" loading="lazy">
           <figcaption><strong>AI作品版</strong> — 右上に今の戦術が表示され、AIが射線が通っていて危険だと記憶している場所が赤くなります。</figcaption>
         </figure>
-      </div>
-    </section>
-
-    <section id="game-design">
-      <h2 class="section-label">Game Design</h2>
-      <p>
-        ゲーム側で工夫したことです。それぞれ、下の Code にあるファイルと対応しています。
-      </p>
-      <div class="feature-grid">
-        <div class="feature">
-          <h3>人間もAIもボットも、同じ「体」を動かす</h3>
-          <p>
-            移動・ダッシュ・EP・被弾はすべて共通の基底クラスが受け持ち、誰が操作するかは「入力値を書き込む頭脳」の違いでしかありません。
-            キーボード、スマホUI、学習用のボット、敵AIが同じ入口から体を動かすので、
-            AIだけ速く動ける・EPを無視できる、といったズルは構造上起こりません。
-            自動対戦で人間の代わりにボットを座らせられるのも、この作りのおかげです。
-            （<code>Character.cs</code>）
-          </p>
-        </div>
-        <div class="feature">
-          <h3>引っかからない地形を、生成ルールで保証する</h3>
-          <p>
-            キャラが壁の角に貼り付く問題を、最初は移動側の補正で直そうとしましたが、3回作り直しても解決せず全廃しました。
-            真因は地形が作る隙間だったため、禁止する配置を「幅1の隙間」と「斜めの角だけの接触」の2つに絞って生成ルールで根治。
-            それ以外は自由に置けるので遮蔽が密着して不定形の塊になり、地形の表情も増えました。
-            密着で生まれる「誰も入れない空洞」は、塗りつぶし探索で見つけて埋めています。
-            （<code>MapGenerator.cs</code>）
-          </p>
-        </div>
-        <div class="feature">
-          <h3>BGMと効果音を、すべてコードで合成する</h3>
-          <p>
-            音源素材は使わず、発振器・エンベロープ・フィルタ・ドラムをPython(NumPy / SciPy)で書き、
-            譜面データからBGM 3曲と効果音をWAVに書き出しています。
-            ノイズや揺らぎの乱数もシードを固定しているので、同じ譜面からは毎回同じ音が出ます。
-            ゲーム側では、曲の切り替えをシーン名の対応表で、ボタンの操作音の割り当てを自動で行うので、各シーンでの配線は不要です。
-            下の <a href="#sound">Sound</a> で試聴できます。
-            （<code>synth.py</code>）
-          </p>
-        </div>
-        <div class="feature">
-          <h3>スマホでも、キーボードと同じ動きにそろえる</h3>
-          <p>
-            スマホではジョイスティックで移動しますが、アナログ入力のままだと好きな角度・速さで動けてしまい、
-            キーボードで遊ぶ人やAIと条件がずれます。そこでスティックの入力を等速の8方向へ量子化し、
-            斜めも速くならないよう単位ベクトルにそろえました。
-            ダッシュは「押している間ずっと有効」を表すため、指を離した瞬間にしか反応しない標準のボタンではなく、押下と解放を直接検知しています。
-            縦横比の狭い画面では、マップの全幅が収まるようカメラを自動で引きます。
-            （<code>PhoneUIController.cs</code>）
-          </p>
-        </div>
-        <div class="feature feature--wide">
-          <img class="feature-media" src="https://shopon1128.github.io/ShoponGames_1/BattleAI/Metrics.jpg" alt="AI作品版のリザルト画面。両者の残りHPと命中率、敵AIが各戦術に使った時間の割合を示すレーダーチャートが表示されている" width="1920" height="1194" loading="lazy">
-          <div>
-            <h3>対戦相手の癖を対数のレーダーで見せる</h3>
-            <p>
-              AI作品版のリザルトでは、敵AIがこの試合でどの戦術に時間を使ったかをレーダーチャートで見せます。
-              割合をそのまま半径にすると、どの試合でも長い索敵・離脱に形が支配され、
-              平均との倍率にすると、今度は平均1〜2%の接近・強襲だけがトゲになります。
-              そこで半径を「全試合平均に対する倍率のlog2」にし、2倍と1/2倍が基準円(破線)から等距離に来るようにしました。
-              （<code>TacticRadarView.cs</code>）
-            </p>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -478,6 +414,71 @@
       <a class="play-button" href="./battle_data.csv">Download battle_data.csv</a>
     </section>
 
+    <!-- ゲーム側の工夫。ゲームAI(AI Design〜Battle Data)を先に読んでもらうため、本題の後ろに置く -->
+    <section id="game-design">
+      <h2 class="section-label">Game Design</h2>
+      <p>
+        ゲーム側で工夫したことです。それぞれ、下の Code にあるファイルと対応しています。
+      </p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>人間もAIもボットも、同じ「体」を動かす</h3>
+          <p>
+            移動・ダッシュ・EP・被弾はすべて共通の基底クラスが受け持ち、誰が操作するかは「入力値を書き込む頭脳」の違いでしかありません。
+            キーボード、スマホUI、学習用のボット、敵AIが同じ入口から体を動かすので、
+            AIだけ速く動ける・EPを無視できる、といったズルは構造上起こりません。
+            自動対戦で人間の代わりにボットを座らせられるのも、この作りのおかげです。
+            （<code>Character.cs</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>引っかからない地形を、生成ルールで保証する</h3>
+          <p>
+            キャラが壁の角に貼り付く問題を、最初は移動側の補正で直そうとしましたが、3回作り直しても解決せず全廃しました。
+            真因は地形が作る隙間だったため、禁止する配置を「幅1の隙間」と「斜めの角だけの接触」の2つに絞って生成ルールで根治。
+            それ以外は自由に置けるので遮蔽が密着して不定形の塊になり、地形の表情も増えました。
+            密着で生まれる「誰も入れない空洞」は、塗りつぶし探索で見つけて埋めています。
+            （<code>MapGenerator.cs</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>BGMと効果音を、すべてコードで合成する</h3>
+          <p>
+            音源素材は使わず、発振器・エンベロープ・フィルタ・ドラムをPython(NumPy / SciPy)で書き、
+            譜面データからBGM 3曲と効果音をWAVに書き出しています。
+            ノイズや揺らぎの乱数もシードを固定しているので、同じ譜面からは毎回同じ音が出ます。
+            ゲーム側では、曲の切り替えをシーン名の対応表で、ボタンの操作音の割り当てを自動で行うので、各シーンでの配線は不要です。
+            下の <a href="#sound">Sound</a> で試聴できます。
+            （<code>synth.py</code>）
+          </p>
+        </div>
+        <div class="feature">
+          <h3>スマホでも、キーボードと同じ動きにそろえる</h3>
+          <p>
+            スマホではジョイスティックで移動しますが、アナログ入力のままだと好きな角度・速さで動けてしまい、
+            キーボードで遊ぶ人やAIと条件がずれます。そこでスティックの入力を等速の8方向へ量子化し、
+            斜めも速くならないよう単位ベクトルにそろえました。
+            ダッシュは「押している間ずっと有効」を表すため、指を離した瞬間にしか反応しない標準のボタンではなく、押下と解放を直接検知しています。
+            縦横比の狭い画面では、マップの全幅が収まるようカメラを自動で引きます。
+            （<code>PhoneUIController.cs</code>）
+          </p>
+        </div>
+        <div class="feature feature--wide">
+          <img class="feature-media" src="https://shopon1128.github.io/ShoponGames_1/BattleAI/Metrics.jpg" alt="AI作品版のリザルト画面。両者の残りHPと命中率、敵AIが各戦術に使った時間の割合を示すレーダーチャートが表示されている" width="1920" height="1194" loading="lazy">
+          <div>
+            <h3>対戦相手の癖を対数のレーダーで見せる</h3>
+            <p>
+              AI作品版のリザルトでは、敵AIがこの試合でどの戦術に時間を使ったかをレーダーチャートで見せます。
+              割合をそのまま半径にすると、どの試合でも長い索敵・離脱に形が支配され、
+              平均との倍率にすると、今度は平均1〜2%の接近・強襲だけがトゲになります。
+              そこで半径を「全試合平均に対する倍率のlog2」にし、2倍と1/2倍が基準円(破線)から等距離に来るようにしました。
+              （<code>TacticRadarView.cs</code>）
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="decisions">
       <h2 class="section-label">Decisions</h2>
       <p>
@@ -647,7 +648,10 @@
         BGMは試聴用にAACへ変換しています。
       </p>
       <!-- 再生は sound-player.js が同じページ内で行う。JS が動かない環境では
-           リンクとして音源ファイルが開くので、そのまま聴ける -->
+           リンクとして音源ファイルが開くので、そのまま聴ける。
+           ページの長さを抑えるため、試聴リストは引き出しに畳んでおく(聴きたい人だけ開く) -->
+      <details class="sound-drawer">
+        <summary>BGM 3曲・効果音 6種を試聴する</summary>
       <p class="code-files-intro">BGM</p>
       <ul class="sound-list">
         <li class="sound-item">
@@ -721,6 +725,7 @@
           </div>
         </li>
       </ul>
+      </details>
     </section>
 
     <section id="tech">
