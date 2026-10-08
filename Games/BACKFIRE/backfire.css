@@ -10,37 +10,12 @@
    ============================================================ */
 
 /* ---------- プレイボタン ---------- */
-.play { text-align: center; }
-
-/* CTA は塗りなし・枠線のみ（仕様書の Outlined CTA） */
-.play-button {
-  display:         inline-block;
-  font-size:       14px;
-  line-height:     1.6;
-  color:           var(--fg);
-  background:      transparent;
-  border:          1px solid var(--line-ui);
-  padding:         16px 32px;
-  margin-top:      var(--sp-m);
-  text-decoration: none;
-  transition:      border-color 0.15s;
-}
-
-.play-button:hover,
-.play-button:focus-visible {
-  border-color: var(--accent);
-  color:        var(--accent);
-}
-
-.play-note {
-  margin-top:  var(--sp-m);
-  font-size:   14px;
-  line-height: 1.8;
-  color:       var(--muted);
-}
+/* .play・.play-button・.play-button--primary・.play-note は detail.css(BattleAI と共有) */
 
 /* ---------- 操作キー ---------- */
-/* 左に入力、右に動作。入力はキーボードとコントローラーを並べて書く */
+/* 左に入力、右に動作。入力はキーボードとコントローラーを並べて書く。
+   枠線は付けない。すぐ上の Play ボタンと同じ枠があると、押せるものと押せないものの
+   見分けがつかなくなるため(枠は押せるものだけが持つ) */
 .controls {
   display:               grid;
   grid-template-columns: auto 1fr;
@@ -48,8 +23,6 @@
   align-items:           center;
   max-width:             fit-content;
   margin:                var(--sp-l) auto 0;
-  border:                1px solid var(--line);
-  padding:               var(--sp-m) var(--sp-l);
   font-size:             14px;
   text-align:            left;
 }

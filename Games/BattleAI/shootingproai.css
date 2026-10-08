@@ -130,59 +130,7 @@
 }
 
 /* ---------- プレイボタン ---------- */
-.play { text-align: center; }
-
-/* CTA は塗りなし・枠線のみ（仕様書の Outlined CTA） */
-.play-button {
-  display:         inline-block;
-  font-size:       14px;
-  font-weight:     400;
-  line-height:     1.6;
-  letter-spacing:  normal;
-  color:           var(--fg);
-  background:      transparent;
-  border:          1px solid var(--line-ui);
-  border-radius:   0;
-  padding:         16px 32px;
-  margin-top:      var(--sp-m);
-  text-decoration: none;
-  transition:      border-color 0.15s;
-}
-
-.play-button:hover,
-.play-button:focus-visible {
-  border-color: var(--accent);
-  color:        var(--accent);
-}
-
-/* ページ冒頭の入口。灰色の細い枠線だけでは周りの説明用の枠(要約・目次・キー)と見分けがつかず、
-   押せると分からなかったため、白の太い枠で別物に見せる。
-   アクセントの水色はゲーム画面の ENERGY バーと同じ色で、映像の一部のように見えたので使わない。
-   塗りなし・枠線のみという CTA の形は保ち、ホバーで白黒を反転させて押せることをはっきり返す */
-.play-button--primary {
-  font-size:  20px;
-  padding:    24px 72px;
-  border:     2px solid var(--fg);
-  color:      var(--fg);
-  transition: background 0.15s, color 0.15s;
-}
-
-.play-button--primary:hover,
-.play-button--primary:focus-visible {
-  border-color: var(--fg);
-  background:   var(--fg);
-  color:        var(--bg);
-}
-
-.play-note {
-  margin-top:  var(--sp-m);
-  font-size:   14px;
-  line-height: 1.8;
-  color:       var(--muted);
-  text-align:  left;
-}
-
-.play .play-note { text-align: center; }
+/* .play・.play-button・.play-button--primary・.play-note は detail.css(BACKFIRE と共有) */
 
 /* ---------- 操作方法 ---------- */
 /* 枠線は付けない。すぐ上の Play ボタンと同じ枠があると、押せるものと押せないものの
@@ -660,10 +608,6 @@
   .decision-list { grid-template-columns: 1fr; }
 
   /* 3列のままだと「全5種のボットそれぞれに」が細切れに折り返すので、縦に積む */
-  .summary         { padding: var(--sp-m); }
-
-  /* 幅320pxの画面では左右72pxの余白だと文字が2行に折れるため、横だけ詰める */
-  .play-button--primary { padding-inline: var(--sp-xl); }
-  .summary-stats   { grid-template-columns: 1fr; }
+  .summary         { padding: var(--sp-m); }  .summary-stats   { grid-template-columns: 1fr; }
   .decision-list dt { padding-bottom: 0; border-bottom: none; }
 }
