@@ -12,6 +12,123 @@
    （ウィンドウを狭めるとページ全体が横へはみ出す）
    ============================================================ */
 
+/* ---------- 冒頭のループ映像 ---------- */
+/* ページを開いて最初に目に入るのは、この映像とすぐ下の Play ボタン。
+   映像自体が十分に色を持つので、枠や飾りは付けない */
+.hero { margin-top: var(--sp-l); }
+
+/* 一時停止ボタンを映像の隅に重ねるための基準 */
+.hero-frame { position: relative; }
+
+.hero-video {
+  display:      block;
+  width:        100%;
+  height:       auto;
+  aspect-ratio: 16 / 10;            /* 読み込み前から高さを確保し、下の要約が後からずれないようにする */
+  background:   var(--surface);
+}
+
+/* 映像の上に重ねるので、どの場面の上でも読めるよう背景色の面を敷く。
+   左上に置くのは、ゲーム画面の右上(戦術表示)・左下(ハート)・右下(ENERGY)を隠さないため。
+   display を指定すると [hidden] が効かなくなる(LESSONS.md)ため、ここでは指定しない */
+.hero-toggle {
+  position:    absolute;
+  left:        var(--sp-s);
+  top:         var(--sp-s);
+  min-height:  24px;                /* タップ領域の高さを 24px 以上にする（WCAG 2.5.8） */
+  padding:     var(--sp-xs) var(--sp-s);
+  font-family: inherit;
+  font-size:   12px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color:       var(--fg);
+  background:  var(--bg);
+  border:      1px solid var(--line-ui);
+  cursor:      pointer;
+  transition:  border-color 0.15s, color 0.15s;
+}
+
+.hero-toggle:hover,
+.hero-toggle:focus-visible {
+  border-color: var(--accent);
+  color:        var(--accent);
+}
+
+/* ---------- 冒頭の要約 ---------- */
+/* 枠1本の中を、要点 → 数字 → 制作体制の3段に罫線で分ける。
+   目立たせるのは数字の段だけで、他は本文と同じ静かな組み方にする */
+.summary {
+  margin-top: var(--sp-l);
+  border:     1px solid var(--line);
+  padding:    var(--sp-m) var(--sp-l) var(--sp-l);
+}
+
+.summary-title {
+  font-size:   15px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.summary-points {
+  margin-top:   var(--sp-s);
+  padding-left: 1.2em;
+  font-size:    14px;
+  line-height:  1.8;
+  color:        var(--muted);
+}
+
+.summary-stats {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--sp-m);
+  margin-top:            var(--sp-m);
+  padding-top:           var(--sp-m);
+  border-top:            1px solid var(--line);
+}
+
+/* 読み上げ順(ラベル→数字)は保ったまま、見た目だけ数字を上に出す */
+.summary-stat {
+  display:        flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap:            var(--sp-xs);
+  min-width:      0;
+}
+
+.summary-stat dt {
+  font-size:   12px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;   /* 12px以下だけ潰れ防止に微量付与（shared.css と同じ） */
+  color:       var(--muted);
+}
+
+.summary-stat dd {
+  font-size:   32px;
+  font-weight: 700;
+  line-height: 1.2;
+  color:       var(--fg);
+}
+
+.summary-unit {
+  margin-left: 2px;
+  font-size:   14px;
+  font-weight: 400;
+}
+
+/* 制作体制は .team-facts(detail.css)を流用し、外枠だけ要約の罫線に置き換える */
+.summary-facts {
+  border:      none;
+  border-top:  1px solid var(--line);
+  padding:     var(--sp-m) 0 0;
+}
+
+.summary-more {
+  margin-top:  var(--sp-m);
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--muted);
+}
+
 /* ---------- プレイボタン ---------- */
 .play { text-align: center; }
 
@@ -38,6 +155,25 @@
   color:        var(--accent);
 }
 
+/* ページ冒頭の入口。灰色の細い枠線だけでは周りの説明用の枠(要約・目次・キー)と見分けがつかず、
+   押せると分からなかったため、白の太い枠で別物に見せる。
+   アクセントの水色はゲーム画面の ENERGY バーと同じ色で、映像の一部のように見えたので使わない。
+   塗りなし・枠線のみという CTA の形は保ち、ホバーで白黒を反転させて押せることをはっきり返す */
+.play-button--primary {
+  font-size:  20px;
+  padding:    24px 72px;
+  border:     2px solid var(--fg);
+  color:      var(--fg);
+  transition: background 0.15s, color 0.15s;
+}
+
+.play-button--primary:hover,
+.play-button--primary:focus-visible {
+  border-color: var(--fg);
+  background:   var(--fg);
+  color:        var(--bg);
+}
+
 .play-note {
   margin-top:  var(--sp-m);
   font-size:   14px;
@@ -49,14 +185,16 @@
 .play .play-note { text-align: center; }
 
 /* ---------- 操作方法 ---------- */
+/* 枠線は付けない。すぐ上の Play ボタンと同じ枠があると、押せるものと押せないものの
+   見分けがつかなくなるため(枠は押せるものだけが持つ)。
+   列幅を中身に合わせる(auto)のは、枠が無いと 1fr 1fr の右列の空きがそのまま見え、
+   文字のかたまりが左に寄って見えるから。中身の幅で組めば、かたまり自体が中央に来る */
 .controls {
   display:               grid;
-  grid-template-columns: 1fr 1fr;
-  gap:                   var(--sp-s) var(--sp-l);
+  grid-template-columns: auto auto;
+  gap:                   var(--sp-s) var(--sp-xl);
   max-width:             fit-content;
   margin:                var(--sp-m) auto 0;
-  border:                1px solid var(--line);
-  padding:               var(--sp-m) var(--sp-l);
   font-size:             14px;
   text-align:            left;
 }
@@ -520,5 +658,12 @@
 
   /* 1列にしたら名前と説明を1組に見せるため、名前の下の線を消して説明の線だけで区切る */
   .decision-list { grid-template-columns: 1fr; }
+
+  /* 3列のままだと「全5種のボットそれぞれに」が細切れに折り返すので、縦に積む */
+  .summary         { padding: var(--sp-m); }
+
+  /* 幅320pxの画面では左右72pxの余白だと文字が2行に折れるため、横だけ詰める */
+  .play-button--primary { padding-inline: var(--sp-xl); }
+  .summary-stats   { grid-template-columns: 1fr; }
   .decision-list dt { padding-bottom: 0; border-bottom: none; }
 }

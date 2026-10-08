@@ -13,7 +13,68 @@
   <header>
     <a class="back-link" href="../index.html">← 作品一覧へ戻る</a>
     <h1>Battle AI</h1>
-    <p class="header-sub">視界とダッシュ残像で駆け引きする1vs1見下ろしシューティング — 「立ち回りで勝つ」敵AIと撃ち合う</p>
+    <p class="header-sub">視界とダッシュ残像で駆け引きする1vs1見下ろしシューティング — 「立ち回りで勝つ」敵AI</p>
+
+    <!-- 最初の画面で「どんなゲームか」を絵で伝えるループ映像(音なし・約1MB)。
+         自動再生は hero-video.js が行う。JS が動かない環境や「動きを減らす」設定ではポスターの静止画のまま -->
+    <figure class="hero">
+      <div class="hero-frame">
+        <video class="hero-video" muted loop playsinline preload="metadata"
+               poster="https://shopon1128.github.io/ShoponGames_1/BattleAI/hero.jpg"
+               width="1280" height="800" aria-label="AI作品版で対戦しているプレイ映像">
+          <source src="https://shopon1128.github.io/ShoponGames_1/BattleAI/hero.mp4" type="video/mp4">
+        </video>
+        <button type="button" class="hero-toggle" hidden>一時停止</button>
+      </div>
+    </figure>
+
+    <!-- 映像を見た直後に遊べるよう、プレイの入口は映像のすぐ下に置く。
+         操作方法は遊ぶときに要る情報なので、ボタンと離さない -->
+    <div class="play">
+      <a class="play-button play-button--primary" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/BattleAI/">▶ Play in Browser</a>
+      <p class="play-note">WebGL版 / PCキーボード推奨 / スマホ対応</p>
+      <div class="controls">
+        <div><span class="key">WASD</span>  移動</div>
+        <div><span class="key">SHIFT</span>  ダッシュ</div>
+        <div><span class="key">↑←↓→</span>  上下左右へショット</div>
+        <div><span class="key">ESC</span>  ポーズ</div>
+      </div>
+      <p class="play-note">※選択画面から対戦相手のAIを選べます。設定を開くと、キー割り当ての変更やスマホ用のUI表示、AIの戦術可視化を切り替えられます。</p>
+    </div>
+
+    <!-- 採用担当が最初の画面だけで「何を作り、何ができ、どこまで自分でやったか」を
+         掴めるよう、目次より上に置く。数字は Battle Data の表・CSV と一致させること -->
+    <section class="summary" aria-labelledby="summary-heading">
+      <h2 class="summary-title" id="summary-heading">この作品で示したこと</h2>
+      <ul class="summary-points">
+        <li>公平性を構造で縛ったうえで、7つの戦術を使い分けるゲームAIを Unity / C# で設計・実装した</li>
+        <li>Optuna によるパラメータ最適化と、模倣学習+CMA-ES による戦術選択の学習を、Unity と連携した自動対戦ループで回した</li>
+        <li>対戦データを統計的に評価して、AIの採否と「最強」を判断した</li>
+      </ul>
+      <!-- 数字を大きく見せたいが、読み上げでは「ラベル→数字」の順が自然なので
+           DOM は dt→dd のまま、CSS(column-reverse)で数字を上に出す -->
+      <dl class="summary-stats">
+        <div class="summary-stat">
+          <dt>公開している対戦データ</dt>
+          <dd>6,097<span class="summary-unit">試合</span></dd>
+        </div>
+        <div class="summary-stat">
+          <dt>選んで戦える敵AI</dt>
+          <dd>9<span class="summary-unit">体</span></dd>
+        </div>
+        <div class="summary-stat">
+          <dt>Crown AI の勝率(5種のボットすべてに)</dt>
+          <dd>75%<span class="summary-unit">以上</span></dd>
+        </div>
+      </dl>
+      <dl class="team-facts summary-facts">
+        <dt>制作</dt><dd>個人制作</dd>
+        <dt>期間</dt><dd>1ヶ月</dd>
+        <dt>体制</dt><dd>設計・判断・検証は私が行い、実装は Claude Code を活用して共同で行いました</dd>
+      </dl>
+      <p class="summary-more">制作中に下した判断の中身は、ページ後半の <a href="#decisions">Decisions</a> にまとめています。</p>
+    </section>
+
     <nav class="toc" aria-label="目次">
       <ol class="toc-list">
         <li><a href="#play-movie">Play Movie</a></li>
@@ -36,18 +97,6 @@
   </header>
 
   <main>
-    <section class="play" aria-label="プレイ">
-      <a class="play-button" href="https://shopon1128.github.io/ShoponGames_1/BattleAI/BattleAI/">▶ Play in Browser</a>
-      <p class="play-note">WebGL版 / PCキーボード推奨 / スマホ対応</p>
-      <div class="controls">
-        <div><span class="key">WASD</span>  移動</div>
-        <div><span class="key">SHIFT</span>  ダッシュ</div>
-        <div><span class="key">↑←↓→</span>  上下左右へショット</div>
-        <div><span class="key">ESC</span>  ポーズ</div>
-      </div>
-      <p>※選択画面から対戦相手のAIを選べます。設定を開くと、キー割り当ての変更やスマホ用のUI表示、AIの戦術可視化を切り替えられます。</p>
-    </section>
-
     <section id="play-movie">
       <h2 class="section-label">Play Movie</h2>
       <div class="video-frame">
@@ -76,12 +125,6 @@
         選択画面で9体の敵AIを切り替えられるので、
         手作りのものから最適化されたものまで、AIの進化を体感しながら遊べます。
       </p>
-      <dl class="team-facts">
-        <dt>制作</dt><dd>個人制作</dd>
-        <dt>期間</dt><dd>1ヶ月</dd>
-        <dt>体制</dt><dd>設計・判断・検証は私が行い、実装は Claude Code を活用して共同で行いました</dd>
-      </dl>
-      <p>制作中に下した判断の中身は、ページ後半の <a href="#decisions">Decisions</a> にまとめています。</p>
     </section>
 
     <section id="game">
@@ -705,5 +748,6 @@
 
   <script defer src="../../code-view.js"></script>
   <script defer src="sound-player.js"></script>
+  <script defer src="hero-video.js"></script>
 </body>
 </html>
