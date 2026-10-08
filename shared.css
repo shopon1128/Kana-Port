@@ -214,7 +214,10 @@ code {
   color:       var(--fg);
   background:  var(--surface);
   padding:     1px 6px;
-  word-break:  break-all;
+  /* break-all だとファイル名(Character.cs など)が収まる行でも途中で折れて読みにくい。
+     ふだんは単語の途中で折らず、行に収まらない長さのときだけ折る */
+  word-break:    normal;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- フッター ---------- */

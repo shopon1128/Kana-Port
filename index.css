@@ -250,8 +250,9 @@
   color:       var(--muted);
 }
 
+/* 見出しの直下に置く読み方の注記。下のスキル表との間を空ける */
 .skill-scale {
-  margin-top:  var(--sp-l);
+  margin-bottom: var(--sp-l);
   font-size:   11px;
   line-height: 1.6;
   color:       var(--muted);
