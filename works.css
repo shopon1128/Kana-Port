@@ -244,12 +244,12 @@
   margin-bottom:         calc(-1 * (var(--card-gap-y) - var(--sp-m)));
 }
 
-/* 行を subgrid で親と共有し、隣のカードと段（写真・題・説明・期間・タグ）を
+/* 行を subgrid で親と共有し、隣のカードと段（写真・題・行き先・説明・期間・タグ）を
    横一直線に揃える。flex の縦積みだと、説明文の長さの差で期間とタグが上下にずれる。
-   span の数は直下の子の数（.work-thumb〜.work-tags の5つ）と一致させること */
+   span の数は直下の子の数（.work-thumb〜.work-tags の6つ）と一致させること */
 .work-card {
   display:            grid;
-  grid-row:           span 5;
+  grid-row:           span 6;
   grid-template-rows: subgrid;
   /* 行間 sp-m は親から受け継ぐ。カード間はそれとの差分だけ足す */
   margin-bottom:      calc(var(--card-gap-y) - var(--sp-m));
@@ -322,6 +322,18 @@
   left:         0;
   width:        100%;
   aspect-ratio: var(--thumb-ratio);
+}
+
+/* ---------- 行き先 ---------- */
+/* カードを押すと「詳細ページへ行く」のか「ゲームがすぐ起動する」のかを、押す前に分かるようにする。
+   タグ(詳細ページあり)だけだと、タグが無いカードの側で違いに気づけなかった。
+   段の間隔は subgrid で全段共通の sp-m なので、題とひと続きに見えるよう上へ寄せる */
+.work-dest {
+  margin-top:     calc(-1 * var(--sp-s));
+  font-size:      12px;
+  line-height:    1.6;
+  letter-spacing: 0.02em;   /* 12px以下だけ潰れ防止に微量付与（shared.css と同じ） */
+  color:          var(--muted);
 }
 
 /* ---------- 説明文 ---------- */
