@@ -27,6 +27,7 @@
         <li><a href="#optuna-optimization">Optuna Optimization</a></li>
         <li><a href="#machine-learning">Machine Learning</a></li>
         <li><a href="#battle-data">Battle Data</a></li>
+        <li><a href="#decisions">Decisions</a></li>
         <li><a href="#code">Code</a></li>
         <li><a href="#sound">Sound</a></li>
         <li><a href="#tech">Tech</a></li>
@@ -44,7 +45,7 @@
         <div><span class="key">↑←↓→</span>  上下左右へショット</div>
         <div><span class="key">ESC</span>  ポーズ</div>
       </div>
-      <p>※選択画面から対戦相手のAIを選べます。設定を開くと、キー割り当ての変更やスマホ用のUI表示、AIの戦術可視化を試合中でも切り替えられます。</p>
+      <p>※選択画面から対戦相手のAIを選べます。設定を開くと、キー割り当ての変更やスマホ用のUI表示、AIの戦術可視化を切り替えられます。</p>
     </section>
 
     <section id="play-movie">
@@ -70,11 +71,17 @@
       <p>
         対戦相手の敵AIは、その駆け引きを人間と同じルールの上で使いこなします。
         「機械だからこその理不尽な反応速度で勝つ」のではなく、
-        <strong>立ち回りの賢さだけで人間を追い詰める</strong>ボスが目標です。
+        <strong>立ち回りの賢さだけで人間を追い詰める</strong>敵AIを目指しました。
         立ち回りのパラメータはPython+Optunaの自動対戦ループで最適化し、戦術の選び方は模倣学習とCMA-ESで学習させました。
         選択画面で9体の敵AIを切り替えられるので、
         手作りのものから最適化されたものまで、AIの進化を体感しながら遊べます。
       </p>
+      <dl class="team-facts">
+        <dt>制作</dt><dd>個人制作</dd>
+        <dt>期間</dt><dd>1ヶ月</dd>
+        <dt>体制</dt><dd>設計・判断・検証は私が行い、実装は Claude Code を活用して共同で行いました</dd>
+      </dl>
+      <p>制作中に下した判断の中身は、ページ後半の <a href="#decisions">Decisions</a> にまとめています。</p>
     </section>
 
     <section id="game">
@@ -105,18 +112,18 @@
     <section id="display-modes">
       <h2 class="section-label">Display Modes</h2>
       <p>
-        同じ試合を2つの見せ方で遊べます。<strong>ゲーム版</strong>では敵の考えは一切見えず、
-        <strong>AI作品版</strong>では今の戦術・AIが記憶した危険地帯・試合後の分析が画面に出ます。
+        同じ試合を2つの見せ方で遊べます。<strong>ゲーム版</strong>ではAIの思考は一切見えず、AIとの駆け引きを最大限楽しめます。
+        <strong>AI作品版</strong>では今の戦術とAIが記憶した危険地帯、試合後の分析が画面に出て、AIが何をしているのかを知ることができます。
         設定から、試合中でも切り替えられます。
       </p>
       <div class="mode-grid">
         <figure>
           <img src="https://shopon1128.github.io/ShoponGames_1/BattleAI/Game_mode.jpg" alt="ゲーム版の対戦画面。プレイヤーの視線が通る範囲だけが明るく、その外側はフォグで暗い" width="1920" height="1200" loading="lazy">
-          <figcaption><strong>ゲーム版</strong> — AIの思考は隠されているので、AIとの駆け引きを最大限楽しめます。</figcaption>
+          <figcaption><strong>ゲーム版</strong> — AIの思考は隠されます。</figcaption>
         </figure>
         <figure>
           <img src="https://shopon1128.github.io/ShoponGames_1/BattleAI/AI_mode.jpg" alt="AI作品版の対戦画面。右上に敵AIの現在の戦術が表示され、AIが記憶した危険地帯が赤く塗られている" width="1920" height="1192" loading="lazy">
-          <figcaption><strong>AI作品版</strong> — AIの思考が開示された状態で遊べます。右上に今の戦術。赤みがかったセルは、AIが射線が通っていて危険だと記憶している場所です。</figcaption>
+          <figcaption><strong>AI作品版</strong> — 右上に今の戦術が表示され、AIが射線が通っていて危険だと記憶している場所が赤くなります。</figcaption>
         </figure>
       </div>
     </section>
@@ -303,11 +310,11 @@
         </li>
         <li>
           <div class="ai-compact-head"><h3>Base AI</h3><span class="ai-tag">base</span></div>
-          <p>索敵→追跡→攻撃→離脱の4状態だけで動く、全AIのご先祖。手数は多いものの、遮蔽を使う人間には動きを読まれがちです。</p>
+          <p>索敵→追跡→攻撃→離脱の4状態を切り替えるステートマシン型で、ユーティリティAI(Craft AI)を作る前のたたき台にした、全AIのご先祖。公平性のルールもこのAIを作る段階で決めました。手数が多くボット相手には強いものの、遮蔽を使う人間には動きを読まれがちです。</p>
         </li>
         <li>
           <div class="ai-compact-head"><h3>Chaos AI</h3><span class="ai-tag">chaos</span></div>
-          <p>立ち回りの14パラメータを毎試合ランダム化する余興枠。勝率66%と最適化・学習した個体に届かない、「<strong>最適化しないとこうなる</strong>」の見本です。</p>
+          <p>Optunaで扱った立ち回りの14パラメータを毎試合ランダム化する余興枠。勝率66%と最適化・学習した個体に届かない、「<strong>最適化しないとこうなる</strong>」の見本です。</p>
         </li>
         <li>
           <div class="ai-compact-head"><h3>Shuffle AI</h3><span class="ai-tag">抽選結果を記録</span></div>
@@ -334,6 +341,7 @@
       <h2 class="section-label">Optuna Optimization</h2>
       <p>
         立ち回りのパラメータ12項目を、Python(Optuna)とUnityをファイル連携させた自動対戦ループで探索しました。
+        (第3回では見せ場のフェイント率と偏差射撃率を固定し、新しい2項目と入れ替えたので、扱ったパラメータは全部で14項目です)
         公平性に関わる値(連射間隔・判断周期・反応速度)は<strong>探索空間から除外</strong>し、
         「ズルで勝つ」方向への最適化(報酬ハッキング)を封じています。
       </p>
@@ -412,7 +420,69 @@
         得意不得意の差が21ptと大きく目立った特徴もなかったため、選択画面には載せていません。
         なお対人戦のデータも含まれていますが、こちらはまだまだデータ数が少ないため、結論を出すにはまだ足りません。
       </p>
+      <p class="play-note">
+        合計では、ステートマシン型の Base AI(77%)が Veteran AI(73%)や Cold AI(74%)を上回っています。
+        ただし Base AI は相手による差が38ptと Chaos AI に並んで最も大きく、全AIの平均で最も勝ちにくい突撃ボットには56%と、Veteran AI・Cold AI(62%)に逆転されます。
+        <strong>合計の勝率は、こうした性質の違いを隠してしまいます</strong>。
+        また、Veteran AI が王座を守ったのは、挑戦者と同じセッションで交互に戦わせる直接のA/B比較で
+        「上回る証拠が出なければ現職を残す」と決めていた時期の結果です。この表は後から5種類のボットで測り直したもので、測り方が違うため、序列も一致しません。
+      </p>
+      <p class="play-note">
+        Base AI は、ボット相手には強いのに人間相手には弱いという、他のAIにはない性質を持っています。
+        地形生成のルールを変える前の記録では、対ボット78%に対して対人は20%(5試合)でした。
+        地形を変えたときに対戦データを取り直したため、公開中のCSVにはまだ対人戦が少なく、この差は今のデータでは確かめられていません。
+      </p>
       <a class="play-button" href="./battle_data.csv">Download battle_data.csv</a>
+    </section>
+
+    <section id="decisions">
+      <h2 class="section-label">Decisions</h2>
+      <p>
+        作りたいAI像がはっきりしていたので、何をどう作るか、どのAIを採用するかの判断はすべて私が行いました。
+        コードの大部分は Claude Code と一緒に書いています。ここまでの各節で紹介した内容のうち、主な判断を振り返ります。
+      </p>
+
+      <h3 class="decision-group">設計</h3>
+      <dl class="decision-list">
+        <dt>駆け引きの仕組み</dt>
+        <dd>視界・ダッシュ残像・撃つのにも走るのにも使うEPの3つで、「隠れる・覗く・居場所がバレる」が起きるゲームにした。</dd>
+        <dt>全員が同じ体を使う</dt>
+        <dd>人間・敵AI・ボットが同じ「体」を動かし、違いは入力を書き込む頭脳だけにした。AIだけのズルが構造上起きず、自動対戦で人間の代わりにボットを座らせられる。</dd>
+        <dt>公平性のルール</dt>
+        <dd>立ち回りで勝つAIを作るために、何を縛ればよいかを決めた。判断は0.25秒ごと、弾は0.3秒見続けてから回避、相手の位置は見えたときか残像からしか分からない。反応の速さで勝つ道を塞ぎ、強くなる余地を判断の側にだけ残した。Base AI を作る段階で決めている。</dd>
+        <dt>知覚・頭脳・足回りの3層</dt>
+        <dd>後から学習に置き換えることを見据え、頭脳だけを差し替えられる構造にした。</dd>
+        <dt>最適化と学習の仕組み</dt>
+        <dd>Optuna とUnityをファイルで連携させた自動対戦ループを組み、公平性に関わる値は探索空間から外した。学習させるのは戦術の選び方だけにして、運動制御は手書きのまま残した。</dd>
+      </dl>
+
+      <h3 class="decision-group">方向性</h3>
+      <dl class="decision-list">
+        <dt>見せ場を残す</dt>
+        <dd>最初の最適化がフェイントをほぼ使わない値を選んだとき、このゲームならではの見せ場は残したいという理由から、関連するパラメータを元の値へ戻した(Veteran AI,Cold AI)。</dd>
+        <dt>後付けから事前の制約へ</dt>
+        <dd>戻した値が周りのパラメータと噛み合っていないと気づき、制約を最初から探索空間に入れて最適化し直した(Snipe AI)。</dd>
+        <dt>教師の選び直し</dt>
+        <dd>Veteran AI を教師にした学習でフェイントが消えた(Frost AI)。原因は後付けだと考え、制約を組み込んでいた Snipe AI を教師にした結果、Crown AI はフェイントを保ったまま最強になった。</dd>
+        <dt>最強の決め方</dt>
+        <dd>「最強は勝率で、最高は試遊で決める」と決めた。勝率で上回っても、見せ場を捨てた強さの Frost AI は最強にしなかった。</dd>
+      </dl>
+
+      <h3 class="decision-group">測り方と検証</h3>
+      <dl class="decision-list">
+        <dt>選抜と評価を分ける</dt>
+        <dd>少ない試合数のベストは運で選ばれるので、候補を選ぶ試合と評価する試合を分けた。挑戦者が同点なら現職を残す。</dd>
+        <dt>交互に測り直す</dt>
+        <dd>50試合の上振れや、2体を順番に測った結果から「有意に上回った」と結論が出かけたとき、試合数が足りない・交互に測るべきだとして止め、A/B対戦でやり直させた。差は再現しなかった。</dd>
+        <dt>評価用ボットを5種類に</dt>
+        <dd>上位のAIが勝率78〜82%に張り付いて区別できなくなったとき、AIではなく測る側を疑い、ボットの性格を増やした。</dd>
+        <dt>結果を見る前に予想を書く</dt>
+        <dd>Crown AI の実験では、予想と判定基準を先にドキュメントに記述してから測った。予想は外れたが、そのまま残している。</dd>
+        <dt>試遊で確かめる</dt>
+        <dd>勝率で並んだ候補の採否は試遊で決めた。何千試合の自動対戦では出なかった欠陥も、試遊で2度見つけた。</dd>
+        <dt>直す層を見直す</dt>
+        <dd>壁に引っかかる問題を移動の補正で3回直そうとして失敗したため、異なるアプローチ(地形生成のルール)で根治した。</dd>
+      </dl>
     </section>
 
     <section id="code">

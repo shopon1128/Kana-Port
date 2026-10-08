@@ -1,6 +1,6 @@
 /* ============================================================
    detail.css — 作品詳細ページ共通スタイル
-                Games/BattleAI・Games/FightInt・Apps/BookLib・
+                Games/BattleAI・Games/BACKFIRE・Games/FightInt・Apps/BookLib・
                 Others/Model_pl・Others/ClaudeMd で使用
    ------------------------------------------------------------
    一覧3ページに works.css があるのと同じ役割を、詳細ページに対して
@@ -118,6 +118,26 @@ main section > p + p { margin-top: var(--sp-m); }
   line-height: 1.8;
   color:       var(--muted);
 }
+
+/* ============================================================
+   制作の概要(人数・担当・期間など)
+   見出しと値を横に並べる。BACKFIRE・BattleAI で使用
+   ============================================================ */
+.team-facts {
+  display:               grid;
+  grid-template-columns: auto 1fr;
+  gap:                   var(--sp-s) var(--sp-l);
+  margin-top:            var(--sp-m);
+  border:                1px solid var(--line);
+  padding:               var(--sp-m) var(--sp-l);
+  font-size:             14px;
+  line-height:           1.7;
+}
+
+.team-facts dt { color: var(--muted); }
+
+/* 段落間隔は p + p にしか付かないので、表の直後の段落にも同じ間隔を空ける */
+.team-facts + p { margin-top: var(--sp-m); }
 
 /* ============================================================
    手順ステップ

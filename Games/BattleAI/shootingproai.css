@@ -400,6 +400,43 @@
   color:       var(--muted);
 }
 
+/* ---------- 制作で下した判断 ---------- */
+/* 判断の名前と中身を、AIの簡易一覧(.ai-compact)と同じ「名前の列+説明」の形で並べる。
+   採用担当が名前の列だけを縦に拾い読みしても、何を決めた人かが分かるようにするため */
+.decision-group {
+  margin-top:  var(--sp-l);
+  font-size:   14px;
+  font-weight: 700;
+  line-height: 1.6;
+  color:       var(--muted);
+}
+
+.decision-list {
+  display:               grid;
+  grid-template-columns: 13em 1fr;
+  margin-top:            var(--sp-s);
+  border-top:            1px solid var(--line);
+}
+
+.decision-list dt,
+.decision-list dd {
+  padding:       var(--sp-s) 0;
+  border-bottom: 1px solid var(--line);
+  font-size:     14px;
+  line-height:   1.8;
+}
+
+.decision-list dt {
+  padding-right: var(--sp-l);
+  font-weight:   700;
+  color:         var(--fg);
+}
+
+.decision-list dd {
+  min-width: 0;
+  color:     var(--muted);
+}
+
 /* ---------- 公平性ルール ---------- */
 .fairness-box {
   border:      1px solid var(--line);
@@ -480,4 +517,8 @@
   .feature--wide,
   .ai-compact li,
   .controls { grid-template-columns: 1fr; }
+
+  /* 1列にしたら名前と説明を1組に見せるため、名前の下の線を消して説明の線だけで区切る */
+  .decision-list { grid-template-columns: 1fr; }
+  .decision-list dt { padding-bottom: 0; border-bottom: none; }
 }

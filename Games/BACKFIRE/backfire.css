@@ -80,22 +80,7 @@
 }
 
 /* ---------- チームと担当 ---------- */
-/* 人数・担当・期間の3項目。見出しと値を横に並べる */
-.team-facts {
-  display:               grid;
-  grid-template-columns: auto 1fr;
-  gap:                   var(--sp-s) var(--sp-l);
-  margin-top:            var(--sp-m);
-  border:                1px solid var(--line);
-  padding:               var(--sp-m) var(--sp-l);
-  font-size:             14px;
-  line-height:           1.7;
-}
-
-.team-facts dt { color: var(--muted); }
-
-/* detail.css の段落間隔は p + p にしか付かないので、表の直後の段落にも同じ間隔を空ける */
-.team-facts + p { margin-top: var(--sp-m); }
+/* 人数・担当・期間の枠(.team-facts)は BattleAI でも使うので detail.css にある */
 
 /* 担当一覧・イベントの条件と種類で使う箇条書き */
 .plain-list {
