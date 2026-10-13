@@ -347,7 +347,7 @@
       <p>
         Optuna最適化(上)が調整したのは「立ち回りの数値」でした。次の一歩は、それまで手書きだった
         <strong>戦術の"選び方"そのもの</strong>を機械学習で置き換えること。運動制御と発動条件(＝公平性のルール)は
-        手書きのまま残し、<strong>7つの戦術のどれを選ぶかだけ</strong>を学習対象にしています(だから公平性は構造的に守られる)。
+        手書きのまま残し、<strong>7つの戦術のどれを選ぶかだけ</strong>を学習対象にしています。
       </p>
       <ol class="steps">
         <li>判断チックごとに「観測18次元 → そのとき選んだ戦術」を記録し、教師データを作る</li>
@@ -356,7 +356,7 @@
       </ol>
       <p class="play-note">
         この方法によって生まれた個体は、教師が軸としていた戦い方を通すための判断に優れていました。
-        また、後付けで浮いた見せ場は殺され(v1 → v4)、最初から設計に織り込まれた見せ場は、進化を通り抜けて残りました(v3 → v5)。
+        また、後付けのフェイントは殺され(v1 → v4)、最初から設計に織り込まれたフェイントは、進化を通り抜けて残りました(v3 → v5)。
         パラメータ最適化で得た「制約は事後に上書きせず、最初から探索空間に入れる」という教訓が、技術を跨いで機械学習でも成り立ちました。
       </p>
     </section>
@@ -754,18 +754,14 @@
       <div class="tech-tags">
         <span class="tag">Unity 6</span>
         <span class="tag">C#</span>
-        <span class="tag">Input System</span>
-        <span class="tag">URP</span>
-        <span class="tag">手続き的マップ生成</span>
         <span class="tag">ユーティリティAI</span>
         <span class="tag">A*経路探索</span>
         <span class="tag">Python</span>
-        <span class="tag">NumPy / SciPy(音声合成)</span>
+        <span class="tag">NumPy / SciPy</span>
         <span class="tag">Optuna</span>
         <span class="tag">模倣学習</span>
         <span class="tag">CMA-ES</span>
         <span class="tag">scikit-learn</span>
-        <span class="tag">WebGL</span>
       </div>
     </section>
   </main>
