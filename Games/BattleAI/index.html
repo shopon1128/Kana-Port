@@ -47,9 +47,9 @@
     <section class="summary" aria-labelledby="summary-heading">
       <h2 class="summary-title" id="summary-heading">このページの要約</h2>
       <ul class="summary-points">
-        <li>公平性を構造で縛ったうえで、7つの戦術を使い分けるゲームAIを Unity / C# で設計・実装した</li>
+        <li>公平性を構造で縛ったうえで、7つの戦術を使い分けるゲームAIを設計・実装した</li>
         <li>Optuna によるパラメータ最適化と、模倣学習+CMA-ES による戦術選択の学習を、Unity と連携した自動対戦ループで回した</li>
-        <li>対戦データを統計的に評価して、AIの採否と「最強」を判断した</li>
+        <li>対戦データを統計的に評価して、AIの性能を判断した</li>
       </ul>
       <!-- 数字を大きく見せたいが、読み上げでは「ラベル→数字」の順が自然なので
            DOM は dt→dd のまま、CSS(column-reverse)で数字を上に出す -->
@@ -59,18 +59,18 @@
           <dd>6,097<span class="summary-unit">試合</span></dd>
         </div>
         <div class="summary-stat">
-          <dt>選んで戦える敵AI</dt>
+          <dt>作った敵AI</dt>
           <dd>9<span class="summary-unit">体</span></dd>
         </div>
         <div class="summary-stat">
-          <dt>Crown AI の勝率(5種のボットすべてに)</dt>
-          <dd>75%<span class="summary-unit">以上</span></dd>
+          <dt>Crown AI(現最強) の対bot勝率</dt>
+          <dd>75%<span class="summary-unit">以上(5種すべてに)</span></dd>
         </div>
       </dl>
       <dl class="team-facts summary-facts">
         <dt>制作</dt><dd>個人制作</dd>
         <dt>期間</dt><dd>1ヶ月</dd>
-        <dt>体制</dt><dd>設計・判断・検証は私が行い、実装は Claude Code を活用して共同で行いました</dd>
+        <dt>体制</dt><dd>設計・判断・検証は全て私が行い、実装は Claude Code を活用して共同で行いました</dd>
       </dl>
       <p class="summary-more">制作中に下した判断の中身は、ページ後半の <a href="#decisions">Decisions</a> にまとめています。</p>
     </section>
